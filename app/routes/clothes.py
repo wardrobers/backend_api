@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from ..dependencies import get_db
-from ..models.pydantic import (
+
+from app.dependencies import get_db
+from app.models.models import (
+    AdvancedSearchQuery,
+    Clothes,
     ClothesCreate,
     ClothesUpdate,
-    Clothes,
-    AdvancedSearchQuery,
     PaginationQuery,
     SortingQuery,
 )
-from ..models.sqlalchemy import ClothesModel
+from app.models.sql import ClothesModel
 
 router = APIRouter()
 

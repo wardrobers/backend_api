@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ..dependencies import get_db
-from ..models.pydantic import BookingCreate, BookingUpdate, Booking
-from ..models.sqlalchemy import BookingModel
+
+from app.dependencies import get_db
+from app.models.models import Booking, BookingCreate, BookingUpdate
+from app.models.sql import BookingModel
 
 router = APIRouter()
+
 
 # Booking System Endpoints
 @router.post("/bookings/", response_model=Booking)

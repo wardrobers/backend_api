@@ -1,22 +1,71 @@
-from pydantic import BaseModel, Field
-from typing import Optional
-from uuid import UUID as PyUUID
 import datetime
+from typing import List, Optional
+from uuid import UUID as PyUUID
+
+from pydantic import BaseModel, Field
 
 
 class UserInformation(BaseModel):
     name: str
-    surname: str
+    surname: Optional[str]
+    second_name: Optional[str]
     email: str
-    phone_number: str
+
+
+class UserGet(BaseModel):
+    uuid: str
+    login: str
+    super_admin: bool
+    is_notificated: bool
+    last_login_at: Optional[str]
     marketing_consent: bool
+    created_at: str
+    updated_at: Optional[str]
+    deleted_at: Optional[str]
+    user_info: Optional[UserInformation]
+    user_activity: Optional[dict]
+    user_subscription: Optional[dict]
+    users_photos: Optional[dict]
+
+
+class UserList(BaseModel):
+    users: List[UserGet]
 
 
 class UserCreate(BaseModel):
+    uuid: str
     login: str
-    password: str
+    super_admin: bool
     is_notificated: bool
-    user_info: UserInformation
+    last_login_at: Optional[str]
+    marketing_consent: bool
+    created_at: str
+    updated_at: Optional[str]
+    deleted_at: Optional[str]
+    user_info: Optional[UserInformation]
+    user_activity: Optional[dict]
+    user_subscription: Optional[dict]
+    users_photos: Optional[dict]
+
+
+class UserUpdate(BaseModel):
+    uuid: str
+    login: str
+    super_admin: bool
+    is_notificated: bool
+    last_login_at: Optional[str]
+    marketing_consent: bool
+    created_at: str
+    updated_at: Optional[str]
+    deleted_at: Optional[str]
+    user_info: Optional[UserInformation]
+    user_activity: Optional[dict]
+    user_subscription: Optional[dict]
+    users_photos: Optional[dict]
+
+
+class UserDelete(BaseModel):
+    uuid: str
 
 
 class UserLogin(BaseModel):

@@ -1,0 +1,22 @@
+{
+    "python.formatting.provider": "black",
+    "python.analysis.autoFormatStrings": true,
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "python.linting.pylintEnabled": false,
+    "python.linting.pylintArgs": [
+        "--generated-members=torch.*",
+        "--ignored-modules=huepy",
+        "--extension-pkg-whitelist=cv2,lxml",
+    ],
+    "python.linting.lintOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    }
+}

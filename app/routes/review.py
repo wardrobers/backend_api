@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 from uuid import UUID as PyUUID
-from ..dependencies import get_db
-from ..models.pydantic import ReviewCreate, ReviewUpdate
-from ..models.sqlalchemy import ReviewModel
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from app.dependencies import get_db
+from app.models.models import ReviewCreate, ReviewUpdate
+from app.models.sql import ReviewModel
 
 router = APIRouter()
 

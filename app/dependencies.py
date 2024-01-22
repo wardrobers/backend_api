@@ -1,15 +1,20 @@
-from fastapi import HTTPException, status, Depends
+import os
+
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from .models.database import SessionLocal
-import os
+from sqlalchemy.orm.interfaces import UserDefinedOption
+
+from app.models.database import SessionLocal
+from app.models.sql import User
 
 # Environment variables
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 # OAuth2PasswordBearer instance for token URL
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 # Dependency to get the DB session
 def get_db():
