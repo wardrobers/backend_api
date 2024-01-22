@@ -18,7 +18,6 @@ class UserGet(BaseModel):
     super_admin: bool
     is_notificated: bool
     last_login_at: Optional[str]
-    marketing_consent: bool
     created_at: str
     updated_at: Optional[str]
     deleted_at: Optional[str]
