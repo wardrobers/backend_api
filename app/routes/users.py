@@ -15,14 +15,28 @@ from app.models.models import (
     PaginationQuery,
     SortingQuery,
     Token,
-    UserCreate,
-    UserGet,
+    User,
+    UserActivity,
+    UserActivityDelete,
+    UserActivityList,
+    UserDelete,
     UserInformation,
     UserList,
     UserLogin,
-    UserUpdate,
+    UsersPhotos,
+    UsersPhotosDelete,
+    UsersPhotosList,
+    UserSubscriptionType,
 )
-from app.models.sql import User, UserInfo
+from app.models.sql import (
+    Subscription,
+    SubscriptionPeriod,
+    SubscriptionType,
+    User,
+    UserActivity,
+    UserInfo,
+    UsersPhotos,
+)
 
 router = APIRouter()
 DATABASE_URL = os.getenv("LOCAL_DATABASE_URL")
@@ -31,7 +45,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 @router.post("/register", response_model=Token)
-def user_create(user_data: UserCreate, db: SessionLocal = Depends(get_db)):
+def user_create(user_data: User, db: SessionLocal = Depends(get_db)):
     db_user = db.query(User).filter(User.login == user_data.login).first()
     if db_user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -81,7 +95,7 @@ def login(user_data: UserLogin, db: SessionLocal = Depends(get_db)):
     return {"access_token": token, "token_type": "bearer"}
 
 
-@router.get("/user/{uuid}", response_model=UserGet)
+@router.get("/user/{uuid}", response_model=User)
 def user_get(uuid: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.uuid == uuid).first()
     if not user:
@@ -90,7 +104,7 @@ def user_get(uuid: str, db: Session = Depends(get_db)):
     return user
 
 
-@router.get("/users", response_model=UserList)
+@router.post("/users", response_model=UserList)
 def user_list(
     deleted_at: bool = None,
     is_notificated: bool = None,
@@ -165,8 +179,8 @@ def user_list(
     return {"users": users}
 
 
-@router.put("/user/{uuid}", response_model=UserGet)
-def user_update(uuid: str, user_data: UserUpdate, db: Session = Depends(get_db)):
+@router.put("/user/{uuid}", response_model=User)
+def user_update(uuid: str, user_data: User, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.uuid == uuid).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -194,7 +208,7 @@ def user_update(uuid: str, user_data: UserUpdate, db: Session = Depends(get_db))
     return user
 
 
-@router.delete("/user/{uuid}")
+@router.post("/user/{uuid}")
 def user_delete(uuid: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.uuid == uuid).first()
     if not user:
