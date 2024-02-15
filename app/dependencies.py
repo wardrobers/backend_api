@@ -1,10 +1,12 @@
 import os
+import json
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.interfaces import UserDefinedOption
+
+from google.cloud import secretmanager_v1
 
 from app.models.database import SessionLocal
 from app.models.sql import User
