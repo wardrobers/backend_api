@@ -3,7 +3,6 @@ from typing import Optional
 from datetime import datetime
 
 
-
 class ProductStatusBase(BaseModel):
     code: str
     name: str

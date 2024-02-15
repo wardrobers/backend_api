@@ -3,7 +3,6 @@ from typing import Optional
 from datetime import datetime
 
 
-
 class ProductPhotoBase(BaseModel):
     product_uuid: UUID4
     showcase: Optional[bool] = False

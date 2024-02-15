@@ -23,4 +23,6 @@ class ProductsCatalogPhoto(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     product = relationship("Product", back_populates="products_catalog_photos")
-    products_catalog = relationship("ProductsCatalog", back_populates="photproducts_catalog_photosos")
+    products_catalog = relationship(
+        "ProductsCatalog", back_populates="products_catalog_photos"
+    )

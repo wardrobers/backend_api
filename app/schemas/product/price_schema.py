@@ -11,6 +11,7 @@ class RentalPeriodBase(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime]
 
+
 class PriceBase(BaseModel):
     uuid: Optional[UUID4] = Field(default_factory=UUID4)
     product_uuid: UUID4
@@ -20,8 +21,10 @@ class PriceBase(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime]
 
+
 class PriceCreate(PriceBase):
     pass
+
 
 class PriceRead(PriceBase):
     rental_period: Optional[RentalPeriodBase]

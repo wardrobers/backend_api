@@ -8,6 +8,7 @@ class OrderStatusBase(BaseModel):
     code: str
     name: str
 
+
 # For reading order status data, including all fields and UUID
 class OrderStatusRead(OrderStatusBase):
     uuid: UUID
@@ -18,9 +19,11 @@ class OrderStatusRead(OrderStatusBase):
     class Config:
         orm_mode = True
 
+
 # For creating a new order status, omitting auto-generated fields
 class OrderStatusCreate(OrderStatusBase):
     pass
+
 
 # For updating an existing order status, allowing optional updates to each field
 class OrderStatusUpdate(BaseModel):

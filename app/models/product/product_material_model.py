@@ -25,6 +25,7 @@ product_materials = Table(
     ),
 )
 
+
 class ProductMaterial(Base):
     __tablename__ = "product_materials"
     product_uuid = Column(
