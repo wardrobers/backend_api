@@ -1,6 +1,6 @@
-from sqlalchemy import Column, DateTime, String, Table, ForeignKey
+from sqlalchemy import Column, DateTime, Table, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 
 

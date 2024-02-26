@@ -6,7 +6,8 @@ from app.routes import (
     subscription_router,
     category_router,
     auth_router,
-    common_router,
+    material_router,
+    color_router,
 )
 
 app = FastAPI()
