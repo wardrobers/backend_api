@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from .models import Product, Category, Material, Color, Size
+from .models import Product, Category, Material, Color, Size, Brand
 from .schemas import ProductCreate, ProductUpdate
 
 class ProductRepository:
@@ -31,7 +31,7 @@ class ProductRepository:
             return product
         return None
 
-    def delete_product(self, uuid: str):
+    def delete_product(self, uuid: UUID4):
         product = self.get_product(uuid)
         if product:
             self.db.delete(product)
@@ -98,6 +98,12 @@ class ProductRepository:
         brand = self.db.query(Brand).filter(Brand.uuid == brand_uuid).first()
         if product and brand:
             product.brand = brand
+            self.db.commit()
+
+    def remove_brand_from_product(self, product_uuid: UUID4):
+        product = self.get_product(product_uuid)
+        if product and product.brand:
+            product.brand = None
             self.db.commit()
 
     # Methods for handling the product-size relationship

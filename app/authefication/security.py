@@ -5,9 +5,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from .repositories.user.user_repository import UserRepository  # Update this import based on your project structure
-from .schemas.user.user_schema import UserRead  # Adjust import as necessary
-from .dependencies import get_db
+from ..repositories.user.user_repository import UserRepository  # Update this import based on your project structure
+from ..schemas.user.user_schema import UserRead  # Adjust import as necessary
+from ..dependencies import get_db
 
 SECRET_KEY = "your_secret_key"  # Ideally, use an environment variable
 ALGORITHM = "HS256"
