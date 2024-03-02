@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .models import Order
 from .schemas import OrderCreate, OrderRead, OrderUpdate
+from pydantic import UUID4
 
 class OrderRepository:
     def __init__(self, db_session: Session):
@@ -20,13 +21,13 @@ class OrderRepository:
         self.db_session.refresh(new_order)
         return new_order
 
-    def get_order_by_uuid(self, uuid: str) -> Optional[OrderRead]:
+    def get_order_by_uuid(self, uuid: UUID4) -> Optional[OrderRead]:
         return self.db_session.query(Order).filter(Order.uuid == uuid).first()
 
-    def list_orders_by_user_uuid(self, user_uuid: str, skip: int = 0, limit: int = 100) -> list[OrderRead]:
+    def list_orders_by_user_uuid(self, user_uuid: UUID4, skip: int = 0, limit: int = 100) -> list[OrderRead]:
         return self.db_session.query(Order).filter(Order.user_uuid == user_uuid).offset(skip).limit(limit).all()
 
-    def update_order(self, uuid: str, order_data: OrderUpdate) -> Optional[OrderRead]:
+    def update_order(self, uuid: UUID4, order_data: OrderUpdate) -> Optional[OrderRead]:
         order = self.db_session.query(Order).filter(Order.uuid == uuid).first()
         if order:
             order.start = order_data.start if order_data.start else order.start

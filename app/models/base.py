@@ -1,9 +1,9 @@
-from typing import TypeVar, Type, List, Optional, Any, Dict, Tuple
+from typing import TypeVar, Type, Optional, Any, Dict, Tuple
 from sqlalchemy.orm import Session, declared_attr, object_session
-from sqlalchemy import Column, DateTime, func, Boolean, String, Integer, or_
+from sqlalchemy import Column, DateTime, func, Boolean, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from fastapi import HTTPExceptio
+from fastapi import HTTPException
 
 # Create a generic type for the base class
 T = TypeVar("T", bound="BaseMixin")
@@ -35,7 +35,7 @@ class BaseMixin:
         )
 
     @classmethod
-    def find_all(cls: Type[T], db_session: Session) -> List[T]:
+    def find_all(cls: Type[T], db_session: Session) -> list[T]:
         return db_session.query(cls).filter(cls.is_active == True).all()
 
     @classmethod
@@ -64,28 +64,28 @@ class BaseMixin:
         db_session.commit()
 
     @classmethod
-    def deactivate_all(cls: Type[T], db_session: Session, ids: List[UUID]) -> None:
+    def deactivate_all(cls: Type[T], db_session: Session, ids: list[UUID]) -> None:
         db_session.query(cls).filter(cls.id.in_(ids)).update(
             {cls.is_active: False}, synchronize_session="fetch"
         )
         db_session.commit()
 
     @classmethod
-    def bulk_create(cls: Type[T], db_session: Session, items: List[Dict]) -> List[T]:
+    def bulk_create(cls: Type[T], db_session: Session, items: list[Dict]) -> list[T]:
         instances = [cls(**item) for item in items]
         db_session.bulk_save_objects(instances)
         db_session.commit()
         return instances
 
     @classmethod
-    def find_available_items(cls: Type[T], db_session: Session) -> List[T]:
+    def find_available_items(cls: Type[T], db_session: Session) -> list[T]:
         """Find items that are available for rental."""
         return db_session.query(cls).filter_by(quantity > 0, is_active=True).all()
 
     @classmethod
     def find_by_size_and_color(
         cls: Type[T], db_session: Session, size: str, color: str
-    ) -> List[T]:
+    ) -> list[T]:
         """Find items by size and color."""
         return (
             db_session.query(cls)
@@ -120,8 +120,8 @@ class BaseMixin:
     def search(
         cls: Type[T],
         db_session: Session,
-        filters: Dict[str, Union[str, List[str], Dict[str, Any]]],
-    ) -> List[T]:
+        filters: Dict[str, Union[str, list[str], Dict[str, Any]]],
+    ) -> list[T]:
         """
         Perform an advanced search with various filters. Filters can be a simple string match, a list of possible values, or a range.
         """
@@ -170,8 +170,8 @@ class BaseMixin:
 
     @classmethod
     def get_by_multiple_ids(
-        cls: Type[T], db_session: Session, ids: List[UUID]
-    ) -> List[T]:
+        cls: Type[T], db_session: Session, ids: list[UUID]
+    ) -> list[T]:
         """
         Get multiple records by a list of IDs.
         """
@@ -182,7 +182,7 @@ class BaseMixin:
     @classmethod
     def filter_by_attributes(
         cls: Type[T], db_session: Session, **attributes
-    ) -> List[T]:
+    ) -> list[T]:
         """Filter items based on attribute values."""
         return db_session.query(cls).filter_by(**attributes, is_active=True).all()
 
@@ -190,9 +190,9 @@ class BaseMixin:
     def get_sorted_and_filtered(
         cls: Type[T],
         db_session: Session,
-        sort_fields: List[Tuple[str, str]],
+        sort_fields: list[Tuple[str, str]],
         filter_criteria: Dict[str, Any],
-    ) -> List[T]:
+    ) -> list[T]:
         """
         Retrieve items sorted and filtered by given fields and criteria.
         """
@@ -226,7 +226,7 @@ class BaseMixin:
         return db_session.query(cls).filter_by(is_active=True).count()
 
     @classmethod
-    def find_with_filters(cls: Type[T], db_session: Session, **filters) -> List[T]:
+    def find_with_filters(cls: Type[T], db_session: Session, **filters) -> list[T]:
         """
         Generic method to find records with given filters.
         """
@@ -236,7 +236,7 @@ class BaseMixin:
     @classmethod
     def get_sorted_by_field(
         cls: Type[T], db_session: Session, sort_field: str, descending: bool = False
-    ) -> List[T]:
+    ) -> list[T]:
         """
         Get all records sorted by a specific field.
         """
@@ -244,131 +244,3 @@ class BaseMixin:
             getattr(cls, sort_field).desc() if descending else getattr(cls, sort_field)
         )
         return db_session.query(cls).order_by(sort_by).all()
-
-    @classmethod
-    def find_subscriptions_by_user(
-        cls: Type[T], db_session: Session, user_id: UUID
-    ) -> List[T]:
-        """
-        Find all active subscriptions for a given user.
-        """
-        return db_session.query(cls).filter_by(user_id=user_id, is_active=True).all()
-
-    @classmethod
-    def find_photos_for_item(
-        cls: Type[T], db_session: Session, item_id: UUID
-    ) -> List[T]:
-        """
-        Find all photos related to a specific item.
-        """
-        return db_session.query(cls).filter_by(item_id=item_id, is_active=True).all()
-
-    @classmethod
-    def get_active_users(cls: Type[T], db_session: Session) -> int:
-        """
-        Get the count of active users on the platform.
-        """
-        return db_session.query(cls).filter_by(is_active=True, type="user").count()
-
-    @classmethod
-    def get_user_activity(
-        cls: Type[T], db_session: Session, user_id: UUID
-    ) -> Optional[T]:
-        """
-        Retrieve the activity log of a specific user.
-        """
-        return db_session.query(cls).filter_by(user_id=user_id, is_active=True).first()
-
-    @classmethod
-    def update_user_activity(
-        cls: Type[T], db_session: Session, user_id: UUID, **activity_updates
-    ) -> Optional[T]:
-        """
-        Update the activity log of a specific user.
-        """
-        user_activity = cls.get_user_activity(db_session, user_id)
-        if user_activity:
-            for key, value in activity_updates.items():
-                setattr(user_activity, key, value)
-            db_session.commit()
-            db_session.refresh(user_activity)
-            return user_activity
-        return None
-
-    @classmethod
-    def get_inventory_status(
-        cls: Type[T], db_session: Session
-    ) -> List[Tuple[UUID, int]]:
-        """
-        Get the current inventory status, including item quantities.
-        """
-        return db_session.query(cls.id, cls.quantity).filter_by(is_active=True).all()
-
-    @classmethod
-    def update_inventory(
-        cls: Type[T], db_session: Session, item_id: UUID, quantity_change: int
-    ) -> Optional[T]:
-        """
-        Update the inventory by adding or subtracting quantities of items.
-        """
-        item = cls.find_by_id(db_session, item_id)
-        if item:
-            item.quantity = max(
-                0, item.quantity + quantity_change
-            )  # Avoid negative quantities
-            db_session.commit()
-            db_session.refresh(item)
-            return item
-        return None
-
-    @classmethod
-    def get_all_active_subscriptions(cls: Type[T], db_session: Session) -> List[T]:
-        """
-        Get all active subscriptions on the platform.
-        """
-        return (
-            db_session.query(cls).filter_by(is_active=True, type="subscription").all()
-        )
-
-    @classmethod
-    def get_subscription_details(
-        cls: Type[T], db_session: Session, subscription_id: UUID
-    ) -> Optional[T]:
-        """
-        Get the details of a specific subscription.
-        """
-        return (
-            db_session.query(cls).filter_by(id=subscription_id, is_active=True).first()
-        )
-
-    @classmethod
-    def get_user_photos(cls: Type[T], db_session: Session, user_id: UUID) -> List[T]:
-        """
-        Get all photos associated with a user's profile.
-        """
-        return db_session.query(cls).filter_by(user_id=user_id, is_active=True).all()
-
-    @classmethod
-    def add_user_subscription(
-        cls: Type[T], db_session: Session, user_id: UUID, subscription_data: Dict
-    ) -> T:
-        """
-        Add a new subscription for a user.
-        """
-        subscription = cls.create(db_session, user_id=user_id, **subscription_data)
-        return subscription
-
-    @classmethod
-    def cancel_user_subscription(
-        cls: Type[T], db_session: Session, subscription_id: UUID
-    ) -> Optional[T]:
-        """
-        Cancel a user's subscription.
-        """
-        subscription = cls.get_subscription_details(db_session, subscription_id)
-        if subscription:
-            subscription.is_active = False
-            subscription.deleted_at = func.now()
-            db_session.commit()
-            return subscription
-        return None

@@ -1,6 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, UUID4
 from typing import Optional
-from uuid import UUID
 from datetime import datetime
 
 
@@ -11,7 +10,7 @@ class OrderStatusBase(BaseModel):
 
 # For reading order status data, including all fields and UUID
 class OrderStatusRead(OrderStatusBase):
-    uuid: UUID
+    uuid: UUID4
     created_at: datetime
     updated_at: Optional[datetime]
     deleted_at: Optional[datetime]

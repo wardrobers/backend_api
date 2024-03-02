@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from .models import CategoryForUser
 from .schemas import CategoryForUserUpdate  # Assuming an existing schema or need to create
+from typing import Optional
 
 class CategoryForUserRepository:
     def __init__(self, db: Session):

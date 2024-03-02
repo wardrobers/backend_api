@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional
 from .models import UserActivity
 from .schemas import UserActivityUpdate  # Assuming an existing schema or need to create
 
@@ -19,11 +19,11 @@ class UserActivityRepository:
             return activity
         return None
 
-    def list_activities(self, skip: int = 0, limit: int = 10) -> List[UserActivity]:
+    def list_activities(self, skip: int = 0, limit: int = 10) -> list[UserActivity]:
         """List user activities with pagination."""
         return self.db.query(UserActivity).offset(skip).limit(limit).all()
 
-    def bulk_update_activities(self, activities_data: List[UserActivityUpdate]):
+    def bulk_update_activities(self, activities_data: list[UserActivityUpdate]):
         """Bulk update user activities."""
         for activity_data in activities_data:
             self.update_user_activity(activity_data.user_uuid, activity_data.dict())

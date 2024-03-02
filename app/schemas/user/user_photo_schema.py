@@ -1,19 +1,21 @@
-from pydantic import BaseModel, UUID4, Field
-from typing import Optional
+from pydantic import BaseModel, UUID4, HttpUrl
 from datetime import datetime
 
-
 class UserPhotoBase(BaseModel):
-    uuid: Optional[UUID4]
-    product_uuid: UUID4
-    showcase: bool
-    created_at: Optional[datetime.datetime]
-    deleted_at: Optional[datetime.datetime]
+    storage_url: HttpUrl
 
+class UserPhotoCreate(UserPhotoBase):
+    pass
 
-class UserPhotoList(BaseModel):
-    users_photos: list[UsersPhotos]
-
-
-class UserPhotoDelete(BaseModel):
+class UserPhotoRead(UserPhotoBase):
     uuid: UUID4
+    user_uuid: UUID4
+    created_at: datetime
+    deleted_at: datetime | None
+
+    class Config:
+        orm_mode = True
+
+class UserPhotoUpdate(BaseModel):
+    storage_url: HttpUrl | None
+

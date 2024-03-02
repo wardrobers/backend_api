@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 from sqlalchemy.orm import Session
 from .models import User, UserInfo
 from .schemas import UserCreate, UserUpdate, UserInfoUpdate
@@ -10,6 +10,10 @@ class UserRepository:
     def get_user_by_uuid(self, uuid: str) -> Optional[User]:
         """Retrieve a user by their UUID."""
         return self.db.query(User).filter(User.uuid == uuid).first()
+    
+    def get_user_by_login(self, login: str) -> Optional[User]:
+        """Retrieve a user by their login."""
+        return self.db.query(User).filter(User.login == login).first()
 
     def create_user(self, user_data: UserCreate) -> User:
         """Create a new user with UserCreate schema."""
@@ -49,6 +53,6 @@ class UserRepository:
                 setattr(user_info, key, value)
             self.db.commit()
 
-    def list_users(self, skip: int = 0, limit: int = 10) -> List[User]:
+    def list_users(self, skip: int = 0, limit: int = 10) -> list[User]:
         """List users with pagination."""
         return self.db.query(User).offset(skip).limit(limit).all()
