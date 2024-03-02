@@ -1,10 +1,22 @@
-from fastapi import FastAPI
+from fastapi import APIRouter
+from app.routers import user_router, product_router, order_router, subscription_router, static_router
 
-from app.routes import booking, clothes, review, users
+api_router = APIRouter()
 
-app = FastAPI()
+# Authentication and User Management
+api_router.include_router(auth_router.router, prefix="/auth", tags=["Auth"])
+api_router.include_router(user_router.router, prefix="/users", tags=["Users"])
 
-app.include_router(users.router, prefix="/users", tags=["UserAuthentication"])
-app.include_router(clothes.router, prefix="/clothes", tags=["Clothes"])
-app.include_router(booking.router, prefix="/booking", tags=["Booking"])
-app.include_router(review.router, prefix="/review", tags=["Review"])
+# Product Catalog and Management
+api_router.include_router(product_router.router, prefix="/products", tags=["Products"])
+api_router.include_router(category_router.router, prefix="/categories", tags=["Categories"])
+api_router.include_router(material_router.router, prefix="/materials", tags=["Materials"])
+api_router.include_router(color_router.router, prefix="/colors", tags=["Colors"])
+api_router.include_router(size_router.router, prefix="/sizes", tags=["Sizes"])
+
+# Order Management
+api_router.include_router(order_router.router, prefix="/orders", tags=["Orders"])
+
+# Subscription Management
+api_router.include_router(subscription_router.router, prefix="/subscriptions", tags=["Subscriptions"])
+
