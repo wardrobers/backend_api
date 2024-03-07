@@ -1,8 +1,13 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
-from .models import ProductPhoto
-from .schemas import ProductPhotoCreate, ProductPhotoRead, ProductPhotoUpdate
+from ...models.product.product_photo_model import ProductPhoto
+from ...schemas.product.product_photo_schema import (
+    ProductPhotoCreate,
+    ProductPhotoRead,
+    ProductPhotoUpdate,
+)
+
 
 class ProductPhotoRepository:
     def __init__(self, db: Session):
@@ -18,10 +23,20 @@ class ProductPhotoRepository:
     def get_product_photo(self, uuid: UUID) -> Optional[ProductPhoto]:
         return self.db.query(ProductPhoto).filter(ProductPhoto.uuid == uuid).first()
 
-    def list_product_photos(self, product_uuid: UUID, skip: int = 0, limit: int = 100) -> List[ProductPhoto]:
-        return self.db.query(ProductPhoto).filter(ProductPhoto.product_uuid == product_uuid).offset(skip).limit(limit).all()
+    def list_product_photos(
+        self, product_uuid: UUID, skip: int = 0, limit: int = 100
+    ) -> List[ProductPhoto]:
+        return (
+            self.db.query(ProductPhoto)
+            .filter(ProductPhoto.product_uuid == product_uuid)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
-    def update_product_photo(self, uuid: UUID, update_data: ProductPhotoUpdate) -> Optional[ProductPhoto]:
+    def update_product_photo(
+        self, uuid: UUID, update_data: ProductPhotoUpdate
+    ) -> Optional[ProductPhoto]:
         photo = self.get_product_photo(uuid)
         if photo:
             for key, value in update_data.dict(exclude_unset=True).items():
@@ -41,7 +56,7 @@ class ProductPhotoRepository:
         # Reset showcase status for all photos of the product
         photos = self.list_product_photos(product_uuid)
         for photo in photos:
-            photo.showcase = (photo.uuid == photo_uuid)
+            photo.showcase = photo.uuid == photo_uuid
         self.db.commit()
 
     # This method could be useful for scenarios where you might want to toggle the showcase status instead of setting it directly

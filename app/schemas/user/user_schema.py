@@ -2,6 +2,8 @@ from pydantic import BaseModel, UUID4, Field
 from typing import Optional
 from datetime import datetime
 
+from ...schemas.user.user_info_schema import UserInfoBase
+
 
 class UserBase(BaseModel):
     login: str

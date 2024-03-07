@@ -1,14 +1,20 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import UUID
-from .models import RentalPeriod
-from .schemas import RentalPeriodCreate, RentalPeriodUpdate
+from ...models.product.rental_period_model import RentalPeriod
+from ...schemas.product.rental_period_schema import (
+    RentalPeriodCreate,
+    RentalPeriodUpdate,
+)
+
 
 class RentalPeriodRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_rental_period(self, rental_period_data: RentalPeriodCreate) -> RentalPeriod:
+    def create_rental_period(
+        self, rental_period_data: RentalPeriodCreate
+    ) -> RentalPeriod:
         new_rental_period = RentalPeriod(**rental_period_data.dict())
         self.db.add(new_rental_period)
         self.db.commit()
@@ -18,10 +24,14 @@ class RentalPeriodRepository:
     def get_rental_period(self, uuid: UUID) -> Optional[RentalPeriod]:
         return self.db.query(RentalPeriod).filter(RentalPeriod.uuid == uuid).first()
 
-    def list_rental_periods(self, skip: int = 0, limit: int = 100) -> list[RentalPeriod]:
+    def list_rental_periods(
+        self, skip: int = 0, limit: int = 100
+    ) -> list[RentalPeriod]:
         return self.db.query(RentalPeriod).offset(skip).limit(limit).all()
 
-    def update_rental_period(self, uuid: UUID, rental_period_data: RentalPeriodUpdate) -> Optional[RentalPeriod]:
+    def update_rental_period(
+        self, uuid: UUID, rental_period_data: RentalPeriodUpdate
+    ) -> Optional[RentalPeriod]:
         rental_period = self.get_rental_period(uuid)
         if rental_period:
             update_data = rental_period_data.dict(exclude_unset=True)

@@ -1,8 +1,12 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import UUID
-from .models import ProductStatus
-from .schemas import ProductStatusCreate, ProductStatusUpdate
+from ...models.product.product_status_model import ProductStatus
+from ...schemas.product.product_status_schema import (
+    ProductStatusCreate,
+    ProductStatusUpdate,
+)
+
 
 class ProductStatusRepository:
     def __init__(self, db: Session):
@@ -18,10 +22,14 @@ class ProductStatusRepository:
     def get_product_status(self, uuid: UUID) -> Optional[ProductStatus]:
         return self.db.query(ProductStatus).filter(ProductStatus.uuid == uuid).first()
 
-    def list_product_statuses(self, skip: int = 0, limit: int = 100) -> list[ProductStatus]:
+    def list_product_statuses(
+        self, skip: int = 0, limit: int = 100
+    ) -> list[ProductStatus]:
         return self.db.query(ProductStatus).offset(skip).limit(limit).all()
 
-    def update_product_status(self, uuid: UUID, status_data: ProductStatusUpdate) -> Optional[ProductStatus]:
+    def update_product_status(
+        self, uuid: UUID, status_data: ProductStatusUpdate
+    ) -> Optional[ProductStatus]:
         status = self.get_product_status(uuid)
         if status:
             update_data = status_data.dict(exclude_unset=True)
@@ -37,4 +45,3 @@ class ProductStatusRepository:
         if status:
             self.db.delete(status)
             self.db.commit()
-

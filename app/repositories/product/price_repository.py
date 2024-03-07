@@ -1,8 +1,8 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from .models import Price
-from .schemas import PriceCreate, PriceUpdate
+from ...models.product.price_model import Price
+from ...schemas.product.price_schema import PriceCreate, PriceUpdate
 
 
 class PriceRepository:
@@ -35,4 +35,8 @@ class PriceRepository:
             self.db.commit()
 
     def get_prices_for_rental_period(self, rental_period_uuid: UUID4) -> list[Price]:
-        return self.db.query(Price).filter(Price.time_period_uuid == rental_period_uuid).all()
+        return (
+            self.db.query(Price)
+            .filter(Price.time_period_uuid == rental_period_uuid)
+            .all()
+        )

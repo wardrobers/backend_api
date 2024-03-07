@@ -4,14 +4,17 @@ from datetime import datetime
 from ..user.user_schema import UserRead
 from ..product.product_schema import ProductRead
 
+
 class OrderBase(BaseModel):
     start: datetime
     end: datetime
     price: float
 
+
 class OrderCreate(OrderBase):
     user_uuid: UUID4
     product_uuid: UUID4
+
 
 class OrderRead(OrderBase):
     uuid: UUID4
@@ -20,6 +23,7 @@ class OrderRead(OrderBase):
 
     class Config:
         orm_mode = True
+
 
 class OrderUpdate(BaseModel):
     start: datetime = Field(None)

@@ -4,23 +4,23 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
-# Many-to-Many relationship helper tables
-product_categories = Table(
-    "product_categories",
-    Base.metadata,
-    Column(
-        "product_uuid",
-        UUID(as_uuid=True),
-        ForeignKey("products.uuid"),
-        primary_key=True,
-    ),
-    Column(
-        "category_uuid",
-        UUID(as_uuid=True),
-        ForeignKey("categories.uuid"),
-        primary_key=True,
-    ),
-)
+# # Many-to-Many relationship helper tables
+# product_categories = Table(
+#     "product_categories",
+#     Base.metadata,
+#     Column(
+#         "product_uuid",
+#         UUID(as_uuid=True),
+#         ForeignKey("products.uuid"),
+#         primary_key=True,
+#     ),
+#     Column(
+#         "category_uuid",
+#         UUID(as_uuid=True),
+#         ForeignKey("categories.uuid"),
+#         primary_key=True,
+#     ),
+# )
 
 
 class ProductCategory(Base):

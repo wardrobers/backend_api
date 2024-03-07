@@ -1,13 +1,19 @@
-from typing import List, Optional
+from typing import Optional
 from sqlalchemy.orm import Session
-from .models import SubscriptionType
-from .schemas import SubscriptionTypeCreate, SubscriptionTypeUpdate
+from ...models.user.subscription_type_model import SubscriptionType
+from ...schemas.user.subscription_type_schema import (
+    SubscriptionTypeCreate,
+    SubscriptionTypeUpdate,
+)
+
 
 class SubscriptionTypeRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_subscription_type(self, subscription_type_data: SubscriptionTypeCreate) -> SubscriptionType:
+    def create_subscription_type(
+        self, subscription_type_data: SubscriptionTypeCreate
+    ) -> SubscriptionType:
         new_subscription_type = SubscriptionType(**subscription_type_data.dict())
         self.db.add(new_subscription_type)
         self.db.commit()
@@ -15,12 +21,20 @@ class SubscriptionTypeRepository:
         return new_subscription_type
 
     def get_subscription_type_by_uuid(self, uuid: str) -> Optional[SubscriptionType]:
-        return self.db.query(SubscriptionType).filter(SubscriptionType.uuid == uuid).first()
+        return (
+            self.db.query(SubscriptionType)
+            .filter(SubscriptionType.uuid == uuid)
+            .first()
+        )
 
-    def list_subscription_types(self, skip: int = 0, limit: int = 100) -> List[SubscriptionType]:
+    def list_subscription_types(
+        self, skip: int = 0, limit: int = 100
+    ) -> list[SubscriptionType]:
         return self.db.query(SubscriptionType).offset(skip).limit(limit).all()
 
-    def update_subscription_type(self, uuid: str, subscription_type_data: SubscriptionTypeUpdate) -> Optional[SubscriptionType]:
+    def update_subscription_type(
+        self, uuid: str, subscription_type_data: SubscriptionTypeUpdate
+    ) -> Optional[SubscriptionType]:
         subscription_type = self.get_subscription_type_by_uuid(uuid)
         if subscription_type:
             for key, value in subscription_type_data.dict(exclude_unset=True).items():

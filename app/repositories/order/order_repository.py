@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from .models import Order
-from .schemas import OrderCreate, OrderRead, OrderUpdate
+from ...models.order.order_model import Order
+from ...schemas.order.order_schema import OrderCreate, OrderRead, OrderUpdate
 from pydantic import UUID4
+
 
 class OrderRepository:
     def __init__(self, db_session: Session):
@@ -14,7 +15,7 @@ class OrderRepository:
             product_uuid=order_data.product_uuid,
             start=order_data.start,
             end=order_data.end,
-            price=order_data.price
+            price=order_data.price,
         )
         self.db_session.add(new_order)
         self.db_session.commit()
@@ -24,8 +25,16 @@ class OrderRepository:
     def get_order_by_uuid(self, uuid: UUID4) -> Optional[OrderRead]:
         return self.db_session.query(Order).filter(Order.uuid == uuid).first()
 
-    def list_orders_by_user_uuid(self, user_uuid: UUID4, skip: int = 0, limit: int = 100) -> list[OrderRead]:
-        return self.db_session.query(Order).filter(Order.user_uuid == user_uuid).offset(skip).limit(limit).all()
+    def list_orders_by_user_uuid(
+        self, user_uuid: UUID4, skip: int = 0, limit: int = 100
+    ) -> list[OrderRead]:
+        return (
+            self.db_session.query(Order)
+            .filter(Order.user_uuid == user_uuid)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
     def update_order(self, uuid: UUID4, order_data: OrderUpdate) -> Optional[OrderRead]:
         order = self.db_session.query(Order).filter(Order.uuid == uuid).first()

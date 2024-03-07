@@ -1,7 +1,8 @@
-from typing import List
+from typing import Optional
 from sqlalchemy.orm import Session
-from .models import UserPhoto
-from .schemas import UserPhotoCreate
+from ...models.user.user_photo_model import UserPhoto
+from ...schemas.user.user_photo_schema import UserPhotoCreate
+
 
 class UserPhotoRepository:
     def __init__(self, db: Session):
@@ -13,7 +14,7 @@ class UserPhotoRepository:
         self.db.commit()
         return new_photo
 
-    def get_photos_by_user_uuid(self, user_uuid: str) -> List[UserPhoto]:
+    def get_photos_by_user_uuid(self, user_uuid: str) -> list[UserPhoto]:
         return self.db.query(UserPhoto).filter(UserPhoto.user_uuid == user_uuid).all()
 
     def delete_photo(self, photo_uuid: str):

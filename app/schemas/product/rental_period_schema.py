@@ -20,3 +20,10 @@ class RentalPeriodRead(RentalPeriodBase):
 
     class Config:
         orm_mode = True
+
+
+class RentalPeriodUpdate(BaseModel):
+    name: Optional[str] = Field(None, example="One Week")
+
+    class Config:
+        schema_extra = {"example": {"name": "Extended Rental"}}

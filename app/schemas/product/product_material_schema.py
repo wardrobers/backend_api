@@ -1,6 +1,9 @@
-from pydantic import BaseModel, EmailStr, UUID4
+from pydantic import BaseModel, UUID4
 from typing import Optional
 from datetime import datetime
+
+from .product_schema import ProductRead
+from .material_schema import MaterialRead
 
 
 class ProductMaterialBase(BaseModel):
@@ -27,9 +30,9 @@ class ProductMaterialUpdate(BaseModel):
 
 
 class ProductMaterialReadWithDetails(ProductMaterialRead):
-    product: Optional["ProductRead"] = None
-    material: Optional["MaterialRead"] = None
+    product: Optional[ProductRead] = None
+    material: Optional[MaterialRead] = None
 
 
 # Don't forget to call update_forward_refs to resolve forward declarations
-ProductMaterialReadWithDetails.update_forward_refs()
+# ProductMaterialReadWithDetails.update_forward_refs()

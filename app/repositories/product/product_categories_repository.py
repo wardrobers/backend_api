@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import uuid4, UUID
-from .models import ProductCategory, Category
+from ...models.product.product_categories_model import ProductCategory
+from ...models.product.category_model import Category
+from datetime import datetime
+
 
 class ProductCategoryRepository:
     def __init__(self, db: Session):
@@ -15,19 +18,23 @@ class ProductCategoryRepository:
             .all()
         )
 
-    def add_category_to_product(self, product_uuid: UUID, category_uuid: UUID) -> ProductCategory:
+    def add_category_to_product(
+        self, product_uuid: UUID, category_uuid: UUID
+    ) -> ProductCategory:
         product_category = ProductCategory(
             uuid=str(uuid4()),
             product_uuid=product_uuid,
             category_uuid=category_uuid,
-            created_at=datetime.utcnow()
+            created_at=datetime.utcnow(),
         )
         self.db.add(product_category)
         self.db.commit()
         self.db.refresh(product_category)
         return product_category
 
-    def remove_category_from_product(self, product_uuid: UUID, category_uuid: UUID) -> None:
+    def remove_category_from_product(
+        self, product_uuid: UUID, category_uuid: UUID
+    ) -> None:
         product_category = (
             self.db.query(ProductCategory)
             .filter_by(product_uuid=product_uuid, category_uuid=category_uuid)
@@ -43,7 +50,9 @@ class ProductCategoryRepository:
     def get_single_product_category(self, uuid: UUID) -> Optional[ProductCategory]:
         return self.db.query(ProductCategory).filter_by(uuid=uuid).first()
 
-    def update_product_category(self, uuid: UUID, update_fields: dict) -> Optional[ProductCategory]:
+    def update_product_category(
+        self, uuid: UUID, update_fields: dict
+    ) -> Optional[ProductCategory]:
         product_category = self.db.query(ProductCategory).filter_by(uuid=uuid).first()
         if product_category:
             for key, value in update_fields.items():

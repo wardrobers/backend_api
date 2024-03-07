@@ -1,8 +1,12 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from .models import ProductMaterial
-from .schemas import ProductMaterialCreate, ProductMaterialUpdate
+from ...models.product.product_material_model import ProductMaterial
+from ...schemas.product.product_material_schema import (
+    ProductMaterialCreate,
+    ProductMaterialUpdate,
+)
 from pydantic import UUID4
+
 
 class ProductMaterialRepository:
     def __init__(self, db: Session):
@@ -15,14 +19,21 @@ class ProductMaterialRepository:
             .all()
         )
 
-    def add_material_to_product(self, product_material_data: ProductMaterialCreate) -> ProductMaterial:
+    def add_material_to_product(
+        self, product_material_data: ProductMaterialCreate
+    ) -> ProductMaterial:
         product_material = ProductMaterial(**product_material_data.dict())
         self.db.add(product_material)
         self.db.commit()
         self.db.refresh(product_material)
         return product_material
 
-    def update_product_material(self, product_uuid: UUID4, material_uuid: UUID4, product_material_data: ProductMaterialUpdate) -> Optional[ProductMaterial]:
+    def update_product_material(
+        self,
+        product_uuid: UUID4,
+        material_uuid: UUID4,
+        product_material_data: ProductMaterialUpdate,
+    ) -> Optional[ProductMaterial]:
         product_material = (
             self.db.query(ProductMaterial)
             .filter(
@@ -38,7 +49,9 @@ class ProductMaterialRepository:
             return product_material
         return None
 
-    def remove_material_from_product(self, product_uuid: UUID4, material_uuid: UUID4) -> None:
+    def remove_material_from_product(
+        self, product_uuid: UUID4, material_uuid: UUID4
+    ) -> None:
         product_material = (
             self.db.query(ProductMaterial)
             .filter(

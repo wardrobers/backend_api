@@ -1,7 +1,10 @@
 from typing import Optional
 from sqlalchemy.orm import Session
-from .models import User, UserInfo
-from .schemas import UserCreate, UserUpdate, UserInfoUpdate
+from ...models.user.user_model import User
+from ...models.user.user_info_model import UserInfo
+from ...schemas.user.user_schema import UserCreate, UserUpdate
+from ...schemas.user.user_info_schema import UserInfoUpdate
+
 
 class UserRepository:
     def __init__(self, db: Session):
@@ -10,7 +13,7 @@ class UserRepository:
     def get_user_by_uuid(self, uuid: str) -> Optional[User]:
         """Retrieve a user by their UUID."""
         return self.db.query(User).filter(User.uuid == uuid).first()
-    
+
     def get_user_by_login(self, login: str) -> Optional[User]:
         """Retrieve a user by their login."""
         return self.db.query(User).filter(User.login == login).first()
@@ -29,7 +32,7 @@ class UserRepository:
         if user:
             update_data = user_data.dict(exclude_unset=True)
             # Separate user_info updates if present
-            user_info_data = update_data.pop('user_info', None)
+            user_info_data = update_data.pop("user_info", None)
             if user_info_data:
                 self.update_user_info(uuid, UserInfoUpdate(**user_info_data))
             if update_data:
@@ -47,7 +50,9 @@ class UserRepository:
 
     def update_user_info(self, user_uuid: str, user_info_data: UserInfoUpdate):
         """Update a user's associated UserInfo."""
-        user_info = self.db.query(UserInfo).filter(UserInfo.user_uuid == user_uuid).first()
+        user_info = (
+            self.db.query(UserInfo).filter(UserInfo.user_uuid == user_uuid).first()
+        )
         if user_info:
             for key, value in user_info_data.dict(exclude_unset=True).items():
                 setattr(user_info, key, value)

@@ -18,5 +18,5 @@ class Material(Base):
     deleted_at = Column(DateTime)
 
     products = relationship(
-        "Product", secondary=product_materials, back_populates="materials"
+        "Product", secondary="product_materials", back_populates="materials"
     )

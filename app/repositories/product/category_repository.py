@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
-from .models import Category
-from .schemas import CategoryCreate, CategoryUpdate
+from ...models.product.category_model import Category
+from ...schemas.product.category_schema import CategoryCreate, CategoryUpdate
 from uuid import UUID
+
 
 class CategoryRepository:
     def __init__(self, db: Session):

@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Session
-from .models import CategoryForUser
-from .schemas import CategoryForUserUpdate  # Assuming an existing schema or need to create
+from ...models.user.categories_for_user_model import CategoryForUser
+from ...schemas.user.categories_for_user_schema import (
+    CategoryForUserUpdate,
+)  # Assuming an existing schema or need to create
 from typing import Optional
+
 
 class CategoryForUserRepository:
     def __init__(self, db: Session):
@@ -14,11 +17,21 @@ class CategoryForUserRepository:
         return new_assignment
 
     def get_categories_by_user_uuid(self, user_uuid: str) -> list[CategoryForUser]:
-        return self.db.query(CategoryForUser).filter(CategoryForUser.user_uuid == user_uuid).all()
+        return (
+            self.db.query(CategoryForUser)
+            .filter(CategoryForUser.user_uuid == user_uuid)
+            .all()
+        )
 
-    def update_category_assignment(self, assignment_uuid: str, category_user_data: dict) -> Optional[CategoryForUser]:
+    def update_category_assignment(
+        self, assignment_uuid: str, category_user_data: dict
+    ) -> Optional[CategoryForUser]:
         """Update category assignment for a user."""
-        assignment = self.db.query(CategoryForUser).filter(CategoryForUser.uuid == assignment_uuid).first()
+        assignment = (
+            self.db.query(CategoryForUser)
+            .filter(CategoryForUser.uuid == assignment_uuid)
+            .first()
+        )
         if assignment:
             for key, value in category_user_data.items():
                 setattr(assignment, key, value)

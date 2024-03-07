@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
@@ -18,5 +18,5 @@ class Category(Base):
     deleted_at = Column(DateTime)
     # Relationship back to Product
     products = relationship(
-        "Product", secondary=product_categories, back_populates="categories"
+        "Product", secondary="product_categories", back_populates="categories"
     )

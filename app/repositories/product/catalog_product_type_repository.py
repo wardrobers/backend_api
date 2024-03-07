@@ -1,15 +1,18 @@
 from sqlalchemy.orm import Session
-from .models import CatalogProductType
+from ...models.product.catalog_product_type_model import CatalogProductType
 from uuid import UUID
+
 
 class CatalogProductTypeRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_catalog_product_type(self, product_type_uuid: UUID, product_catalog_uuid: UUID) -> CatalogProductType:
+    def create_catalog_product_type(
+        self, product_type_uuid: UUID, product_catalog_uuid: UUID
+    ) -> CatalogProductType:
         new_catalog_product_type = CatalogProductType(
             product_type_uuid=product_type_uuid,
-            product_catalog_uuid=product_catalog_uuid
+            product_catalog_uuid=product_catalog_uuid,
         )
         self.db.add(new_catalog_product_type)
         self.db.commit()
@@ -34,5 +37,7 @@ class CatalogProductTypeRepository:
             self.db.delete(catalog_product_type)
             self.db.commit()
 
-    def list_catalog_product_types(self, skip: int = 0, limit: int = 100) -> list[CatalogProductType]:
+    def list_catalog_product_types(
+        self, skip: int = 0, limit: int = 100
+    ) -> list[CatalogProductType]:
         return self.db.query(CatalogProductType).offset(skip).limit(limit).all()

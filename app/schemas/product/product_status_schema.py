@@ -13,7 +13,7 @@ class ProductStatusCreate(ProductStatusBase):
 
 
 class ProductStatusRead(ProductStatusBase):
-    uuid: UUID
+    uuid: UUID4
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     deleted_at: Optional[datetime]

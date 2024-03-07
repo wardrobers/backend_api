@@ -20,3 +20,7 @@ class ProductsCatalogPhotoRead(ProductsCatalogPhotoBase):
 
     class Config:
         orm_mode = True
+
+
+class ProductsCatalogPhotoUpdate(BaseModel):
+    showcase: Optional[bool] = None

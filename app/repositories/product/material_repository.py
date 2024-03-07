@@ -1,8 +1,8 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from .models import Material
-from .schemas import MaterialCreate, MaterialUpdate
+from ...models.product.material_model import Material
+from ...schemas.product.material_schema import MaterialCreate, MaterialUpdate
 
 
 class MaterialRepository:
@@ -19,7 +19,9 @@ class MaterialRepository:
         self.db.refresh(new_material)
         return new_material
 
-    def update_material(self, uuid: UUID4, material_data: MaterialUpdate) -> Optional[Material]:
+    def update_material(
+        self, uuid: UUID4, material_data: MaterialUpdate
+    ) -> Optional[Material]:
         material = self.get_material_by_uuid(uuid)
         if material:
             for key, value in material_data.dict(exclude_unset=True).items():

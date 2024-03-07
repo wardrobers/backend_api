@@ -1,9 +1,10 @@
-from typing import TypeVar, Type, Optional, Any, Dict, Tuple
+# Change the parent class for the sqlachemy models, so repetative fields like 'created_at' and methods would be properly handled
+
+from typing import TypeVar, Type, Optional, Any
 from sqlalchemy.orm import Session, declared_attr, object_session
 from sqlalchemy import Column, DateTime, func, Boolean, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from fastapi import HTTPException
 
 # Create a generic type for the base class
 T = TypeVar("T", bound="BaseMixin")
@@ -71,56 +72,17 @@ class BaseMixin:
         db_session.commit()
 
     @classmethod
-    def bulk_create(cls: Type[T], db_session: Session, items: list[Dict]) -> list[T]:
+    def bulk_create(cls: Type[T], db_session: Session, items: list[dict]) -> list[T]:
         instances = [cls(**item) for item in items]
         db_session.bulk_save_objects(instances)
         db_session.commit()
         return instances
 
     @classmethod
-    def find_available_items(cls: Type[T], db_session: Session) -> list[T]:
-        """Find items that are available for rental."""
-        return db_session.query(cls).filter_by(quantity > 0, is_active=True).all()
-
-    @classmethod
-    def find_by_size_and_color(
-        cls: Type[T], db_session: Session, size: str, color: str
-    ) -> list[T]:
-        """Find items by size and color."""
-        return (
-            db_session.query(cls)
-            .filter_by(size=size, color=color, is_active=True)
-            .all()
-        )
-
-    def rent_out(self, db_session: Session, quantity: int = 1) -> None:
-        """Rent out a specified quantity of this clothing item."""
-        if self.quantity < quantity:
-            raise HTTPException(status_code=400, detail="Not enough items in stock")
-        self.quantity -= quantity
-        db_session.commit()
-
-    def return_item(self, db_session: Session, quantity: int = 1) -> None:
-        """Return a specified quantity of this clothing item."""
-        self.quantity += quantity
-        db_session.commit()
-
-    @classmethod
-    def restock(
-        cls: Type[T], db_session: Session, restock_data: Dict[UUID, int]
-    ) -> None:
-        """Bulk restock items based on a dictionary of item IDs and quantities."""
-        for item_id, additional_quantity in restock_data.items():
-            item = cls.find_by_id(db_session, item_id)
-            if item:
-                item.quantity += additional_quantity
-        db_session.commit()
-
-    @classmethod
     def search(
         cls: Type[T],
         db_session: Session,
-        filters: Dict[str, Union[str, list[str], Dict[str, Any]]],
+        filters: dict[str, str | list[str] | dict[str, Any]],
     ) -> list[T]:
         """
         Perform an advanced search with various filters. Filters can be a simple string match, a list of possible values, or a range.
@@ -147,7 +109,7 @@ class BaseMixin:
         sort_order: str,
         page: int,
         page_size: int,
-    ) -> List[T]:
+    ) -> list[T]:
         """
         Sort the results based on a given field and order, then paginate.
         """
@@ -190,8 +152,8 @@ class BaseMixin:
     def get_sorted_and_filtered(
         cls: Type[T],
         db_session: Session,
-        sort_fields: list[Tuple[str, str]],
-        filter_criteria: Dict[str, Any],
+        sort_fields: list[tuple[str, str]],
+        filter_criteria: dict[str, Any],
     ) -> list[T]:
         """
         Retrieve items sorted and filtered by given fields and criteria.
@@ -210,7 +172,7 @@ class BaseMixin:
 
     @classmethod
     def bulk_update(
-        cls: Type[T], db_session: Session, updates: Dict[UUID, Dict]
+        cls: Type[T], db_session: Session, updates: dict[UUID, dict]
     ) -> None:
         """Bulk update items based on a dictionary of item IDs and their update values."""
         for item_id, update_values in updates.items():
@@ -219,11 +181,6 @@ class BaseMixin:
                 for key, value in update_values.items():
                     setattr(item, key, value)
         db_session.commit()
-
-    @classmethod
-    def get_active_count(cls: Type[T], db_session: Session) -> int:
-        """Get the count of active items."""
-        return db_session.query(cls).filter_by(is_active=True).count()
 
     @classmethod
     def find_with_filters(cls: Type[T], db_session: Session, **filters) -> list[T]:

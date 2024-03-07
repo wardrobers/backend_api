@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from .models import Size
-from .schemas import SizeCreate, SizeUpdate
+from ...models.product.size_model import Size
+from ...schemas.product.size_schema import SizeCreate, SizeUpdate
 from pydantic import UUID4
+
 
 class SizeRepository:
     def __init__(self, db: Session):

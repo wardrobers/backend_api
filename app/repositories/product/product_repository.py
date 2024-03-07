@@ -1,8 +1,16 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from .models import Product, Category, Material, Color, Size, Brand
-from .schemas import ProductCreate, ProductUpdate
+from ...models.product.product_model import Product
+from ...models.product.category_model import Category
+from ...models.product.material_model import Material
+from ...models.product.color_model import Color
+from ...models.product.size_model import Size
+from ...models.product.brand_model import Brand
+from ...models.product.price_model import Price
+from ...schemas.product.product_schema import ProductCreate, ProductUpdate
+from ...schemas.product.price_schema import PriceCreate
+
 
 class ProductRepository:
     def __init__(self, db: Session):
@@ -21,7 +29,9 @@ class ProductRepository:
     def list_products(self, skip: int = 0, limit: int = 100) -> list[Product]:
         return self.db.query(Product).offset(skip).limit(limit).all()
 
-    def update_product(self, uuid: UUID4, product_data: ProductUpdate) -> Optional[Product]:
+    def update_product(
+        self, uuid: UUID4, product_data: ProductUpdate
+    ) -> Optional[Product]:
         product = self.get_product(uuid)
         if product:
             update_data = product_data.dict(exclude_unset=True)
@@ -39,28 +49,36 @@ class ProductRepository:
 
     def add_category_to_product(self, product_uuid: UUID4, category_uuid: UUID4):
         product = self.get_product(product_uuid)
-        category = self.db.query(Category).filter(Category.uuid == category_uuid).first()
+        category = (
+            self.db.query(Category).filter(Category.uuid == category_uuid).first()
+        )
         if product and category:
             product.categories.append(category)
             self.db.commit()
 
     def remove_category_from_product(self, product_uuid: UUID4, category_uuid: UUID4):
         product = self.get_product(product_uuid)
-        category = self.db.query(Category).filter(Category.uuid == category_uuid).first()
+        category = (
+            self.db.query(Category).filter(Category.uuid == category_uuid).first()
+        )
         if product and category and category in product.categories:
             product.categories.remove(category)
             self.db.commit()
 
     def add_material_to_product(self, product_uuid: UUID4, material_uuid: UUID4):
         product = self.get_product(product_uuid)
-        material = self.db.query(Material).filter(Material.uuid == material_uuid).first()
+        material = (
+            self.db.query(Material).filter(Material.uuid == material_uuid).first()
+        )
         if product and material:
             product.materials.append(material)
             self.db.commit()
 
     def remove_material_from_product(self, product_uuid: UUID4, material_uuid: UUID4):
         product = self.get_product(product_uuid)
-        material = self.db.query(Material).filter(Material.uuid == material_uuid).first()
+        material = (
+            self.db.query(Material).filter(Material.uuid == material_uuid).first()
+        )
         if product and material and material in product.materials:
             product.materials.remove(material)
             self.db.commit()
@@ -87,7 +105,11 @@ class ProductRepository:
             self.db.commit()
 
     def remove_price_from_product(self, product_uuid: UUID4, price_uuid: UUID4):
-        price = self.db.query(Price).filter(Price.uuid == price_uuid, Price.product_uuid == product_uuid).first()
+        price = (
+            self.db.query(Price)
+            .filter(Price.uuid == price_uuid, Price.product_uuid == product_uuid)
+            .first()
+        )
         if price:
             self.db.delete(price)
             self.db.commit()

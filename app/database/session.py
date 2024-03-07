@@ -1,13 +1,9 @@
 import json
 from google.cloud.sql.connector import Connector, IPTypes
+from google.cloud import secretmanager_v1
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
-from ..dependencies import get_db_credentials
-
-
-# Retrieve the database credentials
-credentials = get_db_credentials("db-credentials", "477367316624")
 
 # Initialize the Connector object
 connector = Connector()
@@ -35,6 +31,10 @@ def get_db_credentials(
     return secret_dict
 
 
+# Retrieve the database credentials
+credentials = get_db_credentials("db-credentials", "477367316624")
+
+
 # Define a function to create a database connection
 def getconn() -> sqlalchemy.engine.base.Connection:
     conn = connector.connect(
@@ -56,3 +56,11 @@ db_engine = sqlalchemy.create_engine(
 
 # Create a new sessionmaker using the engine
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
