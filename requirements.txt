@@ -1,7 +1,7 @@
-fastapi==0.105.0
+fastapi==0.110.0
+firebase_admin==6.4.0
+passlib==1.7.4
+protobuf==4.25.3
+pydantic==2.6.3
 python_jose==3.3.0
-uvicorn==0.15.0
-sqlalchemy==1.4.25
-python-multipart
-passlib[bcrypt]
-psycopg2
+SQLAlchemy==2.0.25
