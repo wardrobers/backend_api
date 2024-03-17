@@ -1,9 +1,6 @@
 from fastapi import FastAPI
-from .database.session import SessionLocal, db_engine
+from .database.session import db_engine
 from .models.basemixin import Base  # Adjust path as necessary
-from app import (
-    include_api_routers,
-)  # Adjust import based on your __init__.py adjustments
 
 
 def create_tables():
