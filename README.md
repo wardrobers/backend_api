@@ -150,3 +150,41 @@ Run the Docker container:
 ```bash
 docker run -p 8080:8080 wardrobers-backend
 ```
+
+## Continuous Deployment Flow with Cloud Build and Cloud Run
+
+For the app deployment, Wardrobers use Cloud Build and Cloud Run together to automatically build and deploy backend from this GitHub repository:
+
+## 1. Git Repository Integration:
+
+* Your Wardrobers Backend API code is stored in a Git repository (e.g., GitHub).
+* A Cloud Build trigger is set up to monitor the `main` branch of your `backend_api` repository. This trigger automatically initiates a build whenever code is pushed to the `main` branch.
+
+## 2. Cloud Build Trigger Activation:
+
+* When a developer pushes code to the `main` branch, the Cloud Build trigger is activated, and a new build process starts.
+
+## 3. Build Process:
+
+* Cloud Build uses the Dockerfile in your `backend_api` repository to build a Docker image for your backend API.
+* During the build process, Cloud Build securely accesses and injects secrets from Secret Manager into the container image. This allows your Wardrobers application to access sensitive credentials like database passwords without storing them directly in the code or Dockerfile, enhancing security.
+
+## 4. Deployment to Cloud Run:
+
+* Once the Docker image is built, Cloud Build automatically deploys it to Cloud Run.
+* The Cloud Run service is configured to use the "wardrobers-dev" service account, which has the necessary permissions to access Cloud SQL and other required resources for the Wardrobers platform.
+
+**Diagram:**
+
+```
+[Wardrobers Backend API Git Repository (main branch)]
+|
+v (Push triggers build)
+[Cloud Build Trigger]
+|
+v (Starts build process)
+[Cloud Build (Builds Docker image & injects secrets from Secret Manager)]
+|
+v (Deploys image)
+[Cloud Run (Uses "wardrobers-dev" service account, impersonates for short-lived credentials, accesses Cloud SQL)]
+```
