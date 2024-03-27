@@ -21,7 +21,7 @@ class CategoryForUserRead(CategoryForUserBase):
     updated_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CategoryForUserUpdate(BaseModel):
@@ -29,4 +29,4 @@ class CategoryForUserUpdate(BaseModel):
     raw: Optional[Dict] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

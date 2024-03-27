@@ -16,7 +16,7 @@ class MaterialRead(MaterialBase):
     deleted_at: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MaterialCreate(BaseModel):
@@ -26,7 +26,7 @@ class MaterialCreate(BaseModel):
     )
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "Cotton",
                 "product_type_uuid": "123e4567-e89b-12d3-a456-426614174000",
@@ -41,7 +41,7 @@ class MaterialUpdate(BaseModel):
     )
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "name": "Updated Cotton",
                 "product_type_uuid": "123e4567-e89b-12d3-a456-426614174000",

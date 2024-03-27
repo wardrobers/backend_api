@@ -19,11 +19,11 @@ class RentalPeriodRead(RentalPeriodBase):
     deleted_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class RentalPeriodUpdate(BaseModel):
     name: Optional[str] = Field(None, example="One Week")
 
     class Config:
-        schema_extra = {"example": {"name": "Extended Rental"}}
+        json_schema_extra = {"example": {"name": "Extended Rental"}}

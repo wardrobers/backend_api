@@ -22,7 +22,7 @@ class OrderRead(OrderBase):
     product: ProductRead
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class OrderUpdate(BaseModel):

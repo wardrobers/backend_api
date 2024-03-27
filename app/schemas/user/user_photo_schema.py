@@ -17,7 +17,7 @@ class UserPhotoRead(UserPhotoBase):
     deleted_at: datetime | None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserPhotoUpdate(BaseModel):

@@ -19,7 +19,7 @@ class CatalogProductTypeRead(CatalogProductTypeBase):
     deleted_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CatalogProductTypeUpdate(BaseModel):
@@ -27,4 +27,4 @@ class CatalogProductTypeUpdate(BaseModel):
     product_catalog_uuid: Optional[UUID] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

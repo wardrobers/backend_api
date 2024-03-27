@@ -23,7 +23,7 @@ class PriceRead(PriceBase):
     rental_period: Optional[RentalPeriodBase]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class PriceUpdate(BaseModel):
@@ -41,7 +41,7 @@ class PriceUpdate(BaseModel):
     )
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "product_uuid": "123e4567-e89b-12d3-a456-426614174000",
                 "time_period_uuid": "123e4567-e89b-12d3-a456-426614174001",

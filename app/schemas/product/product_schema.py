@@ -26,7 +26,7 @@ class ProductRead(BaseModel):
     materials: list[MaterialRead] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProductCreate(BaseModel):
@@ -45,7 +45,7 @@ class ProductCreate(BaseModel):
     materials: Optional[list[UUID4]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProductUpdate(BaseModel):
@@ -64,7 +64,7 @@ class ProductUpdate(BaseModel):
     materials: Optional[list[UUID4]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # Update forward refs if needed

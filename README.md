@@ -1,100 +1,152 @@
-# Wardrobers API Repository
+# Wardrobers Backend API Repository Overview
 
-## Overview
-The Wardrobers API is a robust backend solution for a clothing rental service. It provides comprehensive endpoints for user authentication, clothing management, booking handling, and user reviews. Built with FastAPI, it offers high performance and easy scalability.
+The Wardrobers Backend API is a FastAPI-based service designed to facilitate fashion item rental transactions. Our repository's architecture is strategically modularized, promoting separation of concerns, scalability, and ease of maintenance.
 
-## Repository Structure
-```
-api/
+## Repository Structure and Logic
+
+### `app/`: The Application Core
+
+- `__init__.py`: This file orchestrates the inclusion of routers into the main application, effectively assembling our API's endpoint structure.
+- `main.py`: Serving as the application's nerve center, this file initializes the FastAPI instance, database tables, and event handlers for startup and shutdown events.
+
+### `database/`: Database Interactions
+
+- Manages database sessions and connections using SQLAlchemy, allowing for a seamless interface with the backend SQL database.
+- `session.py`: Defines the session maker and connection handler, utilizing Google Cloud SQL for reliable database operations.
+
+### `models/`: Data Modeling
+
+- Contains SQLAlchemy ORM models, each representing a table in the database.
+- These models are crucial for mirroring the database schema in Python code, providing a robust groundwork for database interactions.
+
+### `repositories/`: Business Logic Encapsulation
+
+- Each repository file corresponds to a model, with classes containing methods for creating, retrieving, updating, and deleting records.
+- The use of repositories abstracts the complexity of direct database manipulation, providing a clean interface for the routers to interact with the database.
+
+### `routers/`: API Endpoints Definition
+
+- Comprises multiple modules, each defining a set of related endpoints and their logic.
+- Routers handle incoming HTTP requests, interact with the appropriate repositories, and return the correct HTTP responses.
+
+### `schemas/`: Data Validation and Serialization
+
+- Utilizes Pydantic models to enforce type checking and validation of request and response data.
+- Schemas ensure that data transferred between the client and server adheres to the defined structure, fostering data integrity.
+
+### `authentication/`: Security Measures
+
+- Implements JWT-based authentication, providing secure access to the API.
+- The `security.py` file manages password hashing and token generation, safeguarding user credentials and sessions.
+
+## Repository Flow
+
+When the application starts:
+
+1. `main.py` invokes the database connection setup.
+2. Tables are generated based on `models/`.
+3. Routers are imported and included in the API, making the endpoints active.
+4. The API is now ready to handle requests, with `routers/` directing traffic to the correct repository for data handling.
+
+Upon receiving a request:
+
+1. The request is validated against schemas in `schemas/`.
+2. The router processes the request, delegating operations to the corresponding repository.
+3. Repositories perform CRUD operations using models as blueprints for the database.
+4. Responses are serialized as defined in `schemas/` and sent back to the client.
+
+## Visual Repository Scheme
+
+```plaintext
+/backend_api
 ├── app/
 │   ├── __init__.py
-│   ├── main.py          # Main application entry point
-│   ├── dependencies.py  # Common dependencies for routes
+│   ├── main.py
+│   ├── database/
+│   │   └── session.py
 │   ├── models/
-│   │   ├── __init__.py
-│   │   ├── database.py  # Database connection and session handling
-│   │   ├── sqlalchemy.py  # SQLAlchemy ORM models
-│   │   └── pydantic.py  # Pydantic models for data validation
-│   └── routes/
-│       ├── __init__.py
-│       ├── auth.py      # Authentication-related routes
-│       ├── user.py      # User management routes
-│       ├── clothes.py   # Clothing item routes
-│       ├── booking.py   # Booking handling routes
-│       └── review.py    # Review and rating routes
-└── requirements.txt     # Project dependencies
+│   │   └── *.py
+│   ├── repositories/
+│   │   └── *.py
+│   ├── routers/
+│   │   └── *.py
+│   ├── schemas/
+│   │   └── *.py
+│   └── authentication/
+│       └── security.py
+├── Dockerfile
+└── requirements.txt
 ```
 
-## Setup and Installation
+## Local Development Guide for Wardrobers Backend API
+
+This guide outlines the steps necessary to set up a local development environment for Wardrobers Backend API. By following these instructions, developers can work in an isolated environment, ensuring consistency across various setups and streamlined integration with the necessary Google Cloud Platform (GCP) services.
 
 ### Prerequisites
-- Python 3.10 or higher
-- Virtual environment (optional but recommended)
+Before starting, ensure you have the following installed:
+- [Python 3.11](https://www.python.org/downloads/)
+- [Conda](https://docs.conda.io/en/latest/)
+- [Google Cloud SDK](https://cloud.google.com/sdk)
+- Docker (optional, for containerized environments)
 
-### Steps
+### Environment Setup
 
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/yourusername/wardrobers-api.git
-   cd wardrobers-api
-   ```
+#### 1. Clone the Repository
+Begin by cloning the Wardrobers backend repository and navigate to the `backend_API` directory.
 
-2. **Set Up a Virtual Environment (Optional):**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   ```
+```bash
+git clone https://github.com/wardrobers/backend_api.git
+cd backend_api
+```
 
-3. **Install Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### 2. Create a Conda Environment
+Create an isolated Conda environment specifically for Wardrobers development.
 
-4. **Environment Variables:**
-   Set up necessary environment variables such as `DATABASE_URL` and `JWT_SECRET`. This can be done in a `.env` file or exported directly into your environment.
+```bash
+conda create --name wardrobers_env python=3.11
+```
 
-5. **Run the Application:**
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+#### 3. Activate the Conda Environment
+Switch to the newly created Conda environment.
 
-   The API will be accessible at `http://127.0.0.1:8000`.
+```bash
+conda activate wardrobers_env
+```
 
-## API Endpoints
+### 4. Install Dependencies
+Install the required Python packages from the `requirements.txt` file.
 
-### Authentication
-- **POST /auth/register**: Register a new user.
-- **POST /auth/login**: Login for existing users.
+```bash
+pip install -r requirements.txt
+```
 
-### User Management
-- **GET /user/{user_id}**: Retrieve user details.
-- **PUT /user/{user_id}**: Update user information.
+#### 5. Google Cloud Authentication
+Authenticate with GCP using the provided service account. For sign in use your Wardrobers email `<your-email>@wdbrs.co`.
 
-### Clothes Management
-- **POST /clothes/**: Add a new clothing item.
-- **GET /clothes/**: List all clothing items with optional pagination and sorting.
-- **GET /clothes/{clothes_id}**: Retrieve a specific clothing item.
-- **PUT /clothes/{clothes_id}**: Update a clothing item.
-- **DELETE /clothes/{clothes_id}**: Delete a clothing item.
-- **GET /search/clothes/**: Search for clothing items with advanced filters.
+```bash
+gcloud auth application-default login --impersonate-service-account=wardrobers-dev@feisty-enigma-409319.iam.gserviceaccount.com
+```
 
-### Booking Management
-- **POST /booking/**: Create a new booking.
-- **GET /booking/{booking_id}**: Retrieve booking details.
-- **PUT /booking/{booking_id}**: Update booking information.
+### Running the Application
 
-### Review Management
-- **POST /review/**: Submit a review for a clothing item.
-- **PUT /review/{review_id}**: Update a review.
+#### Option 1: Directly with Uvicorn
+Run the FastAPI application using Uvicorn, specifying the host and port.
 
-## Running Tests
-To run tests, ensure you have a testing environment set up and use a testing framework compatible with FastAPI, such as pytest.
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8080
+```
 
-## Connecting to a Database
-Ensure your `DATABASE_URL` is set up correctly in your environment. The application uses SQLAlchemy for ORM, which supports multiple databases.
+#### Option 2: With Docker
+If you prefer to use Docker, update the Dockerfile to include GCP authentication as demonstrated above.
 
-## Security
-JWT is used for user authentication. Ensure `JWT_SECRET` is set to a secure, random value in your environment.
+Build the Docker image:
 
-## Contributing
-Contributions are welcome! Please read our contributing guidelines (if available) for details on how to submit pull requests.
+```bash
+docker build -t wardrobers-backend .
+```
+
+Run the Docker container:
+
+```bash
+docker run -p 8080:8080 wardrobers-backend
+```

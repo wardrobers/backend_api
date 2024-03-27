@@ -15,18 +15,18 @@ class CategoryRead(CategoryBase):
     deleted_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CategoryCreate(BaseModel):
     name: str = Field(..., example="Summer Collection")
 
     class Config:
-        schema_extra = {"example": {"name": "Summer Collection"}}
+        json_schema_extra = {"example": {"name": "Summer Collection"}}
 
 
 class CategoryUpdate(BaseModel):
     name: Optional[str] = Field(None, example="Winter Collection")
 
     class Config:
-        schema_extra = {"example": {"name": "Winter Collection"}}
+        json_schema_extra = {"example": {"name": "Winter Collection"}}

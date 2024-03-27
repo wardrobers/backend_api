@@ -24,7 +24,7 @@ class SubscriptionTypeRead(SubscriptionTypeBase):
     subscriptions: list[SubscriptionRead] = []
 
     class Config:
-        orm_mode = True  # Important for ORM compatibility
+        from_attributes = True  # Important for ORM compatibility
 
 
 # For updating an existing SubscriptionType
@@ -35,4 +35,4 @@ class SubscriptionTypeUpdate(BaseModel):
     count_free_orders: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

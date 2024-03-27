@@ -15,7 +15,7 @@ class SubscriptionPeriodRead(SubscriptionPeriodBase):
     deleted_at: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class SubscriptionPeriodCreate(SubscriptionPeriodBase):

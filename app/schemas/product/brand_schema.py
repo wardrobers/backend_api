@@ -18,7 +18,7 @@ class BrandRead(BrandBase):
     deleted_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class BrandUpdate(BaseModel):

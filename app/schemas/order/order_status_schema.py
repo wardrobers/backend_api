@@ -16,7 +16,7 @@ class OrderStatusRead(OrderStatusBase):
     deleted_at: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # For creating a new order status, omitting auto-generated fields
