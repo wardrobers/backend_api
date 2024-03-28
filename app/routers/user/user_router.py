@@ -10,7 +10,7 @@ from ...schemas.user.user_info_schema import UserInfoUpdate
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=UserCreate, status_code=status.HTTP_201_CREATED)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     user_repository = UserRepository(db)
     db_user = user_repository.get_user_by_login(user.login)
