@@ -1,3 +1,4 @@
+from uuid import uuid4
 from sqlalchemy import Column, DateTime, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
@@ -11,7 +12,7 @@ class User(Base):
     __tablename__ = "users"
     __table_args__ = {"extend_existing": True}
     uuid = Column(
-        UUID, primary_key=True, server_default="uuid_generate_v4()", nullable=False
+        UUID(as_uuid=True), primary_key=True, default=uuid4
     )
     login = Column(String, nullable=False)
     super_admin = Column(Boolean)
