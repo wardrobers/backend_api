@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from .database.session import db_engine
+from fastapi import FastAPI, HTTPException
+from .database.session import db_engine, get_db
 from .models.basemixin import Base  # Adjust path as necessary
 
 
@@ -18,6 +18,23 @@ async def startup_event():
 @app.get("/", tags=["Root"])
 async def root():
     return {"Welcome to the Wardrobers API!"}
+
+
+@app.get("/healthz")
+async def liveness_check():
+    try:
+        # 1. Database Connectivity
+        with get_db() as db:  
+            # Test a simple query to verify the connection
+            db.execute("SELECT 1")
+
+        # 2. (Optional) External Dependency Checks
+        # If Wardrobers relies on other services (e.g., image storage, third-party APIs)
+        # Add checks to make API requests to those external dependencies here
+
+        return {"status": "ok", "dependencies": {"database": "ok"}}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail="Service Unavailable")
 
 
 # Including routers
