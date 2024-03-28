@@ -6,8 +6,9 @@ from ...schemas.user.user_info_schema import UserInfoBase
 
 
 class UserBase(BaseModel):
+    uuid: UUID4 = Field(default_factory = UUID4)
     login: str
-    password: Optional[str]
+    password: Optional[str] = None
     is_notified: Optional[bool] = False
     marketing_consent: Optional[bool] = False
     user_info: Optional[UserInfoBase] = (
@@ -15,8 +16,9 @@ class UserBase(BaseModel):
     )
 
 
-class UserCreate(UserBase):
-    password: str  # Make password mandatory for creation.
+class UserCreate(BaseModel):
+    login: str
+    password: str 
 
 
 class UserRead(BaseModel):
