@@ -22,10 +22,10 @@ class User(Base):
     created_at = Column(DateTime, server_default="now()", nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-    user_info = relationship("UserInfo", back_populates="users", uselist=False)
-    user_activity = relationship("UserActivity", back_populates="users", uselist=False)
+    user_info = relationship("UserInfo", back_populates="user", uselist=False) 
+    user_activity = relationship("UserActivity", back_populates="user", uselist=False)
     user_subscription = relationship(
-        "Subscription", back_populates="users", uselist=False
+        "Subscription", back_populates="user", uselist=False
     )
-    users_photos = relationship("UsersPhotos", back_populates="users", uselist=False)
-    orders = relationship("Order", back_populates="users")
+    users_photos = relationship("UsersPhotos", back_populates="user", uselist=False)
+    orders = relationship("Order", back_populates="user")

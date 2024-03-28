@@ -13,7 +13,7 @@ class UserInfo(Base):
     uuid = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
+    users_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=True)
     second_name = Column(String, nullable=True)
@@ -22,4 +22,4 @@ class UserInfo(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime, nullable=True)
 
-    user = relationship("User", backref=backref("user_info", uselist=False))
+    user = relationship("User", back_populates="user_info")
