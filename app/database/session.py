@@ -1,7 +1,7 @@
 import os
 import json
 from sqlalchemy import create_engine, engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from google.cloud.sql.connector import Connector, IPTypes
 
 
@@ -29,7 +29,7 @@ db_engine = create_engine(
 )
 
 # Create a sessionmaker
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=db_engine))
 
 def get_db():
     db = SessionLocal()

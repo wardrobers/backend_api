@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from .database.session import db_engine, get_db
 from .models.basemixin import Base  # Adjust path as necessary
 
@@ -14,17 +14,27 @@ app = FastAPI(title="Wardrobers API", version="2.0")
 async def startup_event():
     create_tables()
 
+# Middleware for DB session management
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = await call_next(request)
+    try:
+        request.state.db.commit()
+    except:
+        request.state.db.rollback()
+    finally:
+        request.state.db.close()
+    return response
 
 @app.get("/", tags=["Root"])
 async def root():
     return {"Welcome to the Wardrobers API!"}
 
-
 @app.get("/healthz", tags=["Test"])
 async def liveness_check():
     try:
         # 1. Database Connectivity
-        with get_db() as db:  
+        with get_db() as db:
             # Test a simple query to verify the connection
             db.execute("SELECT 1")
 
