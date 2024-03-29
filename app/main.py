@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
-from .database.session import db_engine, get_db
+from .database.session import db_engine, get_db, SessionLocal
 from .models.basemixin import Base  # Adjust path as necessary
 
 
@@ -17,12 +17,17 @@ async def startup_event():
 # Middleware for DB session management
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
-    response = await call_next(request)
+    response = None
     try:
-        request.state.db.commit()
-    except:
+        # Attach a new session to the request state
+        request.state.db = SessionLocal()
+        response = await call_next(request)
+    except Exception as e:
+        # Handle exceptions and potentially roll back transactions here
         request.state.db.rollback()
+        raise e
     finally:
+        # Always close the session after the request is done
         request.state.db.close()
     return response
 

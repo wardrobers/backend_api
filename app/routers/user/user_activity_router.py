@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 
@@ -10,7 +10,8 @@ router = APIRouter()
 
 
 @router.get("/{user_uuid}/activity", response_model=UserActivityRead)
-def get_user_activity(user_uuid: UUID4, db: Session = Depends(get_db)):
+def get_user_activity(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     activity_repository = UserActivityRepository(db)
     activity = activity_repository.get_activity_by_user_uuid(user_uuid)
     if not activity:
@@ -20,8 +21,8 @@ def get_user_activity(user_uuid: UUID4, db: Session = Depends(get_db)):
 
 @router.put("/{user_uuid}/activity", response_model=UserActivityRead)
 def update_user_activity(
-    user_uuid: UUID4, activity_data: UserActivityUpdate, db: Session = Depends(get_db)
-):
+    user_uuid: UUID4, activity_data: UserActivityUpdate, request: Request):
+    db: Session = request.state.db
     activity_repository = UserActivityRepository(db)
     updated_activity = activity_repository.update_user_activity(
         user_uuid, activity_data.dict()

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 
@@ -19,8 +19,8 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 def assign_category_to_user(
-    category_assignment: CategoryForUserCreate, db: Session = Depends(get_db)
-):
+    category_assignment: CategoryForUserCreate, request: Request):
+    db: Session = request.state.db
     """
     Assign a category to a user.
     """
@@ -34,7 +34,8 @@ def assign_category_to_user(
 
 
 @router.get("/{user_uuid}/categories/", response_model=list[CategoryForUserRead])
-def list_categories_for_user(user_uuid: UUID4, db: Session = Depends(get_db)):
+def list_categories_for_user(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     """
     List all categories assigned to a user.
     """
@@ -69,8 +70,8 @@ def update_category_assignment(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def remove_category_assignment(
-    category_assignment_uuid: str, db: Session = Depends(get_db)
-):
+    category_assignment_uuid: str, request: Request):
+    db: Session = request.state.db
     """
     Remove a category assignment from a user.
     """

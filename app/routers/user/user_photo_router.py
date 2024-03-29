@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 
@@ -19,8 +19,8 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 def add_user_photo(
-    user_uuid: UUID4, file: UploadFile = File(...), db: Session = Depends(get_db)
-):
+    user_uuid: UUID4, file: UploadFile = File(...), request: Request):
+    db: Session = request.state.db
     """
     Upload a user photo and store its information.
     """
@@ -32,7 +32,8 @@ def add_user_photo(
 
 
 @router.get("/{user_uuid}/photos/", response_model=list[UserPhotoRead])
-def get_user_photos(user_uuid: UUID4, db: Session = Depends(get_db)):
+def get_user_photos(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     """
     Retrieve all photos for a given user.
     """
@@ -42,8 +43,8 @@ def get_user_photos(user_uuid: UUID4, db: Session = Depends(get_db)):
 
 @router.put("/{user_uuid}/photos", response_model=UserPhotoRead)
 def update_user_photo(
-    photo_uuid: UUID4, photo_update: UserPhotoUpdate, db: Session = Depends(get_db)
-):
+    photo_uuid: UUID4, photo_update: UserPhotoUpdate, request: Request):
+    db: Session = request.state.db
     """
     Update user photo information.
     """
@@ -56,7 +57,8 @@ def update_user_photo(
 
 
 @router.delete("/{user_uuid}/photos", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user_photo(photo_uuid: UUID4, db: Session = Depends(get_db)):
+def delete_user_photo(photo_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     """
     Delete a user photo.
     """

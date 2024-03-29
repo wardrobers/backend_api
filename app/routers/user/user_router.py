@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 
@@ -11,7 +11,8 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=UserCreate, status_code=status.HTTP_201_CREATED)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+def create_user(user: UserCreate, request: Request):
+    db: Session = request.state.db
     user_repository = UserRepository(db)
     db_user = user_repository.get_user_by_login(user.login)
     if db_user:
@@ -20,7 +21,8 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/{user_uuid}", response_model=UserRead)
-def read_user(user_uuid: UUID4, db: Session = Depends(get_db)):
+def read_user(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     user_repository = UserRepository(db)
     db_user = user_repository.get_user_by_uuid(user_uuid)
     if db_user is None:
@@ -30,8 +32,8 @@ def read_user(user_uuid: UUID4, db: Session = Depends(get_db)):
 
 @router.put("/{user_uuid}", response_model=UserRead)
 def update_user(
-    user_uuid: UUID4, user_update: UserUpdate, db: Session = Depends(get_db)
-):
+    user_uuid: UUID4, user_update: UserUpdate, request: Request):
+    db: Session = request.state.db
     user_repository = UserRepository(db)
     updated_user = user_repository.update_user(user_uuid, user_update)
     if not updated_user:
@@ -40,7 +42,8 @@ def update_user(
 
 
 @router.delete("/{user_uuid}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user_uuid: UUID4, db: Session = Depends(get_db)):
+def delete_user(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     user_repository = UserRepository(db)
     if not user_repository.delete_user(user_uuid):
         raise HTTPException(status_code=404, detail="User not found")
@@ -48,7 +51,8 @@ def delete_user(user_uuid: UUID4, db: Session = Depends(get_db)):
 
 
 @router.get("/{user_uuid}/profile", response_model=UserRead)
-def get_user_profile(user_uuid: UUID4, db: Session = Depends(get_db)):
+def get_user_profile(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     """
     Retrieve a single user profile by UUID.
     """
@@ -61,8 +65,8 @@ def get_user_profile(user_uuid: UUID4, db: Session = Depends(get_db)):
 
 @router.patch("/{user_uuid}/profile", response_model=UserRead)
 def update_user_profile(
-    user_uuid: UUID4, user_update: UserInfoUpdate, db: Session = Depends(get_db)
-):
+    user_uuid: UUID4, user_update: UserInfoUpdate, request: Request):
+    db: Session = request.state.db
     """
     Update user profile information.
     """

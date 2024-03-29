@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 
@@ -12,7 +12,8 @@ router = APIRouter()
 
 
 @router.post("/", response_model=OrderRead, status_code=status.HTTP_201_CREATED)
-def create_order(order_create: OrderCreate, db: Session = Depends(get_db)):
+def create_order(order_create: OrderCreate, request: Request):
+    db: Session = request.state.db
     order_repository = OrderRepository(db)
     new_order = order_repository.create_order(order_create)
     if not new_order:
@@ -21,7 +22,8 @@ def create_order(order_create: OrderCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/{order_uuid}", response_model=OrderRead)
-def get_order(order_uuid: UUID4, db: Session = Depends(get_db)):
+def get_order(order_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     order_repository = OrderRepository(db)
     order = order_repository.get_order_by_uuid(order_uuid)
     if not order:
@@ -30,7 +32,8 @@ def get_order(order_uuid: UUID4, db: Session = Depends(get_db)):
 
 
 @router.get("/{user_uuid}/orders/", response_model=list[OrderRead])
-def list_orders_for_user(user_uuid: UUID4, db: Session = Depends(get_db)):
+def list_orders_for_user(user_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     order_repository = OrderRepository(db)
     orders = order_repository.list_orders_by_user_uuid(user_uuid)
     return orders
@@ -38,8 +41,8 @@ def list_orders_for_user(user_uuid: UUID4, db: Session = Depends(get_db)):
 
 @router.put("/{order_uuid}", response_model=OrderRead)
 def update_order(
-    order_uuid: UUID4, order_update: OrderUpdate, db: Session = Depends(get_db)
-):
+    order_uuid: UUID4, order_update: OrderUpdate, request: Request):
+    db: Session = request.state.db
     order_repository = OrderRepository(db)
     updated_order = order_repository.update_order(order_uuid, order_update)
     if not updated_order:
@@ -70,7 +73,8 @@ def update_order_status(
 
 
 @router.delete("/{order_uuid}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_order(order_uuid: UUID4, db: Session = Depends(get_db)):
+def delete_order(order_uuid: UUID4, request: Request):
+    db: Session = request.state.db
     order_repository = OrderRepository(db)
     success = order_repository.delete_order(order_uuid)
     if not success:

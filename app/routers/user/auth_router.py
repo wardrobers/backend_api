@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from ...database.session import get_db
@@ -14,7 +14,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/register", response_model=UserRead)
-def register_user(user_create: UserCreate, db: Session = Depends(get_db)):
+def register_user(user_create: UserCreate, request: Request):
+    db: Session = request.state.db
     user_repo = UserRepository(db)
     # Check if user already exists by login
     if user_repo.get_user_by_login(user_create.login):
@@ -31,8 +32,9 @@ def register_user(user_create: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login")
 async def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
-):
+    request: Request,
+    form_data: OAuth2PasswordRequestForm = Depends()):
+    db: Session = request.state.db
     user_repo = UserRepository(db)
     # Authenticate user
     user = user_repo.authenticate_user(form_data.username, form_data.password)
@@ -45,8 +47,9 @@ async def login_for_access_token(
 
 @router.get("/verify-token", response_model=UserRead)
 async def verify_token(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
+    request: Request,
+    token: str = Depends(oauth2_scheme)):
+    db: Session = request.state.db
     # Decode and verify the token
     user_info = auth_handler.verify_token(token, db)
     if not user_info:
