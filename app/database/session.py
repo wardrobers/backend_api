@@ -6,8 +6,6 @@ from sqlalchemy.orm import sessionmaker
 
 # Get database credentials from the DBCRED environment variable
 db_credentials = json.loads(os.environ["DBCRED"])
-print(db_credentials)
-print()
 
 # Construct the database connection string
 db_uri = (
@@ -15,8 +13,7 @@ db_uri = (
     f"@/{db_credentials['database']}?host=/cloudsql/{db_credentials['project']}:"
     f"{db_credentials['region']}:{db_credentials['instance']}" 
 )
-print(db_uri)
-print()
+
 # Create a SQLAlchemy engine
 db_engine = create_engine(db_uri)
 
@@ -24,6 +21,10 @@ db_engine = create_engine(db_uri)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
 
 def get_db():
+    print(db_credentials)
+    print()
+    print(db_uri)
+    print()
     db = SessionLocal()
     try:
         yield db
