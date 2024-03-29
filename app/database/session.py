@@ -1,6 +1,6 @@
 import os
 import json
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, engine
 from sqlalchemy.orm import sessionmaker
 from google.cloud.sql.connector import Connector, IPTypes
 
@@ -11,7 +11,7 @@ db_credentials = json.loads(os.environ["DBCRED"])
 # Configure connector
 connector = Connector()  
 
-def getconn() -> sqlalchemy.engine.base.Connection:
+def getconn() -> engine.base.Connection:
     conn = connector.connect(
         db_credentials['project'] + ':' + db_credentials['region'] + ':' + db_credentials['instance'],
         "pg8000",
