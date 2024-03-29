@@ -6,7 +6,6 @@ pydantic==2.6.3
 python_jose==3.3.0
 SQLAlchemy==2.0.25
 uvicorn>=0.15.0
-cloud-sql-python-connector[pg8000]==1.6.0
 google-auth==2.27.0
 google-cloud-core==2.4.1
 google-cloud-storage==2.14.0
