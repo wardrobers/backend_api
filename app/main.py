@@ -20,7 +20,7 @@ async def root():
     return {"Welcome to the Wardrobers API!"}
 
 
-@app.get("/healthz")
+@app.get("/healthz", tags=["Test"])
 async def liveness_check():
     try:
         # 1. Database Connectivity
