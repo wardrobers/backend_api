@@ -1,6 +1,6 @@
 fastapi==0.110.0
 firebase_admin==6.4.0
-passlib==1.7.4
+argon2==0.1.10
 protobuf==4.25.3
 pydantic==2.6.3
 python_jose==3.3.0

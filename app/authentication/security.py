@@ -1,12 +1,11 @@
 import os
 import json
+import argon2
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
-from passlib.hash import argon2
 from sqlalchemy.orm import Session
 from ..repositories.user.user_repository import (
     UserRepository,
@@ -23,14 +22,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 class AuthHandler:
-    def __init__(self):
-        self.pwd_context = CryptContext(schemes=["argon2id"], deprecated="auto")
+    def get_password_hash(self, password: str) -> str:
+        return argon2.hash(password)
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        return self.pwd_context.verify(plain_password, hashed_password)
-
-    def get_password_hash(self, password: str) -> str:
-        return self.pwd_context.hash(password)
+        try:
+            return argon2.verify(plain_password, hashed_password)
+        except argon2.exceptions.VerifyMismatchError:
+            return False
 
     def authenticate_user(
         self, db: Session, username: str, password: str
