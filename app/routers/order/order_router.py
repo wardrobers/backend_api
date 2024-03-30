@@ -56,8 +56,8 @@ def update_order(
 def update_order_status(
     order_uuid: UUID4,
     order_status_update: OrderStatusUpdate,
-    db: Session = Depends(get_db),
-):
+    request: Request):
+    db: Session = request.state.db
     order_repository = OrderRepository(db)
     order_status_repository = OrderStatusRepository(
         db

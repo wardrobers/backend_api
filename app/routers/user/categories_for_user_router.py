@@ -51,8 +51,8 @@ def list_categories_for_user(user_uuid: UUID4, request: Request):
 def update_category_assignment(
     category_assignment_uuid: str,
     category_update: CategoryForUserUpdate,
-    db: Session = Depends(get_db),
-):
+    request: Request):
+    db: Session = request.state.db
     """
     Update a category assignment for a user.
     """

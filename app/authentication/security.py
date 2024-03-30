@@ -1,9 +1,12 @@
+import os
+import json
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from passlib.hash import argon2
 from sqlalchemy.orm import Session
 from ..repositories.user.user_repository import (
     UserRepository,
@@ -11,7 +14,8 @@ from ..repositories.user.user_repository import (
 from ..schemas.user.user_schema import UserRead  # Adjust import as necessary
 from ..database.session import get_db
 
-SECRET_KEY = "your_secret_key"  # Ideally, use an environment variable
+
+SECRET_KEY = json.loads(os.environ["AUTH_SECRET_KEY"])['auth_secret_key']
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -20,7 +24,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class AuthHandler:
     def __init__(self):
-        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        self.pwd_context = CryptContext(schemes=["argon2id"], deprecated="auto")
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return self.pwd_context.verify(plain_password, hashed_password)
@@ -46,15 +50,15 @@ class AuthHandler:
     ) -> str:
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.utcnow() + expires_delta
+            expire = datetime.now(datetime.UTC) + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            expire = datetime.now(datetime.UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
         return encoded_jwt
 
     async def get_current_user(
-        self, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+        self, db: Session, token: str = Depends(oauth2_scheme)
     ) -> UserRead:
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -81,8 +85,6 @@ class AuthHandler:
     async def get_current_active_user(
         self, current_user: UserRead = Depends(get_current_user)
     ) -> UserRead:
-        if (
-            current_user.is_active is False
-        ):  # Adjust based on your user model's field for active status
+        if not current_user.is_active:
             raise HTTPException(status_code=400, detail="Inactive user")
         return current_user
