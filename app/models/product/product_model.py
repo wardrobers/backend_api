@@ -2,6 +2,7 @@ from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
+from .product_categories_model import product_categories
 
 
 Base = declarative_base()
@@ -30,7 +31,7 @@ class Product(Base):
     deleted_at = Column(DateTime)
 
     categories = relationship(
-        "Category", secondary="product_categories", back_populates="products"
+        "Category", secondary=product_categories, back_populates="products"
     )
     materials = relationship(
         "Material", secondary="product_materials", back_populates="products"

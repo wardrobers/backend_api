@@ -4,23 +4,40 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
-# # Many-to-Many relationship helper tables
-# product_categories = Table(
-#     "product_categories",
-#     Base.metadata,
-#     Column(
-#         "product_uuid",
-#         UUID(as_uuid=True),
-#         ForeignKey("products.uuid"),
-#         primary_key=True,
-#     ),
-#     Column(
-#         "category_uuid",
-#         UUID(as_uuid=True),
-#         ForeignKey("categories.uuid"),
-#         primary_key=True,
-#     ),
-# )
+# Many-to-Many relationship helper tables
+product_categories = Table(
+    "product_categories",
+    Base.metadata,
+    Column(
+        "uuid",
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4  # Use uuid4 without quotes
+    ),
+    Column(
+        "product_uuid",
+        UUID(as_uuid=True),
+        ForeignKey("products.uuid"),
+        primary_key=True,
+    ),
+    Column(
+        "category_uuid",
+        UUID(as_uuid=True),
+        ForeignKey("categories.uuid"),
+        primary_key=True,
+    ),
+    Column(
+        "created_at",
+        DateTime,
+        nullable=False,
+        default=datetime.now  # Use datetime.now without quotes
+    ),
+    Column(
+        "deleted_at",
+        DateTime
+    )
+)
+
 
 
 class ProductCategory(Base):
