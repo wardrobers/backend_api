@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from ...models.user.user_model import User
 from ...models.user.user_info_model import UserInfo
 from ...schemas.user.user_schema import UserCreate, UserUpdate
-from ...schemas.user.user_info_schema import UserInfoUpdate
+from ...schemas.user.user_info_schema import UserInfoUpdate, UserInfoCreate
 
 
 class UserRepository:
@@ -19,7 +19,9 @@ class UserRepository:
         """Retrieve a user by their login."""
         return self.db.query(User).filter(User.login == login).first()
 
-    def create_user(self, user_data: UserCreate) -> User:
+    def create_user(
+        self, user_data: UserCreate, user_info_data: Optional[UserInfoCreate] = None
+    ) -> User:
         hashed_password = sha256(user_data.password.encode()).hexdigest()
         new_user = User(
             login=user_data.login,
@@ -28,6 +30,13 @@ class UserRepository:
         self.db.add(new_user)
         self.db.commit()
         self.db.refresh(new_user)
+
+        if user_info_data:
+            new_user_info = UserInfo(user_uuid=new_user.uuid, **user_info_data.dict())
+            self.db.add(new_user_info)
+            self.db.commit()
+            self.db.refresh(new_user_info)
+
         return new_user
 
     def update_user(self, uuid: str, user_data: UserUpdate) -> Optional[User]:

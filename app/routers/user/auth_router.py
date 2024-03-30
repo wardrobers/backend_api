@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from typing import Optional
 from ...database.session import get_db
 from ...schemas.user.user_schema import UserRead, UserCreate
+from ...schemas.user.user_info_schema import UserInfoCreate
 from ...repositories.user.user_repository import UserRepository
 from ...authentication.security import AuthHandler
 
@@ -14,7 +16,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/register", response_model=UserRead)
-def register_user(user_create: UserCreate, request: Request):
+def register_user(
+    user_create: UserCreate,
+    request: Request,
+    user_info_create: Optional[UserInfoCreate] = None,
+):
     db: Session = request.state.db
     user_repo = UserRepository(db)
     # Check if user already exists by login
@@ -26,7 +32,7 @@ def register_user(user_create: UserCreate, request: Request):
     user_data = user_create.dict()
     user_data["password"] = hashed_password
     # Create user
-    user = user_repo.create_user(user_data)
+    user = user_repo.create_user(user_data, user_info_create)
     return user
 
 
