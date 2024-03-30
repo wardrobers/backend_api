@@ -13,7 +13,7 @@ class CategoryForUser(Base):
     uuid = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"))
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
     category_uuid = Column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
     coefficient = Column(String)
     raw = Column(JSON)
@@ -21,4 +21,4 @@ class CategoryForUser(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     user = relationship("User", back_populates="categories_for_user")
-    category = relationship("Category", back_populates="users_for_category")
+    category = relationship("Category", back_populates="categories_for_user")
