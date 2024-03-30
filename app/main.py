@@ -3,12 +3,10 @@ from .database.session import db_engine, get_db, SessionLocal
 from .models.basemixin import Base  # Adjust path as necessary
 
 
-def create_tables():
-    Base.metadata.create_all(bind=db_engine)
-
-
 app = FastAPI(title="Wardrobers API", version="2.0")
 
+def create_tables():
+    Base.metadata.create_all(bind=db_engine)
 
 @app.on_event("startup")
 async def startup_event():

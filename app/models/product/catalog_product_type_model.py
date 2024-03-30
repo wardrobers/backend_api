@@ -22,5 +22,5 @@ class CatalogProductType(Base):
     deleted_at = Column(DateTime)
 
     # Relationships
-    product_type = relationship("ProductType", back_populates="catalogs")
-    product_catalog = relationship("ProductCatalog", back_populates="product_types")
+    product_type = relationship("ProductType", back_populates="catalog_product_types")
+    product_catalog = relationship("ProductCatalog", back_populates="catalog_product_types")

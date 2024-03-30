@@ -22,4 +22,4 @@ class Order(Base):
     deleted_at = Column(DateTime)
     # Relationships
     user = relationship("User", back_populates="orders")
-    product = relationship("Product")
+    product = relationship("Product", back_populates="orders")

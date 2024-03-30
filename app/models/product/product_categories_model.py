@@ -6,8 +6,8 @@ from sqlalchemy.orm import declarative_base
 
 # Ensure you are importing Product and Category models in this file
 # This ensures the relationships are properly constructed
-from .product_model import Product  # noqa: F401
-from .category_model import Category  # noqa: F401
+# from .product_model import Product  # noqa: F401
+# from .category_model import Category  # noqa: F401
 
 Base = declarative_base()
 
