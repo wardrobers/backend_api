@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import uuid4, UUID
-from ...models.product.product_categories_model import ProductCategory, product_categories
+from ...models.product.product_categories_model import ProductCategory
 from ...models.product.category_model import Category
 import datetime
 
@@ -13,8 +13,8 @@ class ProductCategoryRepository:
     def get_product_categories(self, product_uuid: UUID) -> list[Category]:
         return (
             self.db.query(Category)
-            .join(product_categories, Category.uuid == product_categories.c.category_uuid)
-            .filter(product_categories.c.product_uuid == product_uuid)
+            .join(ProductCategory, Category.uuid == ProductCategory.category_uuid)
+            .filter(ProductCategory.product_uuid == product_uuid)
             .all()
         )
 

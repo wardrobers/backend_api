@@ -11,6 +11,7 @@ from .category_model import Category  # noqa: F401
 
 Base = declarative_base()
 
+
 class ProductCategory(Base):
     __tablename__ = "product_categories"
 
