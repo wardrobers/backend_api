@@ -19,10 +19,10 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 def add_user_photo(user_uuid: UUID4, request: Request, file: UploadFile = File(...)):
-    db: Session = request.state.db
     """
     Upload a user photo and store its information.
     """
+    db: Session = request.state.db
     # Assuming a function to upload the file and return a storage URL
     storage_url = upload_file_to_storage(file)
     photo_data = {"user_uuid": user_uuid, "storage_url": storage_url}
@@ -32,10 +32,10 @@ def add_user_photo(user_uuid: UUID4, request: Request, file: UploadFile = File(.
 
 @router.get("/{user_uuid}/photos/", response_model=list[UserPhotoRead])
 def get_user_photos(user_uuid: UUID4, request: Request):
-    db: Session = request.state.db
     """
     Retrieve all photos for a given user.
     """
+    db: Session = request.state.db
     photos = UserPhotoRepository(db).get_photos_by_user_uuid(user_uuid)
     return photos
 
@@ -44,10 +44,10 @@ def get_user_photos(user_uuid: UUID4, request: Request):
 def update_user_photo(
     photo_uuid: UUID4, photo_update: UserPhotoUpdate, request: Request
 ):
-    db: Session = request.state.db
     """
     Update user photo information.
     """
+    db: Session = request.state.db
     updated_photo = UserPhotoRepository(db).update_photo(
         photo_uuid, photo_update.dict(exclude_unset=True)
     )
@@ -58,10 +58,10 @@ def update_user_photo(
 
 @router.delete("/{user_uuid}/photos", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user_photo(photo_uuid: UUID4, request: Request):
-    db: Session = request.state.db
     """
     Delete a user photo.
     """
+    db: Session = request.state.db
     UserPhotoRepository(db).delete_photo(photo_uuid)
     return {"detail": "Photo deleted successfully"}
 

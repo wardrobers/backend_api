@@ -36,16 +36,25 @@ async def db_session_middleware(request: Request, call_next):
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response = await call_next(request)
-    response.headers["X-Frame-Options"] = "SAMEORIGIN"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Strict-Transport-Security"] = (
-        "max-age=31536000; includeSubDomains"
-    )
-    response.headers["Content-Security-Policy"] = "default-src 'self';"
-    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["X-XSS-Protection"] = "1; mode=block"
-    response.headers["Permissions-Policy"] = "geolocation=(self), microphone=()"
-    # Customize the above policies as per your application needs
+    if "/docs" in request.url.path or "/openapi.json" in request.url.path:
+        # Allow Swagger UI resources
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self';"
+            "script-src 'self' 'unsafe-inline';"  # Allow inline scripts and scripts from the same origin
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;"  # Allow styles from the same origin and jsDelivr CDN
+            "img-src 'data:' 'self';"  # Allow images from the same origin and data URLs
+            "font-src 'self';"  # Allow fonts from the same origin
+        )
+    else:
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
+        response.headers["Content-Security-Policy"] = "default-src 'self';"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Permissions-Policy"] = "geolocation=(self), microphone=()"
     return response
 
 

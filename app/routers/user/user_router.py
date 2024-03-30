@@ -53,10 +53,10 @@ def delete_user(user_uuid: UUID4, request: Request):
 
 @router.get("/{user_uuid}/profile", response_model=UserRead)
 def get_user_profile(user_uuid: UUID4, request: Request):
-    db: Session = request.state.db
     """
     Retrieve a single user profile by UUID.
     """
+    db: Session = request.state.db
     user_repository = UserRepository(db)
     user = user_repository.get_user_by_uuid(user_uuid)
     if not user:
@@ -68,10 +68,10 @@ def get_user_profile(user_uuid: UUID4, request: Request):
 def update_user_profile(
     user_uuid: UUID4, user_update: UserInfoUpdate, request: Request
 ):
-    db: Session = request.state.db
     """
     Update user profile information.
     """
+    db: Session = request.state.db
     user_repository = UserRepository(db)
     updated_user = user_repository.update_user_info(user_uuid, user_update)
     if not updated_user:

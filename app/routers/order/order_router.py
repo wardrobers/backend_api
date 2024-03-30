@@ -56,7 +56,6 @@ def update_order_status(
     order_uuid: UUID4, order_status_update: OrderStatusUpdate, request: Request
 ):
     db: Session = request.state.db
-    order_repository = OrderRepository(db)
     order_status_repository = OrderStatusRepository(
         db
     )  # Use this repository to handle status updates

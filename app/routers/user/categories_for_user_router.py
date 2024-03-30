@@ -21,10 +21,10 @@ router = APIRouter()
 def assign_category_to_user(
     category_assignment: CategoryForUserCreate, request: Request
 ):
-    db: Session = request.state.db
     """
     Assign a category to a user.
     """
+    db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
     new_assignment = category_for_user_repository.assign_category_to_user(
         category_assignment.dict()
@@ -36,10 +36,10 @@ def assign_category_to_user(
 
 @router.get("/{user_uuid}/categories/", response_model=list[CategoryForUserRead])
 def list_categories_for_user(user_uuid: UUID4, request: Request):
-    db: Session = request.state.db
     """
     List all categories assigned to a user.
     """
+    db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
     categories = category_for_user_repository.get_categories_by_user_uuid(user_uuid)
     return categories
@@ -54,10 +54,10 @@ def update_category_assignment(
     category_update: CategoryForUserUpdate,
     request: Request,
 ):
-    db: Session = request.state.db
     """
     Update a category assignment for a user.
     """
+    db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
     updated_assignment = category_for_user_repository.update_category_assignment(
         category_assignment_uuid, category_update.dict()
@@ -72,10 +72,10 @@ def update_category_assignment(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def remove_category_assignment(category_assignment_uuid: str, request: Request):
-    db: Session = request.state.db
     """
     Remove a category assignment from a user.
     """
+    db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
     if not category_for_user_repository.remove_category_assignment(
         category_assignment_uuid
