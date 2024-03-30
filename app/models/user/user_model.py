@@ -3,7 +3,7 @@ from sqlalchemy import Column, DateTime, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
-
+from .user_info_model import UserInfo
 
 Base = declarative_base()
 
