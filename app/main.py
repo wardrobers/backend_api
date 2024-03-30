@@ -18,9 +18,9 @@ async def startup_event():
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
     response = None
+    request.state.db = SessionLocal()
     try:
         # Attach a new session to the request state
-        request.state.db = SessionLocal()
         response = await call_next(request)
     except Exception as e:
         # Handle exceptions and potentially roll back transactions here
