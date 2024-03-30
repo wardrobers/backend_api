@@ -15,7 +15,7 @@ from ..schemas.user.user_schema import UserRead  # Adjust import as necessary
 from ..database.session import get_db
 
 
-SECRET_KEY = json.loads(os.environ["AUTH_SECRET_KEY"])['auth_secret_key']
+SECRET_KEY = json.loads(os.environ["AUTH_SECRET_KEY"])["auth_secret_key"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
