@@ -9,18 +9,24 @@ from google.cloud.sql.connector import Connector, IPTypes
 db_credentials = json.loads(os.environ["DBCRED"])
 
 # Configure connector
-connector = Connector()  
+connector = Connector()
+
 
 def getconn() -> engine.base.Connection:
     conn = connector.connect(
-        db_credentials['project'] + ':' + db_credentials['region'] + ':' + db_credentials['instance'],
+        db_credentials["project"]
+        + ":"
+        + db_credentials["region"]
+        + ":"
+        + db_credentials["instance"],
         "pg8000",
-        user=db_credentials['user'],
-        password=db_credentials['password'],
-        db=db_credentials['database'],
-        ip_type=IPTypes.PUBLIC  # Use PRIVATE if connecting via private IP
+        user=db_credentials["user"],
+        password=db_credentials["password"],
+        db=db_credentials["database"],
+        ip_type=IPTypes.PUBLIC,  # Use PRIVATE if connecting via private IP
     )
     return conn
+
 
 # Create a SQLAlchemy engine with Cloud SQL Connector
 db_engine = create_engine(
@@ -29,7 +35,10 @@ db_engine = create_engine(
 )
 
 # Create a sessionmaker
-SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=db_engine))
+SessionLocal = scoped_session(
+    sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+)
+
 
 def get_db():
     db = SessionLocal()

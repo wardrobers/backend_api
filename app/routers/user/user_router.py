@@ -10,7 +10,9 @@ from ...schemas.user.user_info_schema import UserInfoUpdate
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserCreate, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserCreate, status_code=status.HTTP_201_CREATED
+)
 def create_user(user: UserCreate, request: Request):
     db: Session = request.state.db
     user_repository = UserRepository(db)
@@ -31,8 +33,7 @@ def read_user(user_uuid: UUID4, request: Request):
 
 
 @router.put("/{user_uuid}", response_model=UserRead)
-def update_user(
-    user_uuid: UUID4, user_update: UserUpdate, request: Request):
+def update_user(user_uuid: UUID4, user_update: UserUpdate, request: Request):
     db: Session = request.state.db
     user_repository = UserRepository(db)
     updated_user = user_repository.update_user(user_uuid, user_update)
@@ -65,7 +66,8 @@ def get_user_profile(user_uuid: UUID4, request: Request):
 
 @router.patch("/{user_uuid}/profile", response_model=UserRead)
 def update_user_profile(
-    user_uuid: UUID4, user_update: UserInfoUpdate, request: Request):
+    user_uuid: UUID4, user_update: UserInfoUpdate, request: Request
+):
     db: Session = request.state.db
     """
     Update user profile information.

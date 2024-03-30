@@ -11,9 +11,7 @@ Base = declarative_base()
 
 class UserInfo(Base):
     __tablename__ = "user_info"
-    uuid = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     users_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=True)

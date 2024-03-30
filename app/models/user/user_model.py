@@ -11,9 +11,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     __table_args__ = {"extend_existing": True}
-    uuid = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     login = Column(String, nullable=False)
     super_admin = Column(Boolean)
     password = Column(String, nullable=False)
@@ -23,7 +21,7 @@ class User(Base):
     created_at = Column(DateTime, server_default="now()", nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-    user_info = relationship("UserInfo", back_populates="user", uselist=False) 
+    user_info = relationship("UserInfo", back_populates="user", uselist=False)
     user_activity = relationship("UserActivity", back_populates="user", uselist=False)
     user_subscription = relationship(
         "Subscription", back_populates="user", uselist=False

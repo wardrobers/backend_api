@@ -40,8 +40,7 @@ def list_orders_for_user(user_uuid: UUID4, request: Request):
 
 
 @router.put("/{order_uuid}", response_model=OrderRead)
-def update_order(
-    order_uuid: UUID4, order_update: OrderUpdate, request: Request):
+def update_order(order_uuid: UUID4, order_update: OrderUpdate, request: Request):
     db: Session = request.state.db
     order_repository = OrderRepository(db)
     updated_order = order_repository.update_order(order_uuid, order_update)
@@ -54,9 +53,8 @@ def update_order(
 
 @router.put("/{order_uuid}/status", response_model=OrderRead)
 def update_order_status(
-    order_uuid: UUID4,
-    order_status_update: OrderStatusUpdate,
-    request: Request):
+    order_uuid: UUID4, order_status_update: OrderStatusUpdate, request: Request
+):
     db: Session = request.state.db
     order_repository = OrderRepository(db)
     order_status_repository = OrderStatusRepository(

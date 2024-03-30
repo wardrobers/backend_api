@@ -18,8 +18,7 @@ router = APIRouter()
     response_model=UserPhotoRead,
     status_code=status.HTTP_201_CREATED,
 )
-def add_user_photo(
-    user_uuid: UUID4, file: UploadFile = File(...), request: Request):
+def add_user_photo(user_uuid: UUID4, request: Request, file: UploadFile = File(...)):
     db: Session = request.state.db
     """
     Upload a user photo and store its information.
@@ -43,7 +42,8 @@ def get_user_photos(user_uuid: UUID4, request: Request):
 
 @router.put("/{user_uuid}/photos", response_model=UserPhotoRead)
 def update_user_photo(
-    photo_uuid: UUID4, photo_update: UserPhotoUpdate, request: Request):
+    photo_uuid: UUID4, photo_update: UserPhotoUpdate, request: Request
+):
     db: Session = request.state.db
     """
     Update user photo information.

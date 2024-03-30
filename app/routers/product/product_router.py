@@ -39,8 +39,7 @@ async def list_products(request: Request, skip: int = 0, limit: int = 100):
 
 
 @router.put("/{product_uuid}", response_model=ProductRead)
-async def update_product(
-    product_uuid: UUID4, product: ProductUpdate, request: Request):
+async def update_product(product_uuid: UUID4, product: ProductUpdate, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     updated_product = product_repository.update_product(product_uuid, product)
@@ -65,7 +64,8 @@ async def delete_product(product_uuid: UUID4, request: Request):
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_category_to_product(
-    product_uuid: UUID4, category_uuid: UUID4, request: Request):
+    product_uuid: UUID4, category_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.add_category_to_product(product_uuid, category_uuid)
@@ -77,7 +77,8 @@ async def add_category_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_category_from_product(
-    product_uuid: UUID4, category_uuid: UUID4, request: Request):
+    product_uuid: UUID4, category_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.remove_category_from_product(product_uuid, category_uuid)
@@ -89,7 +90,8 @@ async def remove_category_from_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_material_to_product(
-    product_uuid: UUID4, material_uuid: UUID4, request: Request):
+    product_uuid: UUID4, material_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.add_material_to_product(product_uuid, material_uuid)
@@ -101,7 +103,8 @@ async def add_material_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_material_from_product(
-    product_uuid: UUID4, material_uuid: UUID4, request: Request):
+    product_uuid: UUID4, material_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.remove_material_from_product(product_uuid, material_uuid)
@@ -113,7 +116,8 @@ async def remove_material_from_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_color_to_product(
-    product_uuid: UUID4, color_uuid: UUID4, request: Request):
+    product_uuid: UUID4, color_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.add_color_to_product(product_uuid, color_uuid)
@@ -125,7 +129,8 @@ async def add_color_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_color_from_product(
-    product_uuid: UUID4, color_uuid: UUID4, request: Request):
+    product_uuid: UUID4, color_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.remove_color_from_product(product_uuid, color_uuid)
@@ -137,7 +142,8 @@ async def remove_color_from_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_brand_to_product(
-    product_uuid: UUID4, brand_uuid: UUID4, request: Request):
+    product_uuid: UUID4, brand_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.add_brand_to_product(product_uuid, brand_uuid)
@@ -149,7 +155,8 @@ async def add_brand_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_brand_from_product(
-    product_uuid: UUID4, brand_uuid: UUID4, request: Request):
+    product_uuid: UUID4, brand_uuid: UUID4, request: Request
+):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.remove_brand_from_product(product_uuid, brand_uuid)

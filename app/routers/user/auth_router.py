@@ -32,8 +32,8 @@ def register_user(user_create: UserCreate, request: Request):
 
 @router.post("/login")
 async def login_for_access_token(
-    request: Request,
-    form_data: OAuth2PasswordRequestForm = Depends()):
+    request: Request, form_data: OAuth2PasswordRequestForm = Depends()
+):
     db: Session = request.state.db
     user_repo = UserRepository(db)
     # Authenticate user
@@ -46,9 +46,7 @@ async def login_for_access_token(
 
 
 @router.get("/verify-token", response_model=UserRead)
-async def verify_token(
-    request: Request,
-    token: str = Depends(oauth2_scheme)):
+async def verify_token(request: Request, token: str = Depends(oauth2_scheme)):
     db: Session = request.state.db
     # Decode and verify the token
     user_info = auth_handler.verify_token(token, db)

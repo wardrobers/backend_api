@@ -6,7 +6,7 @@ from ...schemas.user.user_info_schema import UserInfoBase
 
 
 class UserBase(BaseModel):
-    uuid: UUID4 = Field(default_factory = UUID4)
+    uuid: UUID4 = Field(default_factory=UUID4)
     login: str
     password: Optional[str] = None
     is_notified: Optional[bool] = False
@@ -18,7 +18,7 @@ class UserBase(BaseModel):
 
 class UserCreate(BaseModel):
     login: str
-    password: str 
+    password: str
 
 
 class UserRead(BaseModel):

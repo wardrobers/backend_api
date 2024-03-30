@@ -19,7 +19,9 @@ class ProductStatusRead(ProductStatusBase):
     deleted_at: Optional[datetime]
 
     class Config:
-        from_attributes = True  # Enable ORM mode for compatibility with SQLAlchemy models
+        from_attributes = (
+            True  # Enable ORM mode for compatibility with SQLAlchemy models
+        )
 
 
 class ProductStatusUpdate(BaseModel):

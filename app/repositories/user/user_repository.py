@@ -22,9 +22,9 @@ class UserRepository:
     def create_user(self, user_data: UserCreate) -> User:
         hashed_password = sha256(user_data.password.encode()).hexdigest()
         new_user = User(
-        login=user_data.login,
-        password=hashed_password,
-        )       
+            login=user_data.login,
+            password=hashed_password,
+        )
         self.db.add(new_user)
         self.db.commit()
         self.db.refresh(new_user)

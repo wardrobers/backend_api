@@ -14,6 +14,7 @@ app = FastAPI(title="Wardrobers API", version="2.0")
 async def startup_event():
     create_tables()
 
+
 # Middleware for DB session management
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
@@ -31,12 +32,15 @@ async def db_session_middleware(request: Request, call_next):
         request.state.db.close()
     return response
 
+
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Strict-Transport-Security"] = (
+        "max-age=31536000; includeSubDomains"
+    )
     response.headers["Content-Security-Policy"] = "default-src 'self';"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["X-XSS-Protection"] = "1; mode=block"
@@ -44,9 +48,11 @@ async def security_headers_middleware(request: Request, call_next):
     # Customize the above policies as per your application needs
     return response
 
+
 @app.get("/", tags=["Root"])
 async def root():
     return {"Welcome to the Wardrobers API!"}
+
 
 @app.get("/healthz", tags=["Test"])
 async def liveness_check():

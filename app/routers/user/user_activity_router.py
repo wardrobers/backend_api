@@ -21,7 +21,8 @@ def get_user_activity(user_uuid: UUID4, request: Request):
 
 @router.put("/{user_uuid}/activity", response_model=UserActivityRead)
 def update_user_activity(
-    user_uuid: UUID4, activity_data: UserActivityUpdate, request: Request):
+    user_uuid: UUID4, activity_data: UserActivityUpdate, request: Request
+):
     db: Session = request.state.db
     activity_repository = UserActivityRepository(db)
     updated_activity = activity_repository.update_user_activity(

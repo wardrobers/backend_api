@@ -19,7 +19,8 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 def assign_category_to_user(
-    category_assignment: CategoryForUserCreate, request: Request):
+    category_assignment: CategoryForUserCreate, request: Request
+):
     db: Session = request.state.db
     """
     Assign a category to a user.
@@ -51,7 +52,8 @@ def list_categories_for_user(user_uuid: UUID4, request: Request):
 def update_category_assignment(
     category_assignment_uuid: str,
     category_update: CategoryForUserUpdate,
-    request: Request):
+    request: Request,
+):
     db: Session = request.state.db
     """
     Update a category assignment for a user.
@@ -69,8 +71,7 @@ def update_category_assignment(
     "/{user_uuid}/categories/{category_assignment_uuid}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def remove_category_assignment(
-    category_assignment_uuid: str, request: Request):
+def remove_category_assignment(category_assignment_uuid: str, request: Request):
     db: Session = request.state.db
     """
     Remove a category assignment from a user.
