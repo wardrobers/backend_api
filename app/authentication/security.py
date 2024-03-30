@@ -1,7 +1,8 @@
 import os
 import json
 import argon2
-from datetime import datetime, timedelta
+import datetime
+from datetime import timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -49,9 +50,9 @@ class AuthHandler:
     ) -> str:
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.now(datetime.UTC) + expires_delta
+            expire = datetime.datetime.now(datetime.timezone.utc) + expires_delta
         else:
-            expire = datetime.now(datetime.UTC) + timedelta(
+            expire = datetime.datetime.now(datetime.timezone.utc) + timedelta(
                 minutes=ACCESS_TOKEN_EXPIRE_MINUTES
             )
         to_encode.update({"exp": expire})

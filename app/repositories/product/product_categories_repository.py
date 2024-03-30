@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import uuid4, UUID
 from ...models.product.product_categories_model import ProductCategory, product_categories
 from ...models.product.category_model import Category
-from datetime import datetime
+import datetime
 
 
 class ProductCategoryRepository:
@@ -25,7 +25,7 @@ class ProductCategoryRepository:
             uuid=str(uuid4()),
             product_uuid=product_uuid,
             category_uuid=category_uuid,
-            created_at=datetime.now(datetime.UTC),
+            created_at=datetime.datetime.now(datetime.timezone.utc),
         )
         self.db.add(product_category)
         self.db.commit()
