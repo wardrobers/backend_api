@@ -1,5 +1,7 @@
 from sqlalchemy import Column, DateTime, String, Table, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
+from pydantic import UUID4
+from datetime import datetime
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -12,7 +14,7 @@ product_categories = Table(
         "uuid",
         UUID(as_uuid=True),
         primary_key=True,
-        default=uuid4  # Use uuid4 without quotes
+        default=UUID4, # Use uuid4 without quotes
     ),
     Column(
         "product_uuid",
@@ -30,11 +32,11 @@ product_categories = Table(
         "created_at",
         DateTime,
         nullable=False,
-        default=datetime.now  # Use datetime.now without quotes
+        default=datetime.now,  # Use datetime.now without quotes
     ),
     Column(
         "deleted_at",
-        DateTime
+        DateTime,
     )
 )
 
