@@ -5,6 +5,11 @@ from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 from .user_info_model import UserInfo
+from .user_activity_model import UserActivity
+from .subscription_model import Subscription
+from .user_photo_model import UserPhoto
+from ..order.order_model import Order
+
 
 Base = declarative_base()
 
@@ -22,10 +27,10 @@ class User(Base):
     created_at = Column(DateTime, server_default="now()", nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-    user_info = relationship("UserInfo", back_populates="users", uselist=False)
-    user_activity = relationship("UserActivity", back_populates="users", uselist=False)
+    user_info = relationship("UserInfo", back_populates="user", uselist=False)
+    user_activity = relationship("UserActivity", back_populates="user", uselist=False)
     user_subscription = relationship(
-        "Subscription", back_populates="users", uselist=False
+        "Subscription", back_populates="user", uselist=False
     )
-    users_photos = relationship("UsersPhotos", back_populates="users", uselist=False)
-    orders = relationship("Order", back_populates="users")
+    users_photos = relationship("UsersPhotos", back_populates="user", uselist=False)
+    orders = relationship("Order", back_populates="user")

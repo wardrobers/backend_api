@@ -26,4 +26,4 @@ class SubscriptionType(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     # Assuming Subscription model exists and is correctly defined
-    subscriptions = relationship("Subscription", back_populates="subscription_types")
+    subscriptions = relationship("Subscription", back_populates="subscription_type")

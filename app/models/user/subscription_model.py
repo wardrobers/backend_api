@@ -26,5 +26,5 @@ class Subscription(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
-    user = relationship("User", back_populates="subscriptions")
+    user = relationship("User", back_populates="user_subscription")
     subscription_type = relationship("SubscriptionType", back_populates="subscriptions")
