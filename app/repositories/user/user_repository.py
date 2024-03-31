@@ -1,7 +1,7 @@
 from hashlib import sha256
 from typing import Optional
 from sqlalchemy.orm import Session
-from ...models.user.user_model import User, UserInfo
+from ...models.user.user_info_model import UserInfo, User
 from ...schemas.user.user_schema import UserCreate, UserUpdate
 from ...schemas.user.user_info_schema import UserInfoUpdate, UserInfoCreate
 

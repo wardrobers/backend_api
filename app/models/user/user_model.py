@@ -4,12 +4,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
-from .user_info_model import UserInfo
-from .user_activity_model import UserActivity
-from .subscription_model import Subscription
-from .user_photo_model import UserPhoto
-from ..order.order_model import Order
-
 
 Base = declarative_base()
 
