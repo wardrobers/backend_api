@@ -22,7 +22,7 @@ def create_user(user: UserCreate, request: Request):
     return user_repository.create_user(user)
 
 
-@router.get("/{user_uuid}", response_model=UserRead)
+@router.get("/get", response_model=UserRead)
 def read_user(user_uuid: UUID4, request: Request):
     db: Session = request.state.db
     user_repository = UserRepository(db)
@@ -32,7 +32,7 @@ def read_user(user_uuid: UUID4, request: Request):
     return db_user
 
 
-@router.put("/{user_uuid}", response_model=UserRead)
+@router.put("/put", response_model=UserRead)
 def update_user(user_uuid: UUID4, user_update: UserUpdate, request: Request):
     db: Session = request.state.db
     user_repository = UserRepository(db)
@@ -42,7 +42,7 @@ def update_user(user_uuid: UUID4, user_update: UserUpdate, request: Request):
     return updated_user
 
 
-@router.delete("/{user_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(user_uuid: UUID4, request: Request):
     db: Session = request.state.db
     user_repository = UserRepository(db)
@@ -51,7 +51,7 @@ def delete_user(user_uuid: UUID4, request: Request):
     return {"detail": "User deleted successfully"}
 
 
-@router.get("/{user_uuid}/profile", response_model=UserRead)
+@router.get("/get/profile", response_model=UserRead)
 def get_user_profile(user_uuid: UUID4, request: Request):
     """
     Retrieve a single user profile by UUID.
@@ -64,7 +64,7 @@ def get_user_profile(user_uuid: UUID4, request: Request):
     return user
 
 
-@router.patch("/{user_uuid}/profile", response_model=UserRead)
+@router.patch("/patch/profile", response_model=UserRead)
 def update_user_profile(
     user_uuid: UUID4, user_update: UserInfoUpdate, request: Request
 ):
