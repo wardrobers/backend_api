@@ -1,7 +1,9 @@
 from hashlib import sha256
 from typing import Optional
 from sqlalchemy.orm import Session
-from ...models.user.user_info_model import User, UserInfo
+from uuid import uuid4  # Import the uuid library
+from ...models.user.user_model import User  # Ensure correct import for User
+from ...models.user.user_info_model import UserInfo
 from ...schemas.user.user_schema import UserCreate, UserUpdate
 from ...schemas.user.user_info_schema import UserInfoUpdate, UserInfoCreate
 
@@ -22,22 +24,15 @@ class UserRepository:
         self, user_data: UserCreate, user_info_data: Optional[UserInfoCreate] = None
     ) -> User:
         hashed_password = sha256(user_data.password.encode()).hexdigest()
+        user_uuid = str(uuid4())
         new_user = User(
+            uuid=user_uuid,  # Assign the generated UUID here
             login=user_data.login,
             password=hashed_password,
         )
         self.db.add(new_user)
         self.db.commit()
         self.db.refresh(new_user)
-
-        if user_info_data is None:
-            user_info_data = UserInfoCreate()  # Create with default values if not provided
-
-        new_user_info = UserInfo(user_uuid=new_user.uuid, **user_info_data.dict())
-        self.db.add(new_user_info)
-        self.db.commit()
-        self.db.refresh(new_user_info)
-
         return new_user
 
     def update_user(self, uuid: str, user_data: UserUpdate) -> Optional[User]:
