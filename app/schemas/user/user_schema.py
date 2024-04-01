@@ -11,9 +11,6 @@ class UserBase(BaseModel):
     password: Optional[str] = None
     is_notified: Optional[bool] = False
     marketing_consent: Optional[bool] = False
-    user_info: Optional[UserInfoBase] = (
-        None  # Directly embed UserInfoBase for simplicity.
-    )
 
 
 class UserCreate(BaseModel):
