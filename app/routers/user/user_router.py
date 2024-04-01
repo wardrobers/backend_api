@@ -19,8 +19,7 @@ def create_user(user: UserCreate, request: Request):
     db_user = user_repository.get_user_by_login(user.login)
     if db_user:
         raise HTTPException(status_code=400, detail="User already exists")
-    create_user = user_repository.create_user(user)
-    return create_user
+    return user_repository.create_user(user)
 
 
 @router.get("/{user_uuid}", response_model=UserRead)
