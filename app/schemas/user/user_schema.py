@@ -19,7 +19,7 @@ class UserCreate(BaseModel):
 
 
 class UserRead(BaseModel):
-    uuid: UUID4
+    uuid: str
     login: str
     is_notified: bool
     marketing_consent: bool
@@ -27,7 +27,7 @@ class UserRead(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None
-    user_info: Optional[UserInfoBase] = None
+ #   user_info: Optional[UserInfoBase] = None
 
 
 class UserUpdate(BaseModel):
