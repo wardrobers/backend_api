@@ -21,9 +21,9 @@ class UserCreate(BaseModel):
 class UserRead(BaseModel):
     uuid: str
     login: str
-    is_notified: bool
-    marketing_consent: bool
-    last_login_at: Optional[datetime] = None
+    #is_notified: bool
+    #marketing_consent: bool
+    #last_login_at: Optional[datetime] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None
