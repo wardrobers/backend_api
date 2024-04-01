@@ -1,4 +1,5 @@
 from pydantic import UUID4
+from uuid import uuid4
 from sqlalchemy import Column, DateTime, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
@@ -21,10 +22,10 @@ class User(Base):
     created_at = Column(DateTime, server_default="now()", nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-    user_info = relationship("UserInfo", back_populates="user", uselist=False)
-    user_activity = relationship("UserActivity", back_populates="user", uselist=False)
-    user_subscription = relationship(
-        "Subscription", back_populates="user", uselist=False
-    )
-    users_photos = relationship("UsersPhotos", back_populates="user", uselist=False)
-    orders = relationship("Order", back_populates="user")
+    # user_info = relationship("UserInfo", back_populates="user", uselist=False)
+    # user_activity = relationship("UserActivity", back_populates="user", uselist=False)
+    # user_subscription = relationship(
+    #     "Subscription", back_populates="user", uselist=False
+    # )
+    # users_photos = relationship("UsersPhotos", back_populates="user", uselist=False)
+    # orders = relationship("Order", back_populates="user")
