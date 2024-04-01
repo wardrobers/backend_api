@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/register", response_model=UserCreate, status_code=status.HTTP_201_CREATED
+    "/register", response_model=UserRead, status_code=status.HTTP_201_CREATED
 )
 def create_user(user: UserCreate, request: Request):
     db: Session = request.state.db
