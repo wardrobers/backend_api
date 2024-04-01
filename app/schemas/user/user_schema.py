@@ -19,7 +19,7 @@ class UserCreate(BaseModel):
 
 
 class UserRead(BaseModel):
-    uuid: str
+    uuid: UUID4
     login: str
     #is_notified: bool
     #marketing_consent: bool
