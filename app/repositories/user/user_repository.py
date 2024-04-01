@@ -24,9 +24,7 @@ class UserRepository:
         self, user_data: UserCreate, user_info_data: Optional[UserInfoCreate] = None
     ) -> User:
         hashed_password = sha256(user_data.password.encode()).hexdigest()
-        user_uuid = uuid4()
         new_user = User(
-            uuid=user_uuid,  # Assign the generated UUID here
             login=user_data.login,
             password=hashed_password,
         )

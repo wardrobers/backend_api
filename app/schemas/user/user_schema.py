@@ -14,7 +14,6 @@ class UserBase(BaseModel):
 
 
 class UserCreate(BaseModel):
-    uuid: UUID4 = Field(default_factory=UUID4)
     login: str
     password: str
 

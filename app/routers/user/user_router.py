@@ -18,8 +18,11 @@ def create_user(user: UserCreate, request: Request):
     user_repository = UserRepository(db)
     db_user = user_repository.get_user_by_login(user.login)
     if db_user:
+        # If a user is found, raise an HTTPException indicating the user already exists
         raise HTTPException(status_code=400, detail="User already exists")
-    return user_repository.create_user(user)
+    else:
+        # If no user is found, proceed to create a new user
+        return user_repository.create_user(user)
 
 
 @router.get("/get", response_model=UserRead)
