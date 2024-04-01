@@ -14,7 +14,7 @@ class User(Base):
     __table_args__ = {"extend_existing": True}
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     login = Column(String, nullable=False)
-    super_admin = Column(Boolean)
+    # super_admin = Column(Boolean)
     password = Column(String, nullable=False)
     is_notificated = Column(Boolean, nullable=False, default=False)
     last_login_at = Column(DateTime)
