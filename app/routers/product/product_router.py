@@ -20,7 +20,7 @@ async def create_product(product: ProductCreate, request: Request):
     return new_product
 
 
-@router.get("/{product_uuid}", response_model=ProductRead)
+@router.get("/get", response_model=ProductRead)
 async def get_product(product_uuid: UUID4, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
@@ -30,7 +30,7 @@ async def get_product(product_uuid: UUID4, request: Request):
     return product
 
 
-@router.get("/", response_model=list[ProductRead])
+@router.get("/get_all", response_model=list[ProductRead])
 async def list_products(request: Request, skip: int = 0, limit: int = 100):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
@@ -38,7 +38,7 @@ async def list_products(request: Request, skip: int = 0, limit: int = 100):
     return products
 
 
-@router.put("/{product_uuid}", response_model=ProductRead)
+@router.put("/update", response_model=ProductRead)
 async def update_product(product_uuid: UUID4, product: ProductUpdate, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
@@ -50,7 +50,7 @@ async def update_product(product_uuid: UUID4, product: ProductUpdate, request: R
     return updated_product
 
 
-@router.delete("/{product_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(product_uuid: UUID4, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
@@ -60,7 +60,7 @@ async def delete_product(product_uuid: UUID4, request: Request):
 
 # Assuming you have the necessary methods in your repository for these actions
 @router.post(
-    "/{product_uuid}/categories/{category_uuid}",
+    "/add_category",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_category_to_product(
@@ -73,7 +73,7 @@ async def add_category_to_product(
 
 
 @router.delete(
-    "/{product_uuid}/categories/{category_uuid}",
+    "/remove_category",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_category_from_product(
@@ -86,7 +86,7 @@ async def remove_category_from_product(
 
 
 @router.post(
-    "/{product_uuid}/materials/{material_uuid}",
+    "/add_material",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_material_to_product(
@@ -99,7 +99,7 @@ async def add_material_to_product(
 
 
 @router.delete(
-    "/{product_uuid}/materials/{material_uuid}",
+    "/delete_material",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_material_from_product(
@@ -112,7 +112,7 @@ async def remove_material_from_product(
 
 
 @router.post(
-    "/{product_uuid}/colors/{color_uuid}",
+    "/add_color",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_color_to_product(
@@ -125,7 +125,7 @@ async def add_color_to_product(
 
 
 @router.delete(
-    "/{product_uuid}/colors/{color_uuid}",
+    "/delete_color",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_color_from_product(
@@ -138,7 +138,7 @@ async def remove_color_from_product(
 
 
 @router.post(
-    "/{product_uuid}/brands/{color_uuid}",
+    "/add_brand",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_brand_to_product(
@@ -151,7 +151,7 @@ async def add_brand_to_product(
 
 
 @router.delete(
-    "/{product_uuid}/brands/{color_uuid}",
+    "/remove_brand",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_brand_from_product(

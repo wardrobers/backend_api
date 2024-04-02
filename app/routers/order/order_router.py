@@ -21,7 +21,7 @@ def create_order(order_create: OrderCreate, request: Request):
     return new_order
 
 
-@router.get("/{order_uuid}", response_model=OrderRead)
+@router.get("/get", response_model=OrderRead)
 def get_order(order_uuid: UUID4, request: Request):
     db: Session = request.state.db
     order_repository = OrderRepository(db)
@@ -31,7 +31,7 @@ def get_order(order_uuid: UUID4, request: Request):
     return order
 
 
-@router.get("/{user_uuid}/orders/", response_model=list[OrderRead])
+@router.get("/list_all", response_model=list[OrderRead])
 def list_orders_for_user(user_uuid: UUID4, request: Request):
     db: Session = request.state.db
     order_repository = OrderRepository(db)
@@ -39,7 +39,7 @@ def list_orders_for_user(user_uuid: UUID4, request: Request):
     return orders
 
 
-@router.put("/{order_uuid}", response_model=OrderRead)
+@router.put("/update", response_model=OrderRead)
 def update_order(order_uuid: UUID4, order_update: OrderUpdate, request: Request):
     db: Session = request.state.db
     order_repository = OrderRepository(db)
@@ -51,7 +51,7 @@ def update_order(order_uuid: UUID4, order_update: OrderUpdate, request: Request)
     return updated_order
 
 
-@router.put("/{order_uuid}/status", response_model=OrderRead)
+@router.put("/update_status", response_model=OrderRead)
 def update_order_status(
     order_uuid: UUID4, order_status_update: OrderStatusUpdate, request: Request
 ):
@@ -69,7 +69,7 @@ def update_order_status(
     return updated_order_status
 
 
-@router.delete("/{order_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
 def delete_order(order_uuid: UUID4, request: Request):
     db: Session = request.state.db
     order_repository = OrderRepository(db)
