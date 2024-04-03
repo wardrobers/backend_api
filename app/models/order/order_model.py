@@ -21,5 +21,5 @@ class Order(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
     # Relationships
-    user = relationship("User", back_populates="orders")
-    product = relationship("Product", back_populates="orders")
+    # user = relationship("User", back_populates="orders")
+    # product = relationship("Product", back_populates="orders")
