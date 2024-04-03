@@ -22,8 +22,8 @@ class ProductRead(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None
-    categories: list[CategoryRead] = []
-    materials: list[MaterialRead] = []
+    # categories: list[CategoryRead] = []
+    # materials: list[MaterialRead] = []
 
     class Config:
         from_attributes = True
@@ -41,8 +41,8 @@ class ProductCreate(BaseModel):
     usage_seconds: Optional[int] = None
     factory_number: Optional[str] = None
     base_price: Optional[float] = None
-    categories: Optional[list[UUID4]] = None
-    materials: Optional[list[UUID4]] = None
+    # categories: Optional[list[UUID4]] = None
+    # materials: Optional[list[UUID4]] = None
 
     class Config:
         from_attributes = True
@@ -60,8 +60,8 @@ class ProductUpdate(BaseModel):
     usage_seconds: Optional[int] = None
     factory_number: Optional[str] = None
     base_price: Optional[float] = None
-    categories: Optional[list[UUID4]] = None
-    materials: Optional[list[UUID4]] = None
+    # categories: Optional[list[UUID4]] = None
+    # materials: Optional[list[UUID4]] = None
 
     class Config:
         from_attributes = True
