@@ -12,8 +12,8 @@ class Order(Base):
     uuid = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"))
-    product_uuid = Column(UUID(as_uuid=True), ForeignKey("products.uuid"))
+    # user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"))
+    # product_uuid = Column(UUID(as_uuid=True), ForeignKey("products.uuid"))
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     price = Column(Numeric)

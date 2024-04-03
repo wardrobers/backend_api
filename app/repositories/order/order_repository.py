@@ -11,8 +11,8 @@ class OrderRepository:
 
     def create_order(self, order_data: OrderCreate) -> OrderRead:
         new_order = Order(
-            user_uuid=order_data.user_uuid,
-            product_uuid=order_data.product_uuid,
+            # user_uuid=order_data.user_uuid,
+            # product_uuid=order_data.product_uuid,
             start=order_data.start,
             end=order_data.end,
             price=order_data.price,
