@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 
 
@@ -9,7 +9,7 @@ Base = declarative_base()
 
 class Category(Base):
     __tablename__ = "categories"
-    uuid = Column(
+    uuid = mapped_column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
     name = Column(String)

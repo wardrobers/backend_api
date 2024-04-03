@@ -20,7 +20,7 @@ class Product(Base):
     number = Column(String, nullable=False)
     name = Column(String)
     article = Column(String)
-    size_uuid = Column(UUID(as_uuid=True), ForeignKey("sizes.uuid"))
+    size_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("sizes.uuid"))
     usage_count = Column(Integer, default=0)
     usage_seconds = Column(Integer, default=0)
     factory_number = Column(String)
@@ -28,6 +28,7 @@ class Product(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
+    category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
 
     categories = relationship(
         "Category", back_populates="products"

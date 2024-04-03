@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, Numeric, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,13 +10,13 @@ Base = declarative_base()
 
 class SubscriptionType(Base):
     __tablename__ = "subscription_types"
-    uuid = Column(
+    uuid = mapped_column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
     name = Column(
         String, nullable=True
     )  # Note: Nullable=True as per the table definition
-    period_uuid = Column(
+    period_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("subscription_periods.uuid"), nullable=False
     )
     price = Column(Numeric, nullable=False)
