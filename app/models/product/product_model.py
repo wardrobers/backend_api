@@ -30,10 +30,10 @@ class Product(Base):
     deleted_at = Column(DateTime)
 
     categories = relationship(
-        "Category", secondary="product_categories", back_populates="products"
+        "Category", back_populates="products"
     )
     materials = relationship(
-        "Material", secondary="product_materials", back_populates="products"
+        "Material", back_populates="products"
     )
     color = relationship("Color", back_populates="products")
     product_catalog = relationship("ProductCatalog", back_populates="products")
