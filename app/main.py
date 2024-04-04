@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request
+import uvicorn
 from .database.session import db_engine, get_db, SessionLocal
 from .models.basemixin import Base  # Adjust path as necessary
 
@@ -96,3 +97,5 @@ app.include_router(product_router.router, prefix="/products", tags=["Products"])
 app.include_router(order_router.router, prefix="/orders", tags=["Orders"])
 app.include_router(user_test_router.router, prefix="/users_test", tags=["UsersTest"])
 
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8080)), log_level="info")
