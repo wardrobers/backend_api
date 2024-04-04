@@ -7,8 +7,12 @@ from ...schemas.user.user_test_schema import UserrLoginResponse,UserrLoginReques
 from ...models.user.user_model import User, UserRole, Role
 from ...models.user.user_info_model import UserInfo
 from ...models.user.user_photo_model import UsersPhotos
+from passlib.context import CryptContext
 
 router = APIRouter()
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # User registration
 @router.post("/register_test", response_model=UserrCreateResponse)
@@ -18,7 +22,7 @@ async def register_user(user_create: UserrCreateRequest, request: Request):
     if user_instance:
         raise HTTPException(status_code=400, detail="1-0-0-0: User already exists")
     
-    hashed_password = get_context.hash(user_create.password)
+    hashed_password = pwd_context.hash(user_create.password)
     new_user = User(
         login=user_create.login,
         hashed_password=hashed_password,
