@@ -15,9 +15,7 @@ class UserActivity(Base):
     #     UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     # )
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
-    )
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
     total_confirmed_orders = Column(Integer, default=0, nullable=False)
     total_canceled_orders = Column(Integer, default=0, nullable=False)
     activity_orders = Column(Integer, default=0, nullable=False)

@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
 from .database.session import db_engine, get_db, SessionLocal

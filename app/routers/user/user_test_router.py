@@ -11,11 +11,10 @@ from ...models.user.user_photo_model import UserPhoto
 
 router = APIRouter()
 
-
 # User registration
 @router.post("/register_test", response_model=UserrCreateResponse)
 async def register_user(user_create: UserrCreateRequest, request: Request):
-    db: Session = request.state.db
+    db: Session = Depends(get_db)
     user_instance = db.query(User).filter(User.login == user_create.login).first()
     if user_instance:
         raise HTTPException(status_code=400, detail="1-0-0-0: User already exists")
@@ -30,7 +29,7 @@ async def register_user(user_create: UserrCreateRequest, request: Request):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return UserrResponse(uuid=new_user.uuid, login=new_user.login, created_at=new_user.created_at)
+    return UserrCreateResponse(uuid=new_user.uuid, login=new_user.login, created_at=new_user.created_at)
 
 
 @router.post("/login", response_model=UserrLoginResponse)
@@ -43,7 +42,6 @@ async def login_for_access_token(user_login: UserrLoginRequest, request: Request
         raise HTTPException(status_code=400, detail="1-0-0-4: Incorrect password")
     user.last_login_at = datetime.utcnow()
     db.commit()
-
     return {"uuid": user.uuid, "last_login_at": user.last_login_at}
 
 @router.post("/get", response_model=UserrGetResponse)
