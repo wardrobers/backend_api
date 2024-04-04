@@ -4,8 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
-
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class Roler(Base):

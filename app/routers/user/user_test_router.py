@@ -1,6 +1,6 @@
 import datetime
 from multiprocessing import get_context
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 from ...database.session import get_db
@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 # User registration
-@router.post("/register", response_model=UserrCreateResponse)
+@router.post("/register_test", response_model=UserrCreateResponse)
 async def register_user(user_create: UserrCreateRequest, request: Request):
     db: Session = request.state.db
     user_instance = db.query(Userr).filter(Userr.login == user_create.login).first()
