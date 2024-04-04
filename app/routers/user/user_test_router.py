@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 from ...database.session import get_db
-from ...schemas.user.user_test_schema import UserrLoginResponse,UserrLoginRequest, UserrResponse, UserrCreateRequest, UserrCreateResponse, UserrGetResponse
-from ...models.user.user_model import User, UserrRole, Role
+from ...schemas.user.user_test_schema import UserrLoginResponse,UserrLoginRequest, UserrCreateRequest, UserrCreateResponse, UserrGetResponse
+from ...models.user.user_model import User, UserRole, Role
 from ...models.user.user_info_model import UserInfo
-from ...models.user.user_photo_model import UserPhoto
+from ...models.user.user_photo_model import UsersPhotos
 
 router = APIRouter()
 

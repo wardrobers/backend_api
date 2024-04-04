@@ -38,7 +38,7 @@ class User(Base):
     orders = relationship("Order", back_populates="user")
     roles = relationship('Role', secondary='user_roles', back_populates='user')
 
-class UserrRole(Base):
+class UserRole(Base):
     __tablename__ = 'user_roles'
     user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), primary_key=True)
     role_uuid = Column(UUID(as_uuid=True), ForeignKey('roles.uuid'), primary_key=True)

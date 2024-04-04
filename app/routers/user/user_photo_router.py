@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
-
 from ...database.session import get_db
 from ...repositories.user.user_photo_repository import UserPhotoRepository
 from ...schemas.user.user_photo_schema import (
