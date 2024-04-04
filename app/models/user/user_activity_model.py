@@ -2,6 +2,7 @@ from sqlalchemy import Column, DateTime, Integer, Numeric, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
+from uuid import uuid4
 from .user_model import User
 
 
@@ -10,9 +11,10 @@ from ..basemixin import Base
 
 class UserActivity(Base):
     __tablename__ = "user_activity"
-    uuid = mapped_column(
-        UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
-    )
+    # uuid = mapped_column(
+    #     UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
+    # )
+    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
     )
