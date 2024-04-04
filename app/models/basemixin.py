@@ -20,8 +20,6 @@ class Base:
         return cls.__name__.lower()
 
 
-Base = declarative_base()
-
 
 class BaseMixin:
     id = Column(

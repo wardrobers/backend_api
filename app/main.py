@@ -10,7 +10,7 @@ def create_tables():
     Base.metadata.create_all(bind=db_engine)
 
 
-@app.on_event("startup")
+@app.lifespan("startup")
 async def startup_event():
     create_tables()
 
