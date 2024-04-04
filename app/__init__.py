@@ -9,7 +9,7 @@ api_router = APIRouter()
 # Bundle router inclusions for clarity and centralized error handling
 def include_api_routers():
     api_router.include_router(user_router.router, prefix="/users", tags=["Users"])
-    api_router.include_router(user_test_router.router, prefix="/users_test", tags=["Users_test"])
+    api_router.include_router(user_test_router.router, prefix="/users_test", tags=["UsersTest"])
     api_router.include_router(
         product_router.router, prefix="/products", tags=["Products"]
     )

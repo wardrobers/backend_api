@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 from ...database.session import get_db
-from hashlib import sha256
 from ...schemas.user.user_test_schema import UserrLoginResponse,UserrLoginRequest, UserrResponse, UserrCreateRequest, UserrCreateResponse, UserrGetResponse
 from ...models.user.user_test_model import Userr, UserrInfo, UserrPhoto, UserrRole, Roler
 

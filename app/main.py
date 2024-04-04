@@ -94,5 +94,5 @@ app.include_router(auth_router.router, prefix="/auth", tags=["Auth"])
 app.include_router(user_router.router, prefix="/users", tags=["Users"])
 app.include_router(product_router.router, prefix="/products", tags=["Products"])
 app.include_router(order_router.router, prefix="/orders", tags=["Orders"])
-app.include_router(user_test_router.router, prefix="/users_test", tags=["Users_test"])
+app.include_router(user_test_router.router, prefix="/users_test", tags=["UsersTest"])
 
