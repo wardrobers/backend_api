@@ -32,8 +32,10 @@ class User(Base):
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
     user_info = relationship("UserInfo", back_populates="user", uselist=False)
+    user_activity = relationship("UserActivity", back_populates="user", uselist=False)
     users_photos = relationship("UsersPhotos", back_populates="user")
     roles = relationship('Role', secondary='user_roles', back_populates='user')
+    orders = relationship('Order', back_populates='user')
 
 class UserRole(Base):
     __tablename__ = 'user_roles'
