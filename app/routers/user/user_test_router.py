@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 from pydantic import UUID4
 from ...database.session import get_db
 from ...schemas.user.user_test_schema import UserrLoginResponse,UserrLoginRequest, UserrResponse, UserrCreateRequest, UserrCreateResponse, UserrGetResponse
-from ...models.user.user_test_model import Userr, UserrInfo, UserrPhoto, UserrRole, Roler
+from ...models.user.user_model import User, UserrRole, Role
+from ...models.user.user_info_model import UserInfo
+from ...models.user.user_photo_model import UserPhoto
 
 router = APIRouter()
 
@@ -14,12 +16,12 @@ router = APIRouter()
 @router.post("/register_test", response_model=UserrCreateResponse)
 async def register_user(user_create: UserrCreateRequest, request: Request):
     db: Session = request.state.db
-    user_instance = db.query(Userr).filter(Userr.login == user_create.login).first()
+    user_instance = db.query(User).filter(User.login == user_create.login).first()
     if user_instance:
         raise HTTPException(status_code=400, detail="1-0-0-0: User already exists")
     
     hashed_password = get_context.hash(user_create.password)
-    new_user = Userr(
+    new_user = User(
         login=user_create.login,
         hashed_password=hashed_password,
         is_notificated=user_create.is_notificated,
@@ -34,7 +36,7 @@ async def register_user(user_create: UserrCreateRequest, request: Request):
 @router.post("/login", response_model=UserrLoginResponse)
 async def login_for_access_token(user_login: UserrLoginRequest, request: Request):
     db: Session = request.state.db
-    user = db.query(Userr).filter(Userr.login == user_login.login).first()
+    user = db.query(User).filter(User.login == user_login.login).first()
     if not user:
         raise HTTPException(status_code=400, detail="1-0-0-3: User with this login does not exist")
     if not get_context.verify(user_login.password, user.hashed_password):
@@ -47,7 +49,7 @@ async def login_for_access_token(user_login: UserrLoginRequest, request: Request
 @router.post("/get", response_model=UserrGetResponse)
 async def get_user_data(user_uuid: UUID4, request: Request):
     db: Session = request.state.db
-    user = db.query(Userr).filter(Userr.uuid == user_uuid, Userr.deleted_at.is_(None)).first()
+    user = db.query(User).filter(User.uuid == user_uuid, Userr.deleted_at.is_(None)).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
