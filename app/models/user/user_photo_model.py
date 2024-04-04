@@ -17,4 +17,4 @@ class UserPhoto(Base):
     created_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime)
 
-    user = relationship("User", back_populates="users_photos")
+    user = relationship("User", back_populates="user_photos")

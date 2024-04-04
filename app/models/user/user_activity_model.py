@@ -23,4 +23,4 @@ class UserActivity(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, onupdate=func.now(), nullable=True)
 
-    user = relationship("User", back_populates="user_activity", uselist=False)
+    user = relationship("User", back_populates="user_activity")
