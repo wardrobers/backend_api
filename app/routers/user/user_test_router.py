@@ -13,7 +13,7 @@ from passlib.context import CryptContext
 router = APIRouter()
 
 
-
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # User registration
 @router.post("/register_test", response_model=UserrCreateResponse)
 async def register_user(user_create: UserrCreateRequest, request: Request):
@@ -22,10 +22,10 @@ async def register_user(user_create: UserrCreateRequest, request: Request):
     if user_instance:
         raise HTTPException(status_code=400, detail="1-0-0-0: User already exists")
     
-    hashed_password = sha256(user_create.password.encode()).hexdigest()
+    hashed_password = pwd_context.hash(user_create.password)
     new_user = User(
         login=user_create.login,
-        hashed_password=hashed_password,
+        password=hashed_password,
         is_notificated=user_create.is_notificated,
         marketing_consent=user_create.marketing_consent
     )
