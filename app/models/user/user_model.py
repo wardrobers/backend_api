@@ -6,7 +6,7 @@ from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class User(Base):
@@ -22,10 +22,8 @@ class User(Base):
     created_at = Column(DateTime, server_default="now()", nullable=False)
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-    user_info = relationship("UserInfo", back_populates="user", uselist=False)
-    user_activity = relationship("UserActivity", back_populates="user", uselist=False)
-    user_subscription = relationship(
-        "Subscription", back_populates="user", uselist=False
-    )
-    users_photos = relationship("UsersPhotos", back_populates="user", uselist=False)
+    user_info = relationship("UserInfo", back_populates="user")
+    user_activity = relationship("UserActivity", back_populates="user")
+    user_subscription = relationship("Subscription", back_populates="user")
+    users_photos = relationship("UsersPhotos", back_populates="user")
     orders = relationship("Order", back_populates="user")

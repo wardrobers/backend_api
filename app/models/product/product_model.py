@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class Product(Base):
@@ -30,12 +30,8 @@ class Product(Base):
     deleted_at = Column(DateTime)
     category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
 
-    categories = relationship(
-        "Category", back_populates="products"
-    )
-    materials = relationship(
-        "Material", back_populates="products"
-    )
+    categories = relationship("Category", back_populates="products")
+    materials = relationship("Material", back_populates="products")
     color = relationship("Color", back_populates="products")
     product_catalog = relationship("ProductCatalog", back_populates="products")
     size = relationship("Size", back_populates="products")

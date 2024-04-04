@@ -5,7 +5,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class Subscription(Base):

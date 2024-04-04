@@ -1,20 +1,22 @@
 from uuid import uuid4
 from sqlalchemy import Column, DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, backref, mapped_column
+from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 
 from .user_model import User
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class UserInfo(Base):
     __tablename__ = "user_info"
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    users_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
+    users_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    )
     name = Column(String, nullable=False)
     surname = Column(String, nullable=True)
     second_name = Column(String, nullable=True)

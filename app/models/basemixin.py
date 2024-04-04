@@ -4,7 +4,7 @@ from typing import TypeVar, Type, Optional, Any
 from sqlalchemy.orm import Session, declared_attr, object_session
 from sqlalchemy import Column, DateTime, func, Boolean, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from sqlalchemy.ext.declarative import as_declarative, declared_attr, declarative_base
 
 # Create a generic type for the base class
 T = TypeVar("T", bound="BaseMixin")
@@ -18,6 +18,9 @@ class Base:
     @declared_attr
     def __tablename__(cls) -> str:
         return cls.__name__.lower()
+
+
+Base = declarative_base()
 
 
 class BaseMixin:

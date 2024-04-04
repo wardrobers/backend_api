@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class CatalogProductType(Base):
@@ -23,4 +23,6 @@ class CatalogProductType(Base):
 
     # Relationships
     product_type = relationship("ProductType", back_populates="catalog_product_types")
-    product_catalog = relationship("ProductCatalog", back_populates="catalog_product_types")
+    product_catalog = relationship(
+        "ProductCatalog", back_populates="catalog_product_types"
+    )

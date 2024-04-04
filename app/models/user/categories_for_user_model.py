@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class CategoryForUser(Base):

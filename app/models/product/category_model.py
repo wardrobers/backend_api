@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class Category(Base):

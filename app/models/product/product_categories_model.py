@@ -9,7 +9,7 @@ from sqlalchemy.orm import declarative_base
 # from .product_model import Product  # noqa: F401
 # from .category_model import Category  # noqa: F401
 
-Base = declarative_base()
+from ..basemixin import Base
 
 
 class ProductCategory(Base):
