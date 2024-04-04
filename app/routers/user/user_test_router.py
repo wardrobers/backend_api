@@ -49,7 +49,7 @@ async def login_for_access_token(user_login: UserrLoginRequest, request: Request
 @router.post("/get", response_model=UserrGetResponse)
 async def get_user_data(user_uuid: UUID4, request: Request):
     db: Session = request.state.db
-    user = db.query(User).filter(User.uuid == user_uuid, Userr.deleted_at.is_(None)).first()
+    user = db.query(User).filter(User.uuid == user_uuid, User.deleted_at.is_(None)).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
