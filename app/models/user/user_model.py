@@ -23,6 +23,7 @@ class User(Base):
     __table_args__ = {"extend_existing": True}
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     login = Column(String, nullable=False)
+    # super_admin = Column(Boolean)
     password = Column(String, nullable=False)
     is_notificated = Column(Boolean, nullable=False, default=False)
     last_login_at = Column(DateTime)
@@ -33,10 +34,9 @@ class User(Base):
     user_info = relationship("UserInfo", back_populates="user", uselist=False)
     user_activity = relationship("UserActivity", back_populates="user", uselist=False)
     user_subscription = relationship("Subscription", back_populates="user")
-    user_photos = relationship("UsersPhotos", back_populates="user")
+    users_photos = relationship("UsersPhotos", back_populates="user")
     orders = relationship("Order", back_populates="user")
-    roles = relationship('UserRole', secondary='user_roles', back_populates='user')
-
+    roles = relationship('Role', secondary='user_roles', back_populates='user')
 
 class UserrRole(Base):
     __tablename__ = 'user_roles'
@@ -44,5 +44,4 @@ class UserrRole(Base):
     role_uuid = Column(UUID(as_uuid=True), ForeignKey('roles.uuid'), primary_key=True)
     created_at = Column(DateTime, server_default="now()")
     updated_at = Column(DateTime)
-    deleted_at = Column(DateTime)
-    user = relationship('User', back_populates='user_photos')    
+    deleted_at = Column(DateTime) 
