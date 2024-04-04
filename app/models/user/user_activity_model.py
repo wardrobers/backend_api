@@ -2,6 +2,7 @@ from sqlalchemy import Column, DateTime, Integer, Numeric, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
+from .user_model import User
 
 
 from ..basemixin import Base
