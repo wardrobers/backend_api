@@ -3,7 +3,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
-from .user_model import User
 
 
 from ..basemixin import Base
