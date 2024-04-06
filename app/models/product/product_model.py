@@ -38,3 +38,4 @@ class Product(Base):
     products_catalog = relationship("ProductsCatalog", back_populates="products")
     price = relationship("Price", back_populates="products")
     products_catalog_photos = relationship("ProductsCatalogPhoto", back_populates="products")
+    brand = relationship("Brand", back_populates="products")
