@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
-
+from .product_type_model import ProductType
 
 from ..basemixin import Base
 
