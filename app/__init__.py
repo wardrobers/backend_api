@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from ..tests import user_test_router
 from .routers.user import user_router
 from .routers.product import product_router
 from .routers.order import order_router
