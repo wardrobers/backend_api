@@ -17,4 +17,4 @@ class Brand(Base):
     deleted_at = Column(DateTime)
 
     products = relationship("Product", back_populates="brand")
-    brand = relationship("ProductsCatalog", back_populates="brand")
+    products_catalog = relationship("ProductsCatalog", back_populates="brand")
