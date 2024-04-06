@@ -22,6 +22,7 @@ class Product(Base):
     name = Column(String)
     article = Column(String)
     size_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("sizes.uuid"))
+    brand_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("brands.uuid"))
     usage_count = Column(Integer, default=0)
     usage_seconds = Column(Integer, default=0)
     factory_number = Column(String)
