@@ -15,7 +15,7 @@ class CatalogProductType(Base):
     product_type_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("product_types.uuid"), nullable=False
     )
-    product_catalog_uuid = mapped_column(
+    producs_catalog_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("products_catalog.uuid"), nullable=False
     )
     created_at = Column(DateTime, server_default=func.now())

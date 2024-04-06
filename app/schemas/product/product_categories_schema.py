@@ -6,7 +6,7 @@ from .category_schema import CategoryBase
 
 class ProductCategoryBase(BaseModel):
     uuid: Optional[UUID4]
-    product_catalog_uuid: UUID4
+    products_catalog_uuid: UUID4
     category_uuid: UUID4
     created_at: datetime
     deleted_at: Optional[datetime]

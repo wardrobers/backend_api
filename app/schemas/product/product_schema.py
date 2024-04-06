@@ -9,7 +9,7 @@ from .material_schema import MaterialRead
 class ProductRead(BaseModel):
     uuid: UUID4
     status_code: str
-    product_catalog_uuid: UUID4
+    products_catalog_uuid: UUID4
     color_uuid: UUID4
     number: str
     name: Optional[str] = None
@@ -31,7 +31,7 @@ class ProductRead(BaseModel):
 
 class ProductCreate(BaseModel):
     status_code: Optional[str] = None
-    product_catalog_uuid: Optional[UUID4] = None
+    products_catalog_uuid: Optional[UUID4] = None
     color_uuid: Optional[UUID4] = None
     number: Optional[str] = None
     name: Optional[str] = None
@@ -50,7 +50,7 @@ class ProductCreate(BaseModel):
 
 class ProductUpdate(BaseModel):
     status_code: Optional[str] = None
-    product_catalog_uuid: Optional[UUID4] = None
+    products_catalog_uuid: Optional[UUID4] = None
     color_uuid: Optional[UUID4] = None
     number: Optional[str] = None
     name: Optional[str] = None
