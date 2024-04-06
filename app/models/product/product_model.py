@@ -4,6 +4,7 @@ from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 from .product_catalog_model import ProductsCatalog
 from .product_catalog_photo_model import ProductsCatalogPhoto
+from .product_material_model import ProductMaterial
 
 from ..basemixin import Base
 
