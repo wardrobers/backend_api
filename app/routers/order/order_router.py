@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
+from typing import Optional
 
 from ...database.session import get_db
 from ...repositories.order.order_repository import OrderRepository
@@ -11,7 +12,7 @@ from ...schemas.order.order_status_schema import OrderStatusUpdate
 router = APIRouter()
 
 
-@router.post("/", response_model=OrderRead, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=Optional[OrderRead], status_code=status.HTTP_201_CREATED)
 def create_order(order_create: OrderCreate, request: Request):
     db: Session = request.state.db
     order_repository = OrderRepository(db)

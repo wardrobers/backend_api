@@ -19,7 +19,7 @@ class OrderCreate(OrderBase):
 class OrderRead(OrderBase):
     uuid: UUID4
     user: UserRead
-    product: ProductRead
+    products: ProductRead
 
     class Config:
         from_attributes = True
