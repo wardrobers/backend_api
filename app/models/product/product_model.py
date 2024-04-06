@@ -28,9 +28,7 @@ class Product(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
-    category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
 
-    categories = relationship("Category", back_populates="products")
     materials = relationship("Material", back_populates="products")
     color = relationship("Color", back_populates="products")
     products_catalog = relationship("ProductsCatalog", back_populates="products")

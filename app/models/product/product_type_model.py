@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 from ..basemixin import Base
@@ -15,3 +15,5 @@ class ProductType(Base):
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(DateTime, nullable=True)
     deleted_at = Column(DateTime, nullable=True)
+
+    categories = relationship("Category", back_populates="product_type")
