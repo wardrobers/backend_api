@@ -4,10 +4,10 @@ from multiprocessing import get_context
 from fastapi import APIRouter, HTTPException, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
-from ...schemas.user.user_test_schema import UserrLoginResponse,UserrLoginRequest, UserrCreateRequest, UserrCreateResponse, UserrGetResponse
-from ...models.user.user_model import User, UserRole, Role
-from ...models.user.user_info_model import UserInfo
-from ...models.user.user_photo_model import UsersPhotos
+from ..app.schemas.user.user_test_schema import UserrLoginResponse,UserrLoginRequest, UserrCreateRequest, UserrCreateResponse, UserrGetResponse
+from ..app.models.user.user_model import User, UserRole, Role
+from ..app.models.user.user_info_model import UserInfo
+from ..app.models.user.user_photo_model import UsersPhotos
 from passlib.context import CryptContext
 
 router = APIRouter()

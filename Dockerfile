@@ -9,9 +9,6 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
-# RUN apt-get update && apt-get install -y curl
-# RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-# RUN apt-get update && apt-get install google-cloud-cli
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
