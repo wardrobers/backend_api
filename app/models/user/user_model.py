@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
 from ..basemixin import Base
 
+from .user_activity_model import UserActivity
+
 
 class Role(Base):
     __tablename__ = 'roles'
