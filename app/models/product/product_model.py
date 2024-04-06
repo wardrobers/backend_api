@@ -14,7 +14,7 @@ class Product(Base):
     )
     status_code = Column(String, nullable=False)
     product_catalog_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product_catalogs.uuid")
+        UUID(as_uuid=True), ForeignKey("products_catalog.uuid")
     )
     color_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("colors.uuid"))
     number = Column(String, nullable=False)
