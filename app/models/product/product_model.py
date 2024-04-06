@@ -13,9 +13,9 @@ class Product(Base):
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
     status_code = Column(String, nullable=False)
-    product_catalog_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("product_catalogs.uuid")
-    )
+    # product_catalog_uuid = mapped_column(
+    #     UUID(as_uuid=True), ForeignKey("product_catalogs.uuid")
+    # )
     color_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("colors.uuid"))
     number = Column(String, nullable=False)
     name = Column(String)

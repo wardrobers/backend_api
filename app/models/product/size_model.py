@@ -12,9 +12,6 @@ class Size(Base):
     uuid = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
-    product_uuid = Column(
-        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
-    )
     back_length = Column(Numeric, nullable=True)
     sleeve_length = Column(Numeric, nullable=True)
     leg_length = Column(Numeric, nullable=True)
