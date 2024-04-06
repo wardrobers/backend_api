@@ -2,6 +2,7 @@ from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
+from .catalog_product_type_model import CatalogProductType
 
 from ..basemixin import Base
 
