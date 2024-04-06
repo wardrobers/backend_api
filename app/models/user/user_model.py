@@ -43,17 +43,3 @@ class UserRole(Base):
     created_at = Column(DateTime, server_default="now()")
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-
-
-class UserActivity(Base):
-    __tablename__ = "user_activity"
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
-    total_confirmed_orders = Column(Integer, default=0, nullable=False)
-    total_canceled_orders = Column(Integer, default=0, nullable=False)
-    activity_orders = Column(Integer, default=0, nullable=False)
-    subscription_now = Column(Boolean, default=False, nullable=False)
-    total_money_spent = Column(Numeric, nullable=True)
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime, onupdate=func.now(), nullable=True)
-    user = relationship("User", back_populates="user_activity")
