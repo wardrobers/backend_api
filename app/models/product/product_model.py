@@ -31,7 +31,7 @@ class Product(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
 
-    materials = relationship("Material", back_populates="products")
+    materials = relationship("Material", secondary="product_materials", back_populates="products")
     color = relationship("Color", back_populates="products")
     size = relationship("Size", back_populates="products")
     orders = relationship("Order", back_populates="products")
