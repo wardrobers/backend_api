@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 
 from ..basemixin import Base
@@ -8,7 +8,7 @@ from ..basemixin import Base
 
 class ProductType(Base):
     __tablename__ = "product_types"
-    uuid = Column(
+    uuid = mapped_column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
     name = Column(String(255), nullable=False)
@@ -17,3 +17,4 @@ class ProductType(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     categories = relationship("Category", back_populates="product_type")
+    categories = relationship("CatalogProductType", back_populates="product_type")

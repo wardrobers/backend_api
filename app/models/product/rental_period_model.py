@@ -17,4 +17,4 @@ class RentalPeriod(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     # Assuming there is a Price model that has a foreign key to RentalPeriod
-    prices = relationship("Price", back_populates="rental_periods")
+    price = relationship("Price", back_populates="rental_period")

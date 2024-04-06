@@ -34,3 +34,4 @@ class Product(Base):
     size = relationship("Size", back_populates="products")
     orders = relationship("Order", back_populates="products")
     products_catalog = relationship("ProductsCatalog", back_populates="products")
+    price = relationship("Price", back_populates="products")

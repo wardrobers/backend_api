@@ -23,5 +23,5 @@ class Price(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
-    product = relationship("Product", back_populates="prices")
-    rental_period = relationship("RentalPeriod", back_populates="prices")
+    products = relationship("Product", back_populates="price")
+    rental_period = relationship("RentalPeriod", back_populates="price")
