@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, String, Table, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from pydantic import UUID4
 import datetime
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 
 # Ensure you are importing Product and Category models in this file
 # This ensures the relationships are properly constructed
@@ -20,3 +20,6 @@ class ProductCategory(Base):
     category_uuid = Column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
     created_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     deleted_at = Column(DateTime)
+    products = relationship(
+        "Product", secondary="product_categories", back_populates="categories"
+    )

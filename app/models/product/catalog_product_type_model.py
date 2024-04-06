@@ -23,6 +23,6 @@ class CatalogProductType(Base):
 
     # Relationships
     product_type = relationship("ProductType", back_populates="catalog_product_types")
-    product_catalog = relationship(
-        "ProductCatalog", back_populates="catalog_product_types"
+    products_catalog = relationship(
+        "ProductsCatalog", back_populates="catalog_product_types"
     )

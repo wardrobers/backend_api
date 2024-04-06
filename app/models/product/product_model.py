@@ -13,9 +13,9 @@ class Product(Base):
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
     status_code = Column(String, nullable=False)
-    # product_catalog_uuid = mapped_column(
-    #     UUID(as_uuid=True), ForeignKey("product_catalogs.uuid")
-    # )
+    product_catalog_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("product_catalogs.uuid")
+    )
     color_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("colors.uuid"))
     number = Column(String, nullable=False)
     name = Column(String)
@@ -33,6 +33,6 @@ class Product(Base):
     categories = relationship("Category", back_populates="products")
     materials = relationship("Material", back_populates="products")
     color = relationship("Color", back_populates="products")
-    # product_catalog = relationship("ProductCatalog", back_populates="products")
+    products_catalog = relationship("ProductsCatalog", back_populates="products")
     size = relationship("Size", back_populates="products")
     orders = relationship("Order", back_populates="products")
