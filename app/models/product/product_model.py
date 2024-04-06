@@ -33,6 +33,6 @@ class Product(Base):
     categories = relationship("Category", back_populates="products")
     materials = relationship("Material", back_populates="products")
     color = relationship("Color", back_populates="products")
-    product_catalog = relationship("ProductCatalog", back_populates="products")
+    # product_catalog = relationship("ProductCatalog", back_populates="products")
     size = relationship("Size", back_populates="products")
     orders = relationship("Order", back_populates="products")
