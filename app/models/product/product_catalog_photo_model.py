@@ -22,7 +22,7 @@ class ProductsCatalogPhoto(Base):
     created_at = Column(DateTime, nullable=True, server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)
 
-    product = relationship("Product", back_populates="products_catalog_photos")
+    products = relationship("Product", back_populates="products_catalog_photos")
     products_catalog = relationship(
         "ProductsCatalog", back_populates="products_catalog_photos"
     )
