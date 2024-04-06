@@ -1,6 +1,6 @@
-from sqlalchemy import Column, String, DateTime, Numeric
+from sqlalchemy import Column, String, DateTime, Numeric, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
 
 
@@ -12,6 +12,9 @@ class Size(Base):
     uuid = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
+    product_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    )
     back_length = Column(Numeric, nullable=True)
     sleeve_length = Column(Numeric, nullable=True)
     leg_length = Column(Numeric, nullable=True)
@@ -22,3 +25,5 @@ class Size(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime, nullable=True)
+
+    products = relationship("Product", back_populates="size")
