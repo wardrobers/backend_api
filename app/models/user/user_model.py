@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 from ..basemixin import Base
 
 from .user_activity_model import UserActivity
+from .user_photo_model import UsersPhotos
 
 
 class Role(Base):
