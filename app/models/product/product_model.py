@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship, mapped_column
 from sqlalchemy.sql import func
 from .product_catalog_model import ProductsCatalog
+from .product_catalog_photo_model import ProductsCatalogPhoto
 
 from ..basemixin import Base
 
@@ -35,3 +36,4 @@ class Product(Base):
     orders = relationship("Order", back_populates="products")
     products_catalog = relationship("ProductsCatalog", back_populates="products")
     price = relationship("Price", back_populates="products")
+    products_catalog_photos = relationship("ProductsCatalogPhoto", back_populates="products")
