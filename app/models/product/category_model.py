@@ -12,7 +12,7 @@ class Category(Base):
     uuid = mapped_column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
-    product_types_uuid = mapped_column(
+    product_type_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("product_types.uuid")
     )
     name = Column(String)
