@@ -20,6 +20,8 @@ router = APIRouter()
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
 # User registration
 @router.post("/register_test", response_model=UserrCreateResponse)
 async def register_user(user_create: UserrCreateRequest, request: Request):
@@ -74,25 +76,31 @@ async def get_user_data(user_uuid: UUID4, request: Request):
         "is_notificated": user.is_notificated,
         "marketing_consent": user.marketing_consent,
         "created_at": user.created_at,
-        "info": {
-            "name": user.info.name,
-            "last_name": user.info.last_name,
-            "email": user.info.email,
-        }
-        if user.info
-        else {},
-        "photos": [
-            {"uuid": photo.uuid, "storage_url": photo.storage_url}
-            for photo in user.photos  # Access photos directly from the user
-        ]
-        if user.photos
-        else [],
-        "roles": [
-            {"uuid": role.role_uuid, "code": role.code, "name": role.name}
-            for role in user.roles  # Access roles directly from the user
-        ]
-        if user.roles
-        else [],
+        "info": (
+            {
+                "name": user.info.name,
+                "last_name": user.info.last_name,
+                "email": user.info.email,
+            }
+            if user.info
+            else {}
+        ),
+        "photos": (
+            [
+                {"uuid": photo.uuid, "storage_url": photo.storage_url}
+                for photo in user.photos  # Access photos directly from the user
+            ]
+            if user.photos
+            else []
+        ),
+        "roles": (
+            [
+                {"uuid": role.role_uuid, "code": role.code, "name": role.name}
+                for role in user.roles  # Access roles directly from the user
+            ]
+            if user.roles
+            else []
+        ),
     }
 
     return response

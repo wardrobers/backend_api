@@ -23,5 +23,5 @@ class CategoryForUser(Base):
     category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
 
     # Relationships
-    user = relationship("User", back_populates="categories_for_user")
-    category = relationship("Category", back_populates="categories_for_user")
+    user = relationship("User", back_populates="category_for_user")
+    category = relationship("Category", back_populates="category_for_user")

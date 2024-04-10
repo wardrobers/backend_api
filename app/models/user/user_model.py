@@ -29,5 +29,7 @@ class User(Base):
     subscription = relationship("Subscription", back_populates="user")
     user_info = relationship("UserInfo", uselist=False, back_populates="user")
     user_activity = relationship("UserActivity", uselist=False, back_populates="user")
+    user_basket = relationship("UserBasket", uselist=False, back_populates="user")
+    user_photos = relationship("UsersPhotos", back_populates="user")
     role = relationship("Role", secondary="user_roles", back_populates="user")
-    categories_for_user = relationship("CategoriesForUser", back_populates="user")
+    category_for_user = relationship("CategoriesForUser", back_populates="user")

@@ -19,5 +19,6 @@ class Category(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
-    # Relationship back to Product
+    # Relationships
     product_type = relationship("ProductType", back_populates="categories")
+    category_for_user = relationship("CategoryForUser", back_populates="category")
