@@ -9,9 +9,9 @@ class UserActivityBase(BaseModel):
     total_canceled_orders: int = 0
     activity_orders: int = 0
     subscription_now: bool = False
-    total_money_spent: Optional[float] = (
-        None  # Using float for simplicity in JSON serialization
-    )
+    total_money_spent: Optional[
+        float
+    ] = None  # Using float for simplicity in JSON serialization
 
 
 class UserActivityCreate(UserActivityBase):

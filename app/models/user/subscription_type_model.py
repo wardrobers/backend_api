@@ -10,11 +10,15 @@ from ..basemixin import Base
 
 class SubscriptionType(Base):
     __tablename__ = "subscription_types"
-    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4())
+    uuid = Column(
+        UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
+    )
     name = Column(
         String, nullable=True
     )  # Note: Nullable=True as per the table definition
-    period_uuid = Column(UUID(as_uuid=True), ForeignKey("subscription_periods.uuid"), nullable=False)
+    period_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("subscription_periods.uuid"), nullable=False
+    )
     price = Column(Numeric, nullable=False)
     count_free_orders = Column(Integer, nullable=False)
     created_at = Column(DateTime, server_default=func.now())

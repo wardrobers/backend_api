@@ -17,4 +17,6 @@ class ProductType(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     categories = relationship("Category", back_populates="product_type")
-    catalog_product_types = relationship("CatalogProductType", back_populates="product_type")
+    catalog_product_types = relationship(
+        "CatalogProductType", back_populates="product_type"
+    )

@@ -22,8 +22,12 @@ class OrderItem(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    order_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('orders.uuid'), nullable=False)
-    article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
+    order_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False
+    )
+    article_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    )
 
     # Relationships
     order = relationship("Order", back_populates="order_item")

@@ -6,9 +6,8 @@ from sqlalchemy.orm import relationship, mapped_column
 from ..basemixin import Base
 
 
-
 class Role(Base):
-    __tablename__ = 'roles'
+    __tablename__ = "roles"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = Column(String, nullable=False)
@@ -18,4 +17,4 @@ class Role(Base):
     deleted_at = Column(DateTime)
 
     # Relationships
-    user = relationship('User', secondary='user_roles', back_populates='role')
+    user = relationship("User", secondary="user_roles", back_populates="role")

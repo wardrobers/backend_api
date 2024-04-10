@@ -25,14 +25,20 @@ class Product(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    brand_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('brands.uuid'), nullable=False)
+    brand_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("brands.uuid"), nullable=False
+    )
 
     # Relationships
-    materials = relationship("Material", secondary="product_materials", back_populates="product")
+    materials = relationship(
+        "Material", secondary="product_materials", back_populates="product"
+    )
     color = relationship("Color", back_populates="product")
     size = relationship("Size", back_populates="product")
     orders = relationship("Order", back_populates="product")
     products_catalog = relationship("ProductsCatalog", back_populates="product")
     price = relationship("Price", back_populates="product")
-    products_catalog_photos = relationship("ProductsCatalogPhoto", back_populates="product")
+    products_catalog_photos = relationship(
+        "ProductsCatalogPhoto", back_populates="product"
+    )
     brand = relationship("Brand", back_populates="product")

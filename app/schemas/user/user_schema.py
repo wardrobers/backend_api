@@ -36,9 +36,9 @@ class UserUpdate(BaseModel):
     login: Optional[str] = None
     is_notified: Optional[bool] = None
     marketing_consent: Optional[bool] = None
-    user_info: Optional[UserInfoBase] = (
-        None  # Assume nested updates are handled appropriately.
-    )
+    user_info: Optional[
+        UserInfoBase
+    ] = None  # Assume nested updates are handled appropriately.
 
 
 class UserDelete(BaseModel):

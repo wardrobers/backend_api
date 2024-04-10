@@ -20,7 +20,6 @@ class Base:
         return cls.__name__.lower()
 
 
-
 class BaseMixin:
     id = Column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()

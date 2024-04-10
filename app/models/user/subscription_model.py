@@ -11,8 +11,12 @@ class Subscription(Base):
     __tablename__ = "subscriptions"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
-    subscription_type_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('subscription_types.uuid'), nullable=False)
+    user_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    )
+    subscription_type_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("subscription_types.uuid"), nullable=False
+    )
     subscription_start = Column(DateTime)
     subscription_finish = Column(DateTime)
     count_free_orders = Column(Integer)

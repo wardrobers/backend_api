@@ -9,7 +9,7 @@ from ..basemixin import Base
 
 class SubscriptionPeriod(Base):
     __tablename__ = "subscription_periods"
-    
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=func.now())

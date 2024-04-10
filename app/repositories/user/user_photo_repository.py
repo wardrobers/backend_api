@@ -15,17 +15,23 @@ class UserPhotoRepository:
         return new_photo
 
     def get_photos_by_user_uuid(self, user_uuid: str) -> list[UsersPhotos]:
-        return self.db.query(UsersPhotos).filter(UsersPhotos.user_uuid == user_uuid).all()
+        return (
+            self.db.query(UsersPhotos).filter(UsersPhotos.user_uuid == user_uuid).all()
+        )
 
     def delete_photo(self, photo_uuid: str):
-        photo = self.db.query(UsersPhotos).filter(UsersPhotos.uuid == photo_uuid).first()
+        photo = (
+            self.db.query(UsersPhotos).filter(UsersPhotos.uuid == photo_uuid).first()
+        )
         if photo:
             self.db.delete(photo)
             self.db.commit()
 
     def update_photo(self, photo_uuid: str, photo_data: dict) -> Optional[UsersPhotos]:
         """Update a user photo's details."""
-        photo = self.db.query(UsersPhotos).filter(UsersPhotos.uuid == photo_uuid).first()
+        photo = (
+            self.db.query(UsersPhotos).filter(UsersPhotos.uuid == photo_uuid).first()
+        )
         if photo:
             for key, value in photo_data.items():
                 setattr(photo, key, value)

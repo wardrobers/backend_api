@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class ArticleStatus(Base):
     __tablename__ = "article_statuses"
 

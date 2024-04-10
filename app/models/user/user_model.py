@@ -11,10 +11,9 @@ from .user_photo_model import UsersPhotos
 from .role_model import Role
 
 
-
 class User(Base):
     __tablename__ = "users"
-    
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     login = Column(String, nullable=False)
     password = Column(String, nullable=False)
