@@ -21,4 +21,4 @@ class SubscriptionType(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime, nullable=True)
     # Assuming Subscription model exists and is correctly defined
-    subscriptions = relationship("Subscription", back_populates="subscription_type")
+    subscription = relationship("Subscription", back_populates="subscription_type")
