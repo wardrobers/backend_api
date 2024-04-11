@@ -8,8 +8,8 @@ from ..basemixin import Base
 
 
 class SizeAndFit(Base):
-    __tablename__ = 'size_and_fit'
-    
+    __tablename__ = "size_and_fit"
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)
     created_at = Column(DateTime, server_default=func.now())

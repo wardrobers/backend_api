@@ -8,8 +8,8 @@ from ..basemixin import Base
 
 
 class Variant(Base):
-    __tablename__ = 'variants'
-    
+    __tablename__ = "variants"
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     eu_size = Column(String)
     index = Column(Integer)
@@ -18,10 +18,16 @@ class Variant(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
-    sku_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('stock_keeping_units.uuid'), nullable=True)
+    product_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    )
+    sku_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("stock_keeping_units.uuid"), nullable=True
+    )
     name = mapped_column(String, nullable=False)
-    color_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('variant_colors.uuid'), nullable=True)
+    color_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("variant_colors.uuid"), nullable=True
+    )
 
     # Relationships
     product = relationship("Product", back_populates="variants")

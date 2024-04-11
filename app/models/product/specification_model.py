@@ -19,9 +19,7 @@ class Specification(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    article_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
-    )
+    article_uuid = mapped_column(String, ForeignKey("article.article"), nullable=False)
 
     # Relationships
     article = relationship("Article", back_populates="specification")

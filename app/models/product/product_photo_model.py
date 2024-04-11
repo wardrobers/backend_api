@@ -9,7 +9,7 @@ from ..basemixin import Base
 
 class ProductPhoto(Base):
     __tablename__ = "product_photos"
-    
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     index = Column(Integer, default=1)
     showcase = Column(Boolean, default=False)

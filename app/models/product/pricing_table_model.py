@@ -9,8 +9,8 @@ from ..basemixin import Base
 
 
 class PricingTable(Base):
-    __tablename__ = 'pricing_table'
-    
+    __tablename__ = "pricing_table"
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     title = Column(String, nullable=False)
     base_price = Column(Numeric, nullable=False)
@@ -21,8 +21,12 @@ class PricingTable(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
-    rental_period_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('rental_periods.uuid'), nullable=False)
+    product_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    )
+    rental_period_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("rental_periods.uuid"), nullable=False
+    )
 
     # Relationships
     product = relationship("Product", back_populates="price")

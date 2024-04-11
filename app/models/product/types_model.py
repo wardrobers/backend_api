@@ -8,8 +8,8 @@ from ..basemixin import Base
 
 
 class Type(Base):
-    __tablename__ = 'types'
-    
+    __tablename__ = "types"
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)
     created_at = Column(DateTime, server_default=func.now())

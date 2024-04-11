@@ -9,7 +9,7 @@ from ..basemixin import Base
 
 class ProductType(Base):
     __tablename__ = "product_types"
-    
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)

@@ -9,7 +9,7 @@ from ..basemixin import Base
 
 class Category(Base):
     __tablename__ = "categories"
-    
+
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String)
     default = Column(Boolean)

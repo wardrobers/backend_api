@@ -11,7 +11,7 @@ class Article(Base):
     __tablename__ = "article"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    article = Column(UUID(as_uuid=True), unique=True)
+    article = mapped_column(String, nullable=False)
     factory_number = Column(String)
     size = Column(String)
     color = Column(String)
@@ -26,7 +26,7 @@ class Article(Base):
         UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False
     )
     status_code = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article_statuses.status_code"), nullable=False
+        String, ForeignKey("article_statuses.status_code"), nullable=False
     )
     types_of_operation_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("types_of_operations.uuid"), nullable=False
