@@ -20,8 +20,8 @@ class CategoryForUser(Base):
     user_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
     )
-    category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
+    category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("types.uuid"))
 
     # Relationships
     user = relationship("User", back_populates="category_for_user")
-    category = relationship("Category", back_populates="category_for_user")
+    category = relationship("Type", back_populates="category_for_user")

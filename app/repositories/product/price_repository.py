@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from ...models.product.price_model import Price
+from ...models.product.pricing_table_model import Price
 from ...schemas.product.price_schema import PriceCreate, PriceUpdate
 
 

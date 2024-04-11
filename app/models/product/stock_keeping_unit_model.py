@@ -20,3 +20,4 @@ class StockKeepingUnit(Base):
     # Relationships
     article = relationship("Article", back_populates="stock_keeping_unit")
     user_basket = relationship("UserBasket", back_populates="sku")
+    variants = relationship("Variant", back_populates="sku")

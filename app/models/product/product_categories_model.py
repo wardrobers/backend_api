@@ -1,13 +1,8 @@
-from sqlalchemy import Column, DateTime, String, Table, ForeignKey
+from sqlalchemy import Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from pydantic import UUID4
-import datetime
-from sqlalchemy.orm import declarative_base, relationship
-
-# Ensure you are importing Product and Category models in this file
-# This ensures the relationships are properly constructed
-# from .product_model import Product  # noqa: F401
-# from .category_model import Category  # noqa: F401
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.sql import func
+from uuid import uuid4
 
 from ..basemixin import Base
 
@@ -15,11 +10,10 @@ from ..basemixin import Base
 class ProductCategory(Base):
     __tablename__ = "product_categories"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=UUID4)
-    product_uuid = Column(UUID(as_uuid=True), ForeignKey("products.uuid"))
-    category_uuid = Column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
-    created_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    created_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime)
-    products = relationship(
-        "Product", secondary="product_categories", back_populates="categories"
-    )
+
+    # Foreign Keys
+    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("products.uuid"))
+    category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
