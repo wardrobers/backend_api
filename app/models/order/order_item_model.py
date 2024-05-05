@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Time, ForeignKey, String, Numeric, Text
+from sqlalchemy import Column, DateTime, Time, ForeignKey, Numeric, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
@@ -16,7 +16,7 @@ class OrderItem(Base):
     time_start = Column(Time, nullable=False)
     price = Column(Numeric)
     comment = Column(Text)
-    bill = Column(String)
+    bill = Column(Text)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)

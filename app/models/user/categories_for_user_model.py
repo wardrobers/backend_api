@@ -24,4 +24,4 @@ class CategoryForUser(Base):
 
     # Relationships
     user = relationship("User", back_populates="category_for_user")
-    category = relationship("Type", back_populates="category_for_user")
+    category = relationship("Category", back_populates="category_for_user")

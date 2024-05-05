@@ -12,7 +12,6 @@ class Order(Base):
     __tablename__ = "orders"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    status_code = Column(UUID(as_uuid=True), unique=True)
     total_price = Column(Numeric)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
@@ -20,6 +19,8 @@ class Order(Base):
 
     # Foreign keys
     user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("users.uuid"))
+    status_code = mapped_column(String, ForeignKey("order_statuses.code"))
 
     # Relationships
     user = relationship("User", back_populates="order")
+    status = relationship("OrderStatus", back_populates="order")

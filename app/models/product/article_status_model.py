@@ -11,7 +11,7 @@ class ArticleStatus(Base):
     __tablename__ = "article_statuses"
 
     status_code = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    name = Column(String)
+    name = Column(String(9))
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
