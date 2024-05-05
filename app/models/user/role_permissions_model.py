@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from ..basemixin import Base
 
 
-class RolePermission(Base):
+class RolePermissions(Base):
     __tablename__ = "role_permissions"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)

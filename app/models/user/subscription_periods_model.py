@@ -7,7 +7,7 @@ from uuid import uuid4
 from ..basemixin import Base
 
 
-class SubscriptionPeriod(Base):
+class SubscriptionPeriods(Base):
     __tablename__ = "subscription_periods"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)

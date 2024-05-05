@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy.orm import Session
-from ...models.user.user_photo_model import UsersPhotos
+from ...models.user.user_photos_model import UsersPhotos
 from ...schemas.user.user_photo_schema import UserPhotoCreate
 
 

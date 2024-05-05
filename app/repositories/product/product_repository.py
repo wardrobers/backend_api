@@ -3,8 +3,8 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 from ...models.product.product_model import Product
 from ...models.product.category_model import Category
-from ...models.product.material_model import Material
-from ...models.product.color_model import Color
+from ...models.product.materials_model import Material
+from ...models.product.colors_model import Color
 from ...models.product.clothing_size_model import Size
 from ...models.product.brand_model import Brand
 from ...models.product.pricing_table_model import Price

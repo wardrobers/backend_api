@@ -9,7 +9,7 @@ from ..basemixin import Base
 
 
 class OrderStatus(Base):
-    __tablename__ = "order_statuses"
+    __tablename__ = "order_status"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = mapped_column(String(255), nullable=False)

@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship, mapped_column
 from ..basemixin import Base
 
 
-class Role(Base):
+class Roles(Base):
     __tablename__ = "roles"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)

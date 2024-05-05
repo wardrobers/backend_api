@@ -7,7 +7,7 @@ from uuid import uuid4
 from ..basemixin import Base
 
 
-class Material(Base):
+class Materials(Base):
     __tablename__ = "materials"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -17,7 +17,7 @@ class Material(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_type_uuid = mapped_column(
+    categories_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("categories.uuid"), nullable=False
     )
 

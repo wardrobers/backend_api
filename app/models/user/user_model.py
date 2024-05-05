@@ -7,8 +7,8 @@ from sqlalchemy.sql import func
 from ..basemixin import Base
 
 from .user_activity_model import UserActivity
-from .user_photo_model import UsersPhotos
-from .role_model import Role
+from .user_photos_model import UsersPhotos
+from .roles_model import Role
 
 
 class User(Base):

@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from ...models.product.material_model import Material
+from ...models.product.materials_model import Material
 from ...schemas.product.material_schema import MaterialCreate, MaterialUpdate
 
 

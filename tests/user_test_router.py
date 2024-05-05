@@ -13,7 +13,7 @@ from ..app.schemas.user.user_test_schema import (
 )
 from ..app.models.user.user_model import User, UserRole, Role
 from ..app.models.user.user_info_model import UserInfo
-from ..app.models.user.user_photo_model import UsersPhotos
+from ..app.models.user.user_photos_model import UsersPhotos
 from passlib.context import CryptContext
 
 router = APIRouter()

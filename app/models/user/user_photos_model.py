@@ -7,8 +7,8 @@ from sqlalchemy.sql import func
 from ..basemixin import Base
 
 
-class UsersPhotos(Base):
-    __tablename__ = "users_photos"
+class UserPhotos(Base):
+    __tablename__ = "user_photos"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     storage_url = Column(String, nullable=False)
