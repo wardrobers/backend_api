@@ -1,12 +1,25 @@
-# import os
-# import importlib
-
-# # Dynamically import all routers from the current directory
-# current_dir = os.path.dirname(__file__)
-# for filename in os.listdir(current_dir):
-#     if filename.endswith("_model.py") and not filename.startswith("__"):
-#         module_name = filename[:-3]
-#         module = importlib.import_module(
-#             "." + module_name, package="app.models.product"
-#         )
-#         globals()[module_name] = module
+from .core import Product, StockKeepingUnit, Article
+from .article_details import (
+    SizeSystems,
+    Colors,
+    Specifications,
+    ArticleStatus,
+    Variants,
+    TypesOfOperations,
+    Sizing,
+)
+from .maintenance import CleaningLogs, RepairLogs
+from .product_details import (
+    ProductPhotos,
+    ClothingSizes,
+    Types,
+    Materials,
+    ClaspType,
+    ProductMaterials,
+    ProductCategories,
+    ProductStatus,
+    AccessoriesSize,
+    ProductFit,
+    Brand,
+    ProductTypes,
+)

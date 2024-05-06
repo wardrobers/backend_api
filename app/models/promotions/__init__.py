@@ -1,0 +1,4 @@
+from .promotions_products_model import PromotionsProducts
+from .user_promotions_model import UserPromotions
+from .promotions_and_discounts_model import PromotionsAndDiscounts
+from .order_promotion_model import OrderPromotions
