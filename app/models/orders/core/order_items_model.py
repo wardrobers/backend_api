@@ -7,7 +7,7 @@ from uuid import uuid4
 from ...common.base_model import Base
 
 
-class OrderItem(Base):
+class OrderItems(Base):
     __tablename__ = "order_items"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -31,11 +31,6 @@ class OrderItem(Base):
     shipping_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("shipping_details.uuid"), nullable=False
     )
-
-    # Relationships
-    order = relationship("Order", back_populates="order_items")
-    article = relationship("Article", back_populates="order_items")
-    shipping_detail = relationship("ShippingDetail", back_populates="order_items")
 
     def __repr__(self):
         return f"<OrderItem(uuid={self.uuid}, order={self.order_uuid}, article={self.article_uuid}, start_date={self.start_date}, end_date={self.end_date})>"

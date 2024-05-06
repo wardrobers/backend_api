@@ -39,3 +39,4 @@ class Order(Base):
 
     # Relationships
     transactions = relationship("Transactions", backref="orders")
+    order_items = relationship("OrderItems", backref="orders")

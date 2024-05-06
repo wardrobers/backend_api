@@ -1,7 +1,7 @@
 from enum import Enum
 from sqlalchemy import Column, ForeignKey, DateTime, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
 from uuid import uuid4
@@ -54,3 +54,6 @@ class ShippingDetails(Base):
         nullable=False,
         comment="Адрес",
     )
+
+    # Relationships
+    order_items = relationship("OrderItems", back_populates="shipping_details")

@@ -92,3 +92,4 @@ class Article(Base):
     repair_logs = relationship("RepairLogs", backref="article")
     lender_payments = relationship("LenderPayments", backref="article")
     user_saved_items = relationship("UserSavedItems", backref="article")
+    order_items = relationship("OrderItems", backref="article")
