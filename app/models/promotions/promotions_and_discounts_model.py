@@ -1,10 +1,17 @@
+from enum import Enum
 from sqlalchemy import Column, DateTime, Integer, Numeric, String, Boolean, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy.types import Enum as SQLAEnum
 from uuid import uuid4
 
 from ..common.base_model import Base
+
+
+class DiscountType(Enum):
+    Percentage = "Percentage"
+    FixedAmount = "FixedAmount"
 
 
 class PromotionsAndDiscounts(Base):
@@ -15,7 +22,9 @@ class PromotionsAndDiscounts(Base):
     )
     code = Column(String, nullable=False, comment="Код")
     description = Column(Text, nullable=True)
-    discount_type = Column(String(11), nullable=False, comment="Percentage or fixed")
+    discount_type = Column(
+        SQLAEnum(DiscountType), nullable=False, comment="Percentage or fixed"
+    )
     discount_value = Column(Numeric, nullable=True)
     max_discount_amount = Column(Numeric, nullable=True)
     valid_from = Column(DateTime, nullable=True)

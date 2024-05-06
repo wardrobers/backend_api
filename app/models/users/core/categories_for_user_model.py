@@ -1,6 +1,6 @@
 from sqlalchemy import ForeignKey, JSON, Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 

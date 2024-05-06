@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -17,10 +17,12 @@ class UserSavedItems(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
-    article_uuid = Column(
+    user_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    )
+    article_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("articles.uuid"), nullable=False
     )
-    article = Column(
+    article = mapped_column(
         String, nullable=False
     )  # Cached article identifier, assuming necessary for performance.

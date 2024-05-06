@@ -31,4 +31,4 @@ class UserRoles(Base):
 
     # Relationships
     user = relationship("User", backref="user_roles")
-    role = relationship("Role", backref="user_roles")
+    roles = relationship("Roles", backref="user_roles")

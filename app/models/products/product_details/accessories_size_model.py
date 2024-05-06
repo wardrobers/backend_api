@@ -19,8 +19,3 @@ class AccessoriesSize(Base):
     product_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
     )
-
-    # Relationship
-    product = relationship(
-        "Product", backref=backref("accessories_sizes", uselist=True)
-    )

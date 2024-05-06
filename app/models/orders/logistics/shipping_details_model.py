@@ -1,10 +1,22 @@
+from enum import Enum
 from sqlalchemy import Column, ForeignKey, DateTime, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
+from sqlalchemy.types import Enum as SQLAEnum
 from uuid import uuid4
 
 from ...common.base_model import Base
+
+
+class DeliveryStatus(Enum):
+    Pending = "Pending"
+    Shipped = "Shipped"
+    InTransit = "InTransit"
+    OutForDelivery = "OutForDelivery"
+    Delivered = "Delivered"
+    Cancelled = "Cancelled"
+    Returned = "Returned"
 
 
 class ShippingDetails(Base):
@@ -16,7 +28,7 @@ class ShippingDetails(Base):
     tracking_number = Column(String, nullable=True)
     shipping_provider = Column(String, nullable=True)
     delivery_status = Column(
-        String(14),
+        SQLAEnum(DeliveryStatus),
         nullable=True,
         comment="e.g., Pending, Shipped, Delivered, Cancelled",
     )

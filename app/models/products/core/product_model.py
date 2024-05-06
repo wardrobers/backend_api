@@ -24,19 +24,22 @@ class Product(Base):
         UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False
     )
     brand_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("brands.uuid"))
-    clothing_size_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("clothing_sizes.uuid"))
+    clothing_size_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("clothing_sizes.uuid")
+    )
     clasp_type_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("clasp_types.uuid"))
     product_fit_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.uuid"))
     status_code = mapped_column(String, ForeignKey("product_status.code"))
 
     # Relationships
-    product_types = relationship("ProductTypes", backref="products")
-    product_photos = relationship("ProductPhotos", backref="products")
+    types = relationship("ProductTypes", backref="products")
+    photos = relationship("ProductPhotos", backref="products")
     variants = relationship("Variants", backref="products")
     user_reviews_and_ratings = relationship("UserReviewsAndRatings", backref="products")
-    product_categories = relationship("ProductCategories", backref="products")
+    categories = relationship("ProductCategories", backref="products")
     promotions_products = relationship("PromotionsProducts", backref="products")
     pricing_tiers = relationship("PricingTier", backref="products")
+    accessory_size = relationship("AccessoriesSize", backref="products")
 
     def __repr__(self):
         return f"<Product(uuid={self.uuid}, name='{self.name}', sku_product='{self.sku_product}')>"

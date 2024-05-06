@@ -16,4 +16,5 @@ class Brand(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
 
-    product = relationship("Product", back_populates="brand")
+    # Relationships
+    product = relationship("Product", backref="brands")

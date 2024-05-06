@@ -1,10 +1,27 @@
+from enum import Enum
 from sqlalchemy import Column, DateTime, Integer, ForeignKey, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy.sql import func
+from sqlalchemy.types import Enum as SQLAEnum
 from uuid import uuid4
 
 from ...common.base_model import Base
+
+
+class OwnerType(Enum):
+    Platform = "Platform"
+    Lender = "Lender"
+    Brand = "Brand"
+    Partner = "Partner"
+
+
+class Condition(Enum):
+    New = "New"
+    Excellent = "Excellent"
+    Good = "Good"
+    Fair = "Fair"
+    Poor = "Poor"
 
 
 class Article(Base):
@@ -18,7 +35,7 @@ class Article(Base):
         String, nullable=False, comment="Артикул для каждой уникальной вещи"
     )
     owner_type = Column(
-        String(8), nullable=False, comment="Platform, Lender, Brand, Partner"
+        SQLAEnum(OwnerType), nullable=False, comment="Platform, Lender, Brand, Partner"
     )
     factory_number = Column(String, nullable=True, comment="Заводской номер")
     times_used = Column(
@@ -40,7 +57,9 @@ class Article(Base):
     for_repair = Column(
         Boolean, nullable=True, default=False, comment="Требуется ремонт?"
     )
-    condition = Column(String(9), nullable=False, comment="Описание состояния")
+    condition = Column(
+        SQLAEnum(Condition), nullable=False, comment="Описание состояния"
+    )
     created_at = Column(DateTime, nullable=False, default=func.now(), comment="Создано")
     updated_at = Column(
         DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано"

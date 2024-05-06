@@ -1,18 +1,38 @@
+from enum import Enum
 from sqlalchemy import Column, String, Integer, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import UUID, BYTEA
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy.types import Enum as SQLAEnum
 from uuid import uuid4
 
 from ...common.base_model import Base
+
+
+class PaymentMethodType(Enum):
+    CreditCard = "CreditCard"
+    DebitCard = "DebitCard"
+    BankTransfer = "BankTransfer"
+    GiftCard = "GiftCard"
+    PostPayment = "PostPayment"
+    Wallet = "Wallet"
+
+
+class PaymentProvider(Enum):
+    Stripe = "Stripe"
+    PayPal = "PayPal"
+    Revolut = "Revolut"
+    ApplePay = "ApplePay"
+    GooglePay = "GooglePay"
+    Klarna = "Klarna"
 
 
 class PaymentMethods(Base):
     __tablename__ = "payment_methods"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    type = Column(String(12))
-    provider = Column(String(9))
+    type = Column(SQLAEnum(PaymentMethodType))
+    provider = Column(SQLAEnum(PaymentProvider))
     card_hash = Column(BYTEA)
     token = Column(String)
     exp_month = Column(Integer)

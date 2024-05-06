@@ -1,8 +1,8 @@
-from uuid import uuid4
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
+from uuid import uuid4
 
 from ...common.base_model import Base
 
@@ -15,3 +15,6 @@ class ProductFit(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
+
+    # Relationships
+    product = relationship("Product", backref="product_fit")

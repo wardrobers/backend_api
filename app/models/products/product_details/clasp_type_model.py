@@ -17,4 +17,4 @@ class ClaspType(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     # Relationships
-    product = relationship("Product", back_populates="clasp_type")
+    product = relationship("Product", backref="clasp_types")

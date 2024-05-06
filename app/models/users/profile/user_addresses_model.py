@@ -1,10 +1,18 @@
+from enum import Enum
 from sqlalchemy import Column, ForeignKey, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy.types import Enum as SQLAEnum
 from uuid import uuid4
 
 from ...common.base_model import Base
+
+
+class AddressType(Enum):
+    Shipping = "Shipping"
+    Billing = "Billing"
+    Both = "Both"
 
 
 class UserAddresses(Base):
@@ -19,7 +27,7 @@ class UserAddresses(Base):
     country = Column(String, nullable=True, comment="Страна")
     postal_code = Column(String, nullable=True, comment="Индекс")
     address_type = Column(
-        String(8), nullable=True, comment="e.g., Shipping, Billing, Both"
+        SQLAEnum(AddressType), nullable=True, comment="Shipping, Billing, Both"
     )
     created_at = Column(DateTime, default=func.now(), comment="Создано")
     updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
