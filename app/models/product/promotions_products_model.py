@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -15,9 +15,5 @@ class PromotionsProducts(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = Column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
-    promotion_uuid = Column(UUID(as_uuid=True), ForeignKey('promotions_and_discounts.uuid'), nullable=False)
-
-    # Relationships
-    product = relationship("Product", backref="promotions_products")
-    promotion = relationship("PromotionAndDiscount", backref="promotions_products")
+    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
+    promotion_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('promotions_and_discounts.uuid'), nullable=False)

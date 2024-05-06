@@ -16,6 +16,3 @@ class UserPromotions(Base):
     # Foreign keys
     user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
     promotion_uuid = Column(UUID(as_uuid=True), ForeignKey('promotions_and_discounts.uuid'), nullable=False)
-
-    # Relationships
-    promotion = relationship("PromotionAndDiscount", backref="user_promotions")

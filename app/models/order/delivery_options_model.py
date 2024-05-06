@@ -1,6 +1,7 @@
 
 from sqlalchemy import Column, Numeric, String, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -17,3 +18,6 @@ class DeliveryOptions(Base):
     created_at = Column(DateTime, default=func.now(), comment='Создано')
     updated_at = Column(DateTime, onupdate=func.now(), comment='Отредактировано')
     deleted_at = Column(DateTime, comment='Удалено')
+
+    # Relationships
+    shipping_details = relationship("ShippingDetails", backref="delivery_options")

@@ -31,10 +31,11 @@ class User(Base):
     user_basket = relationship("UserBasket", uselist=False, back_populates="user")
     user_photos = relationship("UsersPhotos", back_populates="user")
     role = relationship("Role", secondary="user_roles", back_populates="user")
-    category_for_user = relationship("CategoriesForUser", back_populates="user")
 
     subscriptions = relationship("Subscriptions", backref="users")
     user_reviews_and_ratings = relationship("UserReviewsAndRatings", backref="users")
     user_saved_items = relationship("UserSavedItems", backref="users")
     user_promotions = relationship("UserPromotions", backref="users")
+    user_addresses = relationship("UserAddresses", backref="users")
     categories_for_user = relationship("CategoriesForUser", backref="users")
+    

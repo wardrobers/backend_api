@@ -35,5 +35,6 @@ class Article(Base):
     # Relationships
     specification = relationship("Specificatios", backref="article")
     cleaning_logs = relationship("CleaningLogs", backref="article")
+    repair_logs = relationship("RepairLogs", backref="article")
     lender_payments = relationship("LenderPayments", backref="article")
     user_saved_items = relationship("UserSavedItems", backref="article")
