@@ -26,7 +26,6 @@ class User(Base):
 
     # Relationships
     order = relationship("Order", back_populates="user")
-    subscription = relationship("Subscription", back_populates="user")
     user_info = relationship("UserInfo", uselist=False, back_populates="user")
     user_activity = relationship("UserActivity", uselist=False, back_populates="user")
     user_basket = relationship("UserBasket", uselist=False, back_populates="user")
@@ -34,6 +33,8 @@ class User(Base):
     role = relationship("Role", secondary="user_roles", back_populates="user")
     category_for_user = relationship("CategoriesForUser", back_populates="user")
 
+    subscriptions = relationship("Subscriptions", backref="users")
     user_reviews_and_ratings = relationship("UserReviewsAndRatings", backref="users")
     user_saved_items = relationship("UserSavedItems", backref="users")
     user_promotions = relationship("UserPromotions", backref="users")
+    categories_for_user = relationship("CategoriesForUser", backref="users")

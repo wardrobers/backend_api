@@ -7,7 +7,7 @@ from uuid import uuid4
 from ..basemixin import Base
 
 
-class Category(Base):
+class Categories(Base):
     __tablename__ = "categories"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -18,7 +18,8 @@ class Category(Base):
     deleted_at = Column(DateTime)
 
     # Relationships
-    type = relationship("Type", back_populates="category")
-    material = relationship("Material", back_populates="category")
-    category_for_user = relationship("CategoryForUser", back_populates="category")
-    product_categories = relationship("ProductCategories", back_populates="category")
+    materials = relationship("Materials", backref="categories")
+    product_categories = relationship("ProductCategories", backref="categories")
+    categories_for_user = relationship("CategoriesForUser", backref="categories")
+    types = relationship("Types", backref="categories")
+

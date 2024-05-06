@@ -7,21 +7,19 @@ from uuid import uuid4
 from ..basemixin import Base
 
 
-class SubscriptionType(Base):
+class SubscriptionTypes(Base):
     __tablename__ = "subscription_types"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    name = Column(String, nullable=True)
-    price = Column(Numeric, nullable=False)
-    count_free_orders = Column(Integer, nullable=False)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime, nullable=True)
+    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор")
+    name = Column(String, nullable=True, comment="наименование")
+    price = Column(Numeric, nullable=False, comment="Цена")
+    count_free_orders = Column(Integer, nullable=False, comment="Кол-во шмоток в подписке")
+    created_at = Column(DateTime, default=func.now(), comment="Создано")
+    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
+    deleted_at = Column(DateTime, nullable=True, comment="Удалено (?)")
 
     # Foreign Keys
-    period_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("subscription_periods.uuid"), nullable=False
-    )
+    period_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("subscription_periods.uuid"), nullable=False, comment="Период")
 
     # Relationships
-    subscription = relationship("Subscription", back_populates="subscription_type")
+    subscriptions = relationship("Subscriptions", backref="subscription_types")

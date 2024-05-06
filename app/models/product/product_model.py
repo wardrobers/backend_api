@@ -30,6 +30,7 @@ class Product(Base):
     product_types = relationship("ProductTypes", backref="products")
     variants = relationship("Variants", backref="products")
     user_reviews_and_ratings = relationship("UserReviewsAndRatings", backref="products")
+    product_categories = relationship("ProductCategories", backref="products")
 
     def __repr__(self):
         return f"<Product(uuid={self.uuid}, name='{self.name}', sku_product='{self.sku_product}')>"

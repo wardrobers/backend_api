@@ -23,6 +23,5 @@ class Materials(Base):
 
     # Relationships
     product = relationship(
-        "Product", secondary="product_materials", back_populates="material"
+        "Product", secondary="product_materials", backref="materials"
     )
-    category = relationship("Category", back_populates="material")

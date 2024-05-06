@@ -21,3 +21,6 @@ class RevolutDetails(Base):
 
     # Relationships
     transaction = relationship('Transaction', backref='revolut_details', uselist=False)
+
+    def __repr__(self):
+        return f"<RevolutDetails(uuid={self.uuid}, transaction_uuid={self.transaction_uuid})>"

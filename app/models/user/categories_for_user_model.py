@@ -7,7 +7,7 @@ from uuid import uuid4
 from ..basemixin import Base
 
 
-class CategoryForUser(Base):
+class CategoriesForUser(Base):
     __tablename__ = "categories_for_user"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -21,7 +21,3 @@ class CategoryForUser(Base):
         UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
     )
     category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("types.uuid"))
-
-    # Relationships
-    user = relationship("User", back_populates="category_for_user")
-    category = relationship("Category", back_populates="category_for_user")

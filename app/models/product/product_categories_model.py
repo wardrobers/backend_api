@@ -17,7 +17,3 @@ class ProductCategories(Base):
     # Foreign Keys
     product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("products.uuid"))
     category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("categories.uuid"))
-
-    # Relationships
-    product = relationship("Product", back_populates="product_categories")
-    category = relationship("Category", back_populates="product_categories")

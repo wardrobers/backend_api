@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from ..basemixin import Base
 
 
-class Type(Base):
+class Types(Base):
     __tablename__ = "types"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -21,4 +21,4 @@ class Type(Base):
 
     # Relationships
     product = relationship("Product", secondary="product_types", backref="types")
-    product_type = relationship("ProductTypes", backref="types")
+    product_types = relationship("ProductTypes", backref="types")
