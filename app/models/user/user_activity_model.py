@@ -39,6 +39,3 @@ class UserActivity(Base):
         nullable=False,
         comment="Пользователь",
     )
-
-    # Relationships
-    user = relationship("User", backref="user_activity")

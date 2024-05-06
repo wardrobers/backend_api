@@ -18,5 +18,6 @@ class StockKeepingUnit(Base):
     deleted_at = Column(DateTime)
 
     # Relationships
-    articles = relationship("Article", backref="sku")
-    variants = relationship("Variants", backref="sku")
+    articles = relationship("Article", backref="stock_keeping_unit")
+    variants = relationship("Variants", backref="stock_keeping_unit")
+    user_basket = relationship("UserBasket", backref="stock_keeping_unit")

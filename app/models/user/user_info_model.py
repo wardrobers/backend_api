@@ -1,7 +1,7 @@
 from uuid import uuid4
 from sqlalchemy import Column, DateTime, String, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
 from ..basemixin import Base
@@ -31,6 +31,3 @@ class UserInfo(Base):
         nullable=False,
         comment="Пользовтаель",
     )
-
-    # Relationships
-    user = relationship("User", backref="user_info")

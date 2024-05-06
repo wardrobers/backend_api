@@ -36,7 +36,3 @@ class Order(Base):
         nullable=False,
         comment="Статус",
     )
-
-    # Relationships
-    user = relationship("User", backref="orders")
-    order_status = relationship("OrderStatus", backref="orders")

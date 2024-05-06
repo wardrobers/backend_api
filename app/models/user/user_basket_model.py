@@ -23,7 +23,3 @@ class UserBasket(Base):
     stock_keeping_unit_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False
     )
-
-    # Relationships
-    user = relationship("User", back_populates="user_basket")
-    sku = relationship("StockKeepingUnit", back_populates="user_basket")

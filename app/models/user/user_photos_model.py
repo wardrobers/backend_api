@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -17,6 +17,3 @@ class UserPhotos(Base):
 
     # Foreign Keys
     user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("users.uuid"))
-
-    # Relationships
-    user = relationship("User", backref="user_photos")

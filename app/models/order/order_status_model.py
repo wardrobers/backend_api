@@ -12,10 +12,14 @@ class OrderStatus(Base):
     __tablename__ = "order_status"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    name = Column(String(255), nullable=False)
+    name = Column(
+        String,
+        nullable=False,
+        comment="Placed, Confirmed, Processing, Shipped, Delivered, Returned, Cancelled",
+    )
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
 
     # Relationships
-    order = relationship("Order", back_populates="status")
+    order = relationship("Order", backref="order_status")
