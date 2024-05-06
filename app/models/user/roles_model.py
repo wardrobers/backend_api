@@ -1,21 +1,20 @@
-from uuid import uuid4
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from uuid import uuid4
 
 from ..basemixin import Base
-
 
 class Roles(Base):
     __tablename__ = "roles"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = Column(String, nullable=False)
     name = Column(String)
-    created_at = Column(DateTime, server_default="now()")
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
 
     # Relationships
-    user = relationship("User", secondary="user_roles", back_populates="roles")
-    role_permissions = relationship("RolePermissions", back_populates="roles")
+    users = relationship("User", secondary="user_roles", backref="roles")
