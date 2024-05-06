@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from ..basemixin import Base
 
 
-class Variant(Base):
+class Variants(Base):
     __tablename__ = "variants"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -31,5 +31,5 @@ class Variant(Base):
 
     # Relationships
     product = relationship("Product", back_populates="variants")
-    sku = relationship("StockKeepingUnit", back_populates="variants")
+    sku = relationship("StockKeepingUnit", back_populates="variant")
     color = relationship("VariantColor", back_populates="variants")

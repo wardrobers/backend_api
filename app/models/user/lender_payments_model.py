@@ -11,7 +11,6 @@ class LenderPayments(Base):
     __tablename__ = "lender_payments"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    article_uuid = Column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
     payment_percentage = Column(Integer, nullable=False)
     payment_amount = Column(Numeric, nullable=False)
     payment_status = Column(String(10))

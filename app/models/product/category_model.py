@@ -21,3 +21,4 @@ class Category(Base):
     type = relationship("Type", back_populates="category")
     material = relationship("Material", back_populates="category")
     category_for_user = relationship("CategoryForUser", back_populates="category")
+    product_categories = relationship("ProductCategories", back_populates="category")

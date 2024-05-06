@@ -1,13 +1,13 @@
-from sqlalchemy import Column, DateTime, Table, ForeignKey, Integer
+ from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
 
 from ..basemixin import Base
 
 
-class ProductMaterial(Base):
+class ProductMaterials(Base):
     __tablename__ = "product_materials"
 
     percent = Column(Integer)
@@ -16,9 +16,9 @@ class ProductMaterial(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = Column(
+    product_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("products.uuid"), primary_key=True
     )
-    material_uuid = Column(
+    material_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("materials.uuid"), primary_key=True
     )

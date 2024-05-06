@@ -39,8 +39,7 @@ class Article(Base):
     )
 
     # Relationships
-    stock_keeping_unit = relationship("StockKeepingUnit", back_populates="article")
+    sku = relationship("StockKeepingUnit", back_populates="article")
     article_status = relationship("ArticleStatus", back_populates="article")
     types_of_operations = relationship("TypesOfOperations", back_populates="article")
-    specification = relationship("Specification", back_populates="article")
     order_item = relationship("Specification", back_populates="article")

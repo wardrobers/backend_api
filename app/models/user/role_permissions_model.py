@@ -10,11 +10,11 @@ from ..basemixin import Base
 class RolePermissions(Base):
     __tablename__ = "role_permissions"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    create = Column(Boolean, default=False)
-    read = Column(Boolean, default=False)
-    update = Column(Boolean, default=False)
-    delete = Column(Boolean, default=False)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    to_create = Column(Boolean, default=False, name="create")
+    to_read = Column(Boolean, default=False, name="read")
+    to_update = Column(Boolean, default=False, name="update")
+    to_delete = Column(Boolean, default=False, name="delete")
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
@@ -28,5 +28,5 @@ class RolePermissions(Base):
     )
 
     # Relationships
-    role = relationship("Role", back_populates="role_permission")
-    permission = relationship("Permission", back_populates="role_permission")
+    roles = relationship("Roles", back_populates="role_permissions")
+    permissions = relationship("Permissions", back_populates="role_permissions")

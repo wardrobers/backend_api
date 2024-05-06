@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, Numeric
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -17,6 +17,3 @@ class ClothingSize(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime, nullable=True)
-
-    # Relationships
-    products = relationship("Product", back_populates="clothing_size")

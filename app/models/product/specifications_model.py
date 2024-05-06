@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, Integer, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import relationship, mapped_column, backref
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -19,7 +19,7 @@ class Specifications(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    article_uuid = mapped_column(String, ForeignKey("article.article"), nullable=False)
+    article_uuid = mapped_column(String, ForeignKey("article.uuid"), nullable=False)
 
     # Relationships
-    article = relationship("Article", back_populates="specification")
+    article = relationship("Article", backref=backref("specifications", uselist=True))

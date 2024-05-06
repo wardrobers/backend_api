@@ -17,5 +17,5 @@ class Roles(Base):
     deleted_at = Column(DateTime)
 
     # Relationships
-    user = relationship("User", secondary="user_roles", back_populates="role")
-    role_permission = relationship("RolePermission", back_populates="role")
+    user = relationship("User", secondary="user_roles", back_populates="roles")
+    role_permissions = relationship("RolePermissions", back_populates="roles")

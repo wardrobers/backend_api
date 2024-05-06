@@ -12,7 +12,6 @@ class OrderStatus(Base):
     __tablename__ = "order_status"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    code = mapped_column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

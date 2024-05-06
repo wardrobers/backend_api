@@ -7,7 +7,7 @@ from uuid import uuid4
 from ..basemixin import Base
 
 
-class ProductPhoto(Base):
+class ProductPhotos(Base):
     __tablename__ = "product_photos"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
