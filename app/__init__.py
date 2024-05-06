@@ -3,6 +3,9 @@ from .routers.user import user_router
 from .routers.product import product_router
 from .routers.order import order_router
 
+from app.models import products, users, orders
+
+
 api_router = APIRouter()
 
 
