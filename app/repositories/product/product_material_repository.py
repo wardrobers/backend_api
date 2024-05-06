@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from ...models.product.product_materials_model import ProductMaterial
+from ...models.products.product_details.product_materials_model import ProductMaterial
 from ...schemas.product.product_material_schema import (
     ProductMaterialCreate,
     ProductMaterialUpdate,

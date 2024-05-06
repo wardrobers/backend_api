@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from ...models.order.order_status_model import (
+from ...models.orders.core.order_status_model import (
     OrderStatus,
 )  # Assuming your model file is named models.py
 from ...schemas.order.order_status_schema import (

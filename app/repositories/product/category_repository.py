@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ...models.product.category_model import Category
+from ...models.products.core.category_model import Category
 from ...schemas.product.category_schema import CategoryCreate, CategoryUpdate
 from uuid import UUID
 

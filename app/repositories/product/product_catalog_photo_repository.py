@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import UUID
-from ...models.product.product_catalog_photo_model import ProductsCatalogPhoto
+from ...models.products.product_catalog_photo_model import ProductsCatalogPhoto
 from ...schemas.product.product_catalog_photo_schema import (
     ProductsCatalogPhotoCreate,
     ProductsCatalogPhotoUpdate,

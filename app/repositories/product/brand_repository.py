@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from ...models.product.brand_model import Brand
+from ...models.products.product_details.brand_model import Brand
 from ...schemas.product.brand_schema import BrandCreate, BrandUpdate
 
 

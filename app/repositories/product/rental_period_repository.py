@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import UUID
-from ...models.product.rental_period_model import RentalPeriod
+from ...models.products.rental_period_model import RentalPeriod
 from ...schemas.product.rental_period_schema import (
     RentalPeriodCreate,
     RentalPeriodUpdate,

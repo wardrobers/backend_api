@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from ...models.user.subscription_periods_model import SubscriptionPeriod
+from ...models.subscriptions.subscription_periods_model import SubscriptionPeriod
 from ...schemas.user.subscription_period_schema import (
     SubscriptionPeriodCreate,
     SubscriptionPeriodUpdate,

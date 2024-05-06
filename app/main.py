@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
 from .database.session import db_engine, get_db, SessionLocal
-from .models.basemixin import Base  # Adjust path as necessary
+from .models.common.base_model import Base  # Adjust path as necessary
 
 
 app = FastAPI(title="Wardrobers API", version="2.0")

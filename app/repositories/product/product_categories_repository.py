@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import uuid4, UUID
-from ...models.product.product_categories_model import ProductCategory
-from ...models.product.category_model import Category
+from ...models.products.product_details.product_categories_model import ProductCategory
+from ...models.products.core.category_model import Category
 import datetime
 
 

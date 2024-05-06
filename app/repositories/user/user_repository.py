@@ -2,8 +2,8 @@ from hashlib import sha256
 from typing import Optional
 from sqlalchemy.orm import Session
 from uuid import uuid4  # Import the uuid library
-from ...models.user.user_model import User  # Ensure correct import for User
-from ...models.user.user_info_model import UserInfo
+from ...models.users.core.user_model import User  # Ensure correct import for User
+from ...models.users.core.user_info_model import UserInfo
 from ...schemas.user.user_schema import UserCreate, UserUpdate
 from ...schemas.user.user_info_schema import UserInfoUpdate, UserInfoCreate
 

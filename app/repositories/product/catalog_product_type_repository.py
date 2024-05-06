@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ...models.product.catalog_product_type_model import CatalogProductType
+from ...models.products.catalog_product_type_model import CatalogProductType
 from uuid import UUID
 
 

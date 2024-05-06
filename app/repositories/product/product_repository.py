@@ -1,13 +1,13 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from ...models.product.product_model import Product
-from ...models.product.category_model import Category
-from ...models.product.materials_model import Material
-from ...models.product.colors_model import Color
-from ...models.product.clothing_sizes_model import Size
-from ...models.product.brand_model import Brand
-from ...models.product.pricing_table_model import Price
+from ...models.products.core.product_model import Product
+from ...models.products.core.category_model import Category
+from ...models.products.product_details.materials_model import Material
+from ...models.products.article_details.colors_model import Color
+from ...models.products.product_details.clothing_sizes_model import Size
+from ...models.products.product_details.brand_model import Brand
+from ...models.products.pricing_table_model import Price
 from ...schemas.product.product_schema import ProductCreate, ProductUpdate
 from ...schemas.product.price_schema import PriceCreate
 

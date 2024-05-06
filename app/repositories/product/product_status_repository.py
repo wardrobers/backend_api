@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional
 from uuid import UUID
-from ...models.product.product_status_model import ProductStatus
+from ...models.products.product_details.product_status_model import ProductStatus
 from ...schemas.product.product_status_schema import (
     ProductStatusCreate,
     ProductStatusUpdate,

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from ...models.order.order_model import Order
+from ...models.orders.core.order_model import Order
 from ...schemas.order.order_schema import OrderCreate, OrderRead, OrderUpdate
 from pydantic import UUID4
 

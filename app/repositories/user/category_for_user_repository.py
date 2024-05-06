@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ...models.user.categories_for_user_model import CategoryForUser
+from ...models.users.roles.categories_for_user_model import CategoryForUser
 from ...schemas.user.categories_for_user_schema import (
     CategoryForUserUpdate,
 )  # Assuming an existing schema or need to create

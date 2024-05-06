@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy.orm import Session
-from ...models.user.subscription_type_model import SubscriptionType
+from ...models.subscriptions.subscription_types_model import SubscriptionType
 from ...schemas.user.subscription_type_schema import (
     SubscriptionTypeCreate,
     SubscriptionTypeUpdate,

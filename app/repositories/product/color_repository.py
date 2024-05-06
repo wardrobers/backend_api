@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from ...models.product.color_model import Color
+from ...models.products.color_model import Color
 from ...schemas.product.color_schema import ColorCreate, ColorUpdate
 
 

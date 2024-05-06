@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from ...models.user.user_activity_model import UserActivity
+from ...models.users.activity.user_activity_model import UserActivity
 
 
 class UserActivityRepository:
