@@ -19,4 +19,6 @@ class LenderPayments(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
+    article_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    )

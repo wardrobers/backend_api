@@ -10,15 +10,23 @@ class UserRoles(Base):
     __tablename__ = "user_roles"
 
     created_at = Column(DateTime, nullable=False, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано")
+    updated_at = Column(
+        DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано"
+    )
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign keys
     user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), primary_key=True, comment="Пользователь"
+        UUID(as_uuid=True),
+        ForeignKey("users.uuid"),
+        primary_key=True,
+        comment="Пользователь",
     )
     role_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("roles.uuid"), primary_key=True, comment="Индетифекатор"
+        UUID(as_uuid=True),
+        ForeignKey("roles.uuid"),
+        primary_key=True,
+        comment="Индетифекатор",
     )
 
     # Relationships

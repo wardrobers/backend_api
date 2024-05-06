@@ -16,9 +16,15 @@ class OrderPromotions(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    order_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('orders.uuid'), nullable=False)
-    promotion_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('promotions_and_discounts.uuid'), nullable=False)
+    order_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False
+    )
+    promotion_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("promotions_and_discounts.uuid"), nullable=False
+    )
 
     # Relationships
     order = relationship("Order", backref=backref("order_promotions", uselist=True))
-    promotion = relationship("Promotion", backref=backref("order_promotions", uselist=True))
+    promotion = relationship(
+        "Promotion", backref=backref("order_promotions", uselist=True)
+    )

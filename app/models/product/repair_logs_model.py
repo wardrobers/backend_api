@@ -8,9 +8,11 @@ from ..basemixin import Base
 
 
 class RepairLogs(Base):
-    __tablename__ = 'repair_logs'
+    __tablename__ = "repair_logs"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор")
+    uuid = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
+    )
     description = Column(Text, nullable=True, comment="Описание")
     cost = Column(Numeric, nullable=True, comment="Цена ремонта")
     repair_date = Column(DateTime, nullable=False, comment="Дата ремонта")
@@ -19,4 +21,9 @@ class RepairLogs(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
-    article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False, comment="Индетифекатор")
+    article_uuid = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("article.uuid"),
+        nullable=False,
+        comment="Индетифекатор",
+    )

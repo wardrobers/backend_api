@@ -17,7 +17,9 @@ class Colors(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    variant_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('variants.uuid'), nullable=False)
+    variant_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("variants.uuid"), nullable=False
+    )
 
     # Relationship
     variant = relationship("Variant", backref=backref("colors", uselist=True))

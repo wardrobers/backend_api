@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class OrderItem(Base):
     __tablename__ = "order_items"
 
@@ -21,9 +22,15 @@ class OrderItem(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     # Foreign keys
-    order_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('orders.uuid'), nullable=False)
-    article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
-    shipping_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('shipping_details.uuid'), nullable=False)
+    order_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False
+    )
+    article_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    )
+    shipping_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("shipping_details.uuid"), nullable=False
+    )
 
     # Relationships
     order = relationship("Order", back_populates="order_items")

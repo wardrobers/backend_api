@@ -22,4 +22,3 @@ class Categories(Base):
     product_categories = relationship("ProductCategories", backref="categories")
     categories_for_user = relationship("CategoriesForUser", backref="categories")
     types = relationship("Types", backref="categories")
-

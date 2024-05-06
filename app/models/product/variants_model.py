@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class Variants(Base):
     __tablename__ = "variants"
 
@@ -17,5 +18,5 @@ class Variants(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'))
-    sku_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('stock_keeping_unit.uuid'))
+    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("products.uuid"))
+    sku_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"))

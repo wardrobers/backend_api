@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class UserPhotos(Base):
     __tablename__ = "user_photos"
 
@@ -15,8 +16,7 @@ class UserPhotos(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('users.uuid'))
+    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("users.uuid"))
 
     # Relationships
     user = relationship("User", backref="user_photos")
-

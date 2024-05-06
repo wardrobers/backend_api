@@ -6,13 +6,16 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class UserPromotions(Base):
-    __tablename__ = 'user_promotions'
+    __tablename__ = "user_promotions"
 
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
-    promotion_uuid = Column(UUID(as_uuid=True), ForeignKey('promotions_and_discounts.uuid'), nullable=False)
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
+    promotion_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("promotions_and_discounts.uuid"), nullable=False
+    )

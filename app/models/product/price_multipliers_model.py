@@ -6,8 +6,9 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class PriceMultipliers(Base):
-    __tablename__ = 'price_multipliers'
+    __tablename__ = "price_multipliers"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     category = Column(String, nullable=False)

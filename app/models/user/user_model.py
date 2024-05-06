@@ -38,4 +38,3 @@ class User(Base):
     user_promotions = relationship("UserPromotions", backref="users")
     user_addresses = relationship("UserAddresses", backref="users")
     categories_for_user = relationship("CategoriesForUser", backref="users")
-    

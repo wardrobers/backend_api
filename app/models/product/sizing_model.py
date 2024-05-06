@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class Sizing(Base):
     __tablename__ = "sizing"
 
@@ -17,8 +18,12 @@ class Sizing(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    variant_uuid = Column(UUID(as_uuid=True), ForeignKey('variants.uuid'), nullable=False)
-    size_system_uuid = Column(UUID(as_uuid=True), ForeignKey('size_systems.uuid'), nullable=False)
+    variant_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("variants.uuid"), nullable=False
+    )
+    size_system_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("size_systems.uuid"), nullable=False
+    )
 
     # Relationships
     variant = relationship("Variant", backref=backref("sizings", uselist=True))

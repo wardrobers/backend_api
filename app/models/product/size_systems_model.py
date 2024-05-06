@@ -6,8 +6,9 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class SizeSystems(Base):
-    __tablename__ = 'size_systems'
+    __tablename__ = "size_systems"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)

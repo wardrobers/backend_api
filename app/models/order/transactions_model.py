@@ -6,8 +6,9 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class Transaction(Base):
-    __tablename__ = 'transactions'
+    __tablename__ = "transactions"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     amount = Column(Numeric, nullable=False)
@@ -19,10 +20,14 @@ class Transaction(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
-    payment_method_uuid = Column(UUID(as_uuid=True), ForeignKey('payment_methods.uuid'), nullable=False)
-    order_uuid = Column(UUID(as_uuid=True), ForeignKey('orders.uuid'), nullable=False)
-    user_address_uuid = Column(UUID(as_uuid=True), ForeignKey('user_addresses.uuid'), nullable=False)
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
+    payment_method_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("payment_methods.uuid"), nullable=False
+    )
+    order_uuid = Column(UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False)
+    user_address_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("user_addresses.uuid"), nullable=False
+    )
 
     # Relationships
     user = relationship("User", backref="transactions")

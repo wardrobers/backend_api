@@ -19,7 +19,9 @@ class DataPrivacyConsents(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     # Foreign keys
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
+    user_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    )
 
     # Relationship
     user = relationship("User", backref=backref("data_privacy_consents", uselist=True))

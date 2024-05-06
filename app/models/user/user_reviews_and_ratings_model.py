@@ -6,8 +6,9 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class UserReviewsAndRatings(Base):
-    __tablename__ = 'user_reviews_and_ratings'
+    __tablename__ = "user_reviews_and_ratings"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     rating = Column(Integer)
@@ -16,5 +17,9 @@ class UserReviewsAndRatings(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     # Foreign Keys
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
-    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
+    user_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    )
+    product_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    )

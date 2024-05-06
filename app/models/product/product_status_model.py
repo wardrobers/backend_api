@@ -8,7 +8,7 @@ from ..basemixin import Base
 
 class ProductStatus(Base):
     __tablename__ = "product_status"
-    
+
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = Column(String, nullable=False)
     name = Column(String(12), nullable=False)

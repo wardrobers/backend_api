@@ -10,10 +10,14 @@ from ..basemixin import Base
 class TypesOfOperations(Base):
     __tablename__ = "types_of_operations"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор")
+    uuid = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
+    )
     name = Column(String, nullable=True, default=None, comment="Наименование")
     created_at = Column(DateTime, nullable=True, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано")
+    updated_at = Column(
+        DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано"
+    )
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Relationships

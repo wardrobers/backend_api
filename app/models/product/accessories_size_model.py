@@ -16,7 +16,11 @@ class AccessoriesSize(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
+    product_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    )
 
     # Relationship
-    product = relationship("Product", backref=backref("accessories_sizes", uselist=True))
+    product = relationship(
+        "Product", backref=backref("accessories_sizes", uselist=True)
+    )

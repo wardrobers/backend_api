@@ -21,11 +21,19 @@ class PricingTier(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    product_uuid = Column(UUID(as_uuid=True), ForeignKey('products.uuid'), nullable=False)
-    category_uuid = Column(UUID(as_uuid=True), ForeignKey('categories.uuid'), nullable=False)
-    price_multiplier_uuid = Column(UUID(as_uuid=True), ForeignKey('price_multipliers.uuid'), nullable=False)
+    product_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    )
+    category_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("categories.uuid"), nullable=False
+    )
+    price_multiplier_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("price_multipliers.uuid"), nullable=False
+    )
 
     # Relationships
     product = relationship("Product", backref=backref("pricing_tiers", uselist=True))
     category = relationship("Category", backref=backref("pricing_tiers", uselist=True))
-    price_multiplier = relationship("PriceMultiplier", backref=backref("pricing_tiers", uselist=True))
+    price_multiplier = relationship(
+        "PriceMultiplier", backref=backref("pricing_tiers", uselist=True)
+    )

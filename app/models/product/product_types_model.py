@@ -10,8 +10,12 @@ from ..basemixin import Base
 class ProductTypes(Base):
     __tablename__ = "product_types"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор")
-    created_at = Column(DateTime, nullable=False, server_default=func.now(), comment="Создано")
+    uuid = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
+    )
+    created_at = Column(
+        DateTime, nullable=False, server_default=func.now(), comment="Создано"
+    )
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
@@ -21,4 +25,3 @@ class ProductTypes(Base):
     type_uuid = mapped_column(
         UUID(as_uuid=True), ForeignKey("types.uuid"), nullable=False, comment="Тип вещи"
     )
-

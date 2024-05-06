@@ -6,8 +6,9 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class UserSavedItems(Base):
-    __tablename__ = 'user_saved_items'
+    __tablename__ = "user_saved_items"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     saved_at = Column(DateTime, default=func.now())
@@ -16,6 +17,10 @@ class UserSavedItems(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid'), nullable=False)
-    article_uuid = Column(UUID(as_uuid=True), ForeignKey('articles.uuid'), nullable=False)
-    article = Column(String, nullable=False) # Cached article identifier, assuming necessary for performance.
+    user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False)
+    article_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("articles.uuid"), nullable=False
+    )
+    article = Column(
+        String, nullable=False
+    )  # Cached article identifier, assuming necessary for performance.

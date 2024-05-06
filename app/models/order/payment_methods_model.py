@@ -6,8 +6,9 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class PaymentMethods(Base):
-    __tablename__ = 'payment_methods'
+    __tablename__ = "payment_methods"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     type = Column(String(12))

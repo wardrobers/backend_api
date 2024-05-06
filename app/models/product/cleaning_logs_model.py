@@ -8,7 +8,7 @@ from ..basemixin import Base
 
 
 class CleaningLogs(Base):
-    __tablename__ = 'cleaning_logs'
+    __tablename__ = "cleaning_logs"
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     article = Column(String, nullable=False)
@@ -20,4 +20,6 @@ class CleaningLogs(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
+    article_uuid = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    )

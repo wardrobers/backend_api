@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from ..basemixin import Base
 
+
 class Product(Base):
     __tablename__ = "products"
 
@@ -19,7 +20,9 @@ class Product(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    sku_uuid = Column(UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False)
+    sku_uuid = Column(
+        UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False
+    )
     brand_uuid = Column(UUID(as_uuid=True), ForeignKey("brands.uuid"))
     clothing_size_uuid = Column(UUID(as_uuid=True), ForeignKey("clothing_sizes.uuid"))
     clasp_type_uuid = Column(UUID(as_uuid=True), ForeignKey("clasp_types.uuid"))
@@ -35,4 +38,3 @@ class Product(Base):
 
     def __repr__(self):
         return f"<Product(uuid={self.uuid}, name='{self.name}', sku_product='{self.sku_product}')>"
-

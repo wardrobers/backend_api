@@ -8,19 +8,28 @@ from ..basemixin import Base
 
 
 class RevolutDetails(Base):
-    __tablename__ = 'revolut_details'
-    
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment='Индетифекатор')
-    revolut_account_id = Column(String, nullable=True, comment='Revolut account identifier')
-    created_at = Column(DateTime, default=func.now(), comment='Создано')
-    updated_at = Column(DateTime, onupdate=func.now(), comment='Отредактировано')
-    deleted_at = Column(DateTime, comment='Удалено')
+    __tablename__ = "revolut_details"
+
+    uuid = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
+    )
+    revolut_account_id = Column(
+        String, nullable=True, comment="Revolut account identifier"
+    )
+    created_at = Column(DateTime, default=func.now(), comment="Создано")
+    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
+    deleted_at = Column(DateTime, comment="Удалено")
 
     # Foreign keys
-    transaction_uuid = Column(UUID(as_uuid=True), ForeignKey('transactions.uuid'), nullable=False, comment='Транзакция')
+    transaction_uuid = Column(
+        UUID(as_uuid=True),
+        ForeignKey("transactions.uuid"),
+        nullable=False,
+        comment="Транзакция",
+    )
 
     # Relationships
-    transaction = relationship('Transaction', backref='revolut_details', uselist=False)
+    transaction = relationship("Transaction", backref="revolut_details", uselist=False)
 
     def __repr__(self):
         return f"<RevolutDetails(uuid={self.uuid}, transaction_uuid={self.transaction_uuid})>"
