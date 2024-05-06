@@ -5,7 +5,7 @@ from ...models.product.product_model import Product
 from ...models.product.category_model import Category
 from ...models.product.materials_model import Material
 from ...models.product.colors_model import Color
-from ...models.product.clothing_size_model import Size
+from ...models.product.clothing_sizes_model import Size
 from ...models.product.brand_model import Brand
 from ...models.product.pricing_table_model import Price
 from ...schemas.product.product_schema import ProductCreate, ProductUpdate

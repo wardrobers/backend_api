@@ -8,7 +8,7 @@ from ..basemixin import Base
 
 
 class ArticleStatus(Base):
-    __tablename__ = "article_statuses"
+    __tablename__ = "article_status"
 
     status_code = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String(9))
@@ -17,4 +17,4 @@ class ArticleStatus(Base):
     deleted_at = Column(DateTime)
 
     # Relationships
-    article = relationship("Article", back_populates="article_status")
+    article = relationship("Article", backref="article_status")

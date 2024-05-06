@@ -20,6 +20,3 @@ class Specifications(Base):
 
     # Foreign keys
     article_uuid = mapped_column(String, ForeignKey("article.uuid"), nullable=False)
-
-    # Relationships
-    article = relationship("Article", backref=backref("specifications", uselist=True))

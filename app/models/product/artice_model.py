@@ -10,36 +10,30 @@ from ..basemixin import Base
 class Article(Base):
     __tablename__ = "article"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    article = Column(String, nullable=False)
-    sku_article = Column(String, nullable=False)
-    owner_type = Column(String(8), nullable=False)
-    factory_number = Column(String)
-    times_used = Column(Integer, default=0, nullable=False)
-    hours_used = Column(Integer, default=0, nullable=False)
-    min_rental_days = Column(Integer, nullable=False, default=2)
-    buffer_days = Column(Integer, nullable=False, default=1)
+    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор")
+    article = Column(String, nullable=False, comment="Артикул")
+    sku_article = Column(String, nullable=False, comment="Артикул для каждой уникальной вещи")
+    owner_type = Column(String(8), nullable=False, comment="Platform, Lender, Brand, Partner")
+    factory_number = Column(String, nullable=True, comment="Заводской номер")
+    times_used = Column(Integer, nullable=False, default=0, comment="Кол-во использованей")
+    hours_used = Column(Integer, nullable=False, default=0, comment="Часов в использование")
+    min_rental_days = Column(Integer, nullable=False, default=2, comment="Минимальная аренда в днях")
+    buffer_days = Column(Integer, nullable=False, default=1, comment="Дней на обслуживание после заказа")
     pre_rental_buffer = Column(Integer, nullable=True, default=0)
-    for_cleaning = Column(Boolean, nullable=True, default=False)
-    for_repair = Column(Boolean, nullable=True, default=False)
-    condition = Column(String(9), nullable=False)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
+    for_cleaning = Column(Boolean, nullable=True, default=False, comment="Требуется чистка?")
+    for_repair = Column(Boolean, nullable=True, default=False, comment="Требуется ремонт?")
+    condition = Column(String(9), nullable=False, comment="Описание состояния")
+    created_at = Column(DateTime, nullable=False, default=func.now(), comment="Создано")
+    updated_at = Column(DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано")
+    deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign keys
-    stock_keeping_unit_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False
-    )
-    status_code = mapped_column(
-        String, ForeignKey("article_statuses.status_code"), nullable=False
-    )
-    types_of_operation_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("types_of_operations.uuid"), nullable=False
-    )
+    sku_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False, comment="Индетифекатор")
+    status_code = mapped_column(String, ForeignKey("article_status.status_code"), nullable=False, comment="Статус")
+    types_of_operation_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("types_of_operations.uuid"), nullable=False, comment="Тип операций")
 
     # Relationships
-    sku = relationship("StockKeepingUnit", back_populates="article")
-    article_status = relationship("ArticleStatus", back_populates="article")
-    types_of_operations = relationship("TypesOfOperations", back_populates="article")
-    order_item = relationship("Specification", back_populates="article")
+    specification = relationship("Specificatios", backref="article")
+    cleaning_logs = relationship("CleaningLogs", backref="article")
+    lender_payments = relationship("LenderPayments", backref="article")
+    user_saved_items = relationship("UserSavedItems", backref="article")

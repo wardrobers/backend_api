@@ -11,19 +11,19 @@ from ..basemixin import Base
 class UserActivity(Base):
     __tablename__ = "user_activity"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    total_confirmed_orders = Column(Integer, default=0, nullable=False)
-    total_canceled_orders = Column(Integer, default=0, nullable=False)
-    activity_orders = Column(Integer, default=0, nullable=False)
-    subscription_now = Column(Boolean, default=False, nullable=False)
-    total_money_spent = Column(Numeric, nullable=True)
-    created_at = Column(DateTime, default=func.now(), nullable=False)
-    updated_at = Column(DateTime, onupdate=func.now(), nullable=True)
+    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор")
+    total_confirmed_orders = Column(Integer, nullable=False, default=0, comment="Кол-во заказов")
+    total_canceled_orders = Column(Integer, nullable=False, default=0, comment="Отмененные заказы")
+    activity_orders = Column(Integer, nullable=False, default=0, comment="активные заказы")
+    subscription_now = Column(Boolean, nullable=False, default=False, comment="Подписка")
+    total_money_spent = Column(Numeric, nullable=True, comment="Потрачено денег")
+    created_at = Column(DateTime, nullable=False, default=func.now(), comment="Создано")
+    updated_at = Column(DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано")
 
     # Foreign Keys
     user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False, comment="Пользователь"
     )
 
     # Relationships
-    user = relationship("User", back_populates="user_activity")
+    user = relationship("User", backref="user_activity")

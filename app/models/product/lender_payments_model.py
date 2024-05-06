@@ -1,6 +1,6 @@
 from sqlalchemy import Column, DateTime, String, ForeignKey, Numeric, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship, backref
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 
@@ -20,6 +20,3 @@ class LenderPayments(Base):
 
     # Foreign Keys
     article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
-
-    # Relationships
-    article = relationship("Article", backref=backref("lender_payments", uselist=True))

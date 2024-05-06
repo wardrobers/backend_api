@@ -1,13 +1,13 @@
 from sqlalchemy import Column, DateTime, Numeric, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 from uuid import uuid4
 
 from ..basemixin import Base
 
 
-class CleaningLog(Base):
+class CleaningLogs(Base):
     __tablename__ = 'cleaning_logs'
 
     uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -21,6 +21,3 @@ class CleaningLog(Base):
 
     # Foreign keys
     article_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('article.uuid'), nullable=False)
-    
-    # Relationships
-    article = relationship("Article", back_populates="cleaning_logs")

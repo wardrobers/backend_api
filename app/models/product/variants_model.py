@@ -19,6 +19,3 @@ class Variants(Base):
     # Foreign Keys
     product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('products.uuid'))
     sku_uuid = mapped_column(UUID(as_uuid=True), ForeignKey('stock_keeping_unit.uuid'))
-
-    # Relationships
-    product = relationship("Product", backref="variants")

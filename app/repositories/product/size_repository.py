@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Optional
-from ...models.product.clothing_size_model import Size
+from ...models.product.clothing_sizes_model import Size
 from ...schemas.product.size_schema import SizeCreate, SizeUpdate
 from pydantic import UUID4
 
