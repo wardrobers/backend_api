@@ -13,3 +13,4 @@ pydantic[email]
 python-multipart==0.0.6
 cloud-sql-python-connector[pg8000]==1.6.0
 passlib==1.7.4
+redis==5.0.4
