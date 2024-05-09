@@ -115,21 +115,16 @@ class BaseMixin(ABC):
         database access.
         """
         query = db_session.query(cls)
-
         # Apply filters
         conditions = [cls.apply_filter_conditions(query, attribute, value) for attribute, value in filters.items()]
         query = query.filter(*conditions)
-
         # Handle relationships
         query = cls.apply_relationship_filters(query, relationships or {})
-
         # Apply ordering
         query = cls.apply_ordering(query, order_by or [])
-
         # Apply pagination
         if offset is not None and limit is not None:
             query = query.offset(offset).limit(limit)
-
         return query
 
     @classmethod
