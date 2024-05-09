@@ -1,22 +1,27 @@
+from enum import Enum, auto
 from typing import Optional
-from pydantic import UUID4
 from sqlalchemy.orm import Session
-from ...models.products.core.product_model import Product
-from ...models.products.core.category_model import Category
-from ...models.products.product_details.materials_model import Material
-from ...models.products.article_details.colors_model import Color
-from ...models.products.product_details.clothing_sizes_model import Size
-from ...models.products.product_details.brand_model import Brand
-from ...models.products.pricing_table_model import Price
-from ...schemas.product.product_schema import ProductCreate, ProductUpdate
-from ...schemas.product.price_schema import PriceCreate
+from sqlalchemy import and_, between
+from pydantic import UUID4
+
+from app.models.products import Product, Category, Size, Brand, Material, Color
+
+
+class FilterKeys(Enum):
+    category_uuid = auto()
+    size_uuid = auto()
+    brand_uuid = auto()
+    material_uuid = auto()
+    color_uuid = auto()
+    price_range = auto()
+    available_dates = auto()
 
 
 class ProductRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_product(self, product_data: ProductCreate) -> Product:
+    def create_product(self, product_data: dict) -> Product:
         new_product = Product(**product_data.dict())
         self.db.add(new_product)
         self.db.commit()
@@ -29,9 +34,7 @@ class ProductRepository:
     def list_products(self, skip: int = 0, limit: int = 100) -> list[Product]:
         return self.db.query(Product).offset(skip).limit(limit).all()
 
-    def update_product(
-        self, uuid: UUID4, product_data: ProductUpdate
-    ) -> Optional[Product]:
+    def update_product(self, uuid: UUID4, product_data: dict) -> Optional[Product]:
         product = self.get_product(uuid)
         if product:
             update_data = product_data.dict(exclude_unset=True)
