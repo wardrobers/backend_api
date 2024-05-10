@@ -16,15 +16,15 @@ class UserRoles(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign keys
-    user_uuid = mapped_column(
+    user_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.uuid"),
+        ForeignKey("users.id"),
         primary_key=True,
         comment="Пользователь",
     )
-    role_uuid = mapped_column(
+    role_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("roles.uuid"),
+        ForeignKey("roles.id"),
         primary_key=True,
         comment="Индетифекатор",
     )

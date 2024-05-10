@@ -20,7 +20,7 @@ class ProductStatus(Enum):
 class ProductStatus(Base):
     __tablename__ = "product_status"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = Column(String, nullable=False)
     name = Column(SQLAEnum(ProductStatus), nullable=False)
     created_at = Column(DateTime, server_default=func.now())

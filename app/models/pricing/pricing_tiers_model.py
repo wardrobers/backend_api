@@ -10,7 +10,7 @@ from ..common.base_model import Base
 class PricingTier(Base):
     __tablename__ = "pricing_tiers"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     retail_price = Column(Numeric, nullable=False)
     max_price_threshold = Column(Numeric)
     max_price_discount = Column(Numeric)
@@ -21,14 +21,14 @@ class PricingTier(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    product_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    product_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False
     )
-    category_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("categories.uuid"), nullable=False
+    category_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("categories.id"), nullable=False
     )
-    price_multiplier_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("price_multipliers.uuid"), nullable=False
+    price_multiplier_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("price_multipliers.id"), nullable=False
     )
 
     # Relationships

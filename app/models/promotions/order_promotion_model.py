@@ -10,17 +10,17 @@ from ..common.base_model import Base
 class OrderPromotions(Base):
     __tablename__ = "order_promotions"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    order_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False
+    order_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False
     )
-    promotion_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("promotions_and_discounts.uuid"), nullable=False
+    promotion_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("promotions_and_discounts.id"), nullable=False
     )
 
     # Relationships

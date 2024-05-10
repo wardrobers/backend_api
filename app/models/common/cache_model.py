@@ -1,13 +1,21 @@
+import os
+import json
 import redis
 from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import UUID
+
+
+# Get Redis credentials from the REDISCRED environment variable
+redis_credentials = json.loads(os.environ["REDISCRED"])
+
 
 class RedisCache:
     """
     Simple Redis Cache class to handle caching operations.
     """
-    def __init__(self, host='localhost', port=6379, db=0):
-        self.r = redis.Redis(host=host, port=port, db=db)
+
+    def __init__(self, host="localhost", port=6379, password="password"):
+        self.r = redis.Redis(host=host, port=port, password=password)
 
     def get(self, key):
         """
@@ -39,11 +47,17 @@ class RedisCache:
         except redis.RedisError:
             pass
 
+
 class CachingMixin:
     """
     Mixin to add caching using Redis for frequently accessed data.
     """
-    _redis_cache = RedisCache(host='your_redis_host', port=your_redis_port, db=your_redis_db_index)
+
+    _redis_cache = RedisCache(
+        host=redis_credentials["host"],
+        port=redis_credentials["port"],
+        password=redis_credentials["password"],
+    )
 
     @classmethod
     def cached_find_by_id(cls, db_session: Session, _id: UUID):
@@ -55,7 +69,11 @@ class CachingMixin:
         if cached_result:
             return cached_result
 
-        result = db_session.query(cls).filter(cls.id == _id, cls.deleted_at.is_(None)).first()
+        result = (
+            db_session.query(cls)
+            .filter(cls.id == _id, cls.deleted_at.is_(None))
+            .first()
+        )
         if result:
             cls._redis_cache.set(key, result, ttl=3600)  # Cache for 1 hour
         return result

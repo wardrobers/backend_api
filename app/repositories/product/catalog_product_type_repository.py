@@ -8,11 +8,11 @@ class CatalogProductTypeRepository:
         self.db = db
 
     def create_catalog_product_type(
-        self, product_type_uuid: UUID, products_catalog_uuid: UUID
+        self, product_type_id: UUID, products_catalog_id: UUID
     ) -> CatalogProductType:
         new_catalog_product_type = CatalogProductType(
-            product_type_uuid=product_type_uuid,
-            products_catalog_uuid=products_catalog_uuid,
+            product_type_id=product_type_id,
+            products_catalog_id=products_catalog_id,
         )
         self.db.add(new_catalog_product_type)
         self.db.commit()

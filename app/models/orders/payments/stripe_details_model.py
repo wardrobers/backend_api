@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class StripeDetails(Base):
     __tablename__ = "stripe_details"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     stripe_charge_id = Column(
@@ -31,12 +31,12 @@ class StripeDetails(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
-    transaction_uuid = mapped_column(
+    transaction_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("transactions.uuid"),
+        ForeignKey("transactions.id"),
         nullable=False,
         comment="Транзакция",
     )
 
     def __repr__(self):
-        return f"<StripeDetails(uuid={self.uuid}, transaction_uuid={self.transaction_uuid})>"
+        return f"<StripeDetails(uuid={self.id}, transaction_id={self.transaction_id})>"

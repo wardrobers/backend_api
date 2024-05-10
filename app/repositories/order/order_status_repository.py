@@ -24,9 +24,9 @@ class OrderStatusRepository:
         self.db_session.refresh(new_order_status)
         return new_order_status
 
-    def get_order_status_by_uuid(self, uuid: UUID4) -> Optional[OrderStatusRead]:
+    def get_order_status_by_id(self, uuid: UUID4) -> Optional[OrderStatusRead]:
         return (
-            self.db_session.query(OrderStatus).filter(OrderStatus.uuid == uuid).first()
+            self.db_session.query(OrderStatus).filter(OrderStatus.id == uuid).first()
         )
 
     def list_order_statuses(
@@ -38,7 +38,7 @@ class OrderStatusRepository:
         self, uuid: UUID4, order_status_data: OrderStatusUpdate
     ) -> Optional[OrderStatusRead]:
         order_status = (
-            self.db_session.query(OrderStatus).filter(OrderStatus.uuid == uuid).first()
+            self.db_session.query(OrderStatus).filter(OrderStatus.id == uuid).first()
         )
         if order_status:
             if order_status_data.code is not None:
@@ -51,7 +51,7 @@ class OrderStatusRepository:
 
     def delete_order_status(self, uuid: UUID4):
         order_status = (
-            self.db_session.query(OrderStatus).filter(OrderStatus.uuid == uuid).first()
+            self.db_session.query(OrderStatus).filter(OrderStatus.id == uuid).first()
         )
         if order_status:
             self.db_session.delete(order_status)

@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/{user_uuid}/categories/",
+    "/{user_id}/categories/",
     response_model=CategoryForUserRead,
     status_code=status.HTTP_201_CREATED,
 )
@@ -34,23 +34,23 @@ def assign_category_to_user(
     return new_assignment
 
 
-@router.get("/{user_uuid}/categories/", response_model=list[CategoryForUserRead])
-def list_categories_for_user(user_uuid: UUID4, request: Request):
+@router.get("/{user_id}/categories/", response_model=list[CategoryForUserRead])
+def list_categories_for_user(user_id: UUID4, request: Request):
     """
     List all categories assigned to a user.
     """
     db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
-    categories = category_for_user_repository.get_categories_by_user_uuid(user_uuid)
+    categories = category_for_user_repository.get_categories_by_user_id(user_id)
     return categories
 
 
 @router.patch(
-    "/{user_uuid}/categories/{category_assignment_uuid}",
+    "/{user_id}/categories/{category_assignment_id}",
     response_model=CategoryForUserRead,
 )
 def update_category_assignment(
-    category_assignment_uuid: str,
+    category_assignment_id: str,
     category_update: CategoryForUserUpdate,
     request: Request,
 ):
@@ -60,7 +60,7 @@ def update_category_assignment(
     db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
     updated_assignment = category_for_user_repository.update_category_assignment(
-        category_assignment_uuid, category_update.dict()
+        category_assignment_id, category_update.dict()
     )
     if not updated_assignment:
         raise HTTPException(status_code=404, detail="Category assignment not found")
@@ -68,17 +68,17 @@ def update_category_assignment(
 
 
 @router.delete(
-    "/{user_uuid}/categories/{category_assignment_uuid}",
+    "/{user_id}/categories/{category_assignment_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def remove_category_assignment(category_assignment_uuid: str, request: Request):
+def remove_category_assignment(category_assignment_id: str, request: Request):
     """
     Remove a category assignment from a user.
     """
     db: Session = request.state.db
     category_for_user_repository = CategoryForUserRepository(db)
     if not category_for_user_repository.remove_category_assignment(
-        category_assignment_uuid
+        category_assignment_id
     ):
         raise HTTPException(
             status_code=404,

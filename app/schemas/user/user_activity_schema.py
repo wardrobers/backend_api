@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class UserActivityBase(BaseModel):
-    user_uuid: UUID4
+    user_id: UUID4
     total_confirmed_orders: int = 0
     total_canceled_orders: int = 0
     activity_orders: int = 0
@@ -20,7 +20,7 @@ class UserActivityCreate(UserActivityBase):
 
 class UserActivityRead(BaseModel):
     uuid: UUID4
-    user_uuid: UUID4
+    user_id: UUID4
     total_confirmed_orders: int
     total_canceled_orders: int
     activity_orders: int

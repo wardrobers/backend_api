@@ -12,7 +12,7 @@ class UserPhotoCreate(UserPhotoBase):
 
 class UserPhotoRead(UserPhotoBase):
     uuid: UUID4
-    user_uuid: UUID4
+    user_id: UUID4
     created_at: datetime
     deleted_at: datetime | None
 

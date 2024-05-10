@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class ProductPhotoBase(BaseModel):
-    product_uuid: UUID4
+    product_id: UUID4
     showcase: Optional[bool] = False
 
 
@@ -14,7 +14,7 @@ class ProductPhotoCreate(ProductPhotoBase):
 
 class ProductPhotoRead(BaseModel):
     uuid: UUID4
-    product_uuid: UUID4
+    product_id: UUID4
     showcase: bool
     created_at: datetime
     deleted_at: Optional[datetime] = None

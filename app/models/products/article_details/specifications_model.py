@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class Specifications(Base):
     __tablename__ = "specifications"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String)
     index = Column(Integer)
     value = Column(String)
@@ -19,4 +19,4 @@ class Specifications(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    article_uuid = mapped_column(String, ForeignKey("article.uuid"), nullable=False)
+    article_id = mapped_column(String, ForeignKey("article.id"), nullable=False)

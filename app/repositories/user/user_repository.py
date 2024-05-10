@@ -12,9 +12,9 @@ class UserRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_user_by_uuid(self, uuid: str) -> Optional[User]:
+    def get_user_by_id(self, uuid: str) -> Optional[User]:
         """Retrieve a user by their UUID."""
-        return self.db.query(User).filter(User.uuid == uuid).first()
+        return self.db.query(User).filter(User.id == uuid).first()
 
     def get_user_by_login(self, login: str) -> Optional[User]:
         """Retrieve a user by their login."""
@@ -35,7 +35,7 @@ class UserRepository:
 
     def update_user(self, uuid: str, user_data: UserUpdate) -> Optional[User]:
         """Update a user's details."""
-        user = self.get_user_by_uuid(uuid)
+        user = self.get_user_by_id(uuid)
         if user:
             update_data = user_data.dict(exclude_unset=True)
             # Separate user_info updates if present
@@ -43,22 +43,22 @@ class UserRepository:
             if user_info_data:
                 self.update_user_info(uuid, UserInfoUpdate(**user_info_data))
             if update_data:
-                self.db.query(User).filter(User.uuid == uuid).update(update_data)
+                self.db.query(User).filter(User.id == uuid).update(update_data)
                 self.db.commit()
-            return self.get_user_by_uuid(uuid)
+            return self.get_user_by_id(uuid)
         return None
 
     def delete_user(self, uuid: str):
         """Delete a user by their UUID."""
-        user = self.get_user_by_uuid(uuid)
+        user = self.get_user_by_id(uuid)
         if user:
             self.db.delete(user)
             self.db.commit()
 
-    def update_user_info(self, user_uuid: str, user_info_data: UserInfoUpdate):
+    def update_user_info(self, user_id: str, user_info_data: UserInfoUpdate):
         """Update a user's associated UserInfo."""
         user_info = (
-            self.db.query(UserInfo).filter(UserInfo.user_uuid == user_uuid).first()
+            self.db.query(UserInfo).filter(UserInfo.user_id == user_id).first()
         )
         if user_info:
             for key, value in user_info_data.dict(exclude_unset=True).items():

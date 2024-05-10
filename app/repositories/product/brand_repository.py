@@ -9,8 +9,8 @@ class BrandRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_brand_by_uuid(self, uuid: UUID4) -> Optional[Brand]:
-        return self.db.query(Brand).filter(Brand.uuid == uuid).first()
+    def get_brand_by_id(self, uuid: UUID4) -> Optional[Brand]:
+        return self.db.query(Brand).filter(Brand.id == uuid).first()
 
     def create_brand(self, brand_data: BrandCreate) -> Brand:
         new_brand = Brand(**brand_data.dict())
@@ -20,7 +20,7 @@ class BrandRepository:
         return new_brand
 
     def update_brand(self, uuid: UUID4, brand_data: BrandUpdate) -> Optional[Brand]:
-        brand = self.get_brand_by_uuid(uuid)
+        brand = self.get_brand_by_id(uuid)
         if brand:
             for key, value in brand_data.dict(exclude_unset=True).items():
                 setattr(brand, key, value)
@@ -29,7 +29,7 @@ class BrandRepository:
         return None
 
     def delete_brand(self, uuid: UUID4):
-        brand = self.get_brand_by_uuid(uuid)
+        brand = self.get_brand_by_id(uuid)
         if brand:
             self.db.delete(brand)
             self.db.commit()

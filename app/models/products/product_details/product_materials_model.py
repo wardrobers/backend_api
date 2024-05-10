@@ -16,9 +16,9 @@ class ProductMaterials(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.uuid"), primary_key=True
+    product_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.id"), primary_key=True
     )
-    material_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("materials.uuid"), primary_key=True
+    material_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("materials.id"), primary_key=True
     )

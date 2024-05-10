@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class ProductTypes(Base):
     __tablename__ = "product_types"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     created_at = Column(
@@ -19,9 +19,9 @@ class ProductTypes(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
-    product_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False, comment="Товар"
+    product_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False, comment="Товар"
     )
-    type_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("types.uuid"), nullable=False, comment="Тип вещи"
+    type_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("types.id"), nullable=False, comment="Тип вещи"
     )

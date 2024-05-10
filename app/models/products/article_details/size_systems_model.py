@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class SizeSystems(Base):
     __tablename__ = "size_systems"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)
     description = Column(Text)
     created_at = Column(DateTime, default=func.now())

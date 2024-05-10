@@ -7,7 +7,7 @@ from .subscription_schema import SubscriptionRead
 
 class SubscriptionTypeBase(BaseModel):
     name: Optional[str] = None
-    period_uuid: UUID4
+    period_id: UUID4
     price: float
     count_free_orders: int
 
@@ -30,7 +30,7 @@ class SubscriptionTypeRead(SubscriptionTypeBase):
 # For updating an existing SubscriptionType
 class SubscriptionTypeUpdate(BaseModel):
     name: Optional[str] = None
-    period_uuid: Optional[UUID4] = None
+    period_id: Optional[UUID4] = None
     price: Optional[float] = None
     count_free_orders: Optional[int] = None
 

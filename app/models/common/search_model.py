@@ -9,11 +9,17 @@ class SearchMixin:
         Performs full-text search with filtering and faceted search capabilities.
         """
         if not fields:
-            fields = [column.name for column in cls.__table__.columns if isinstance(column.type, String)]
+            fields = [
+                column.name
+                for column in cls.__table__.columns
+                if isinstance(column.type, String)
+            ]
 
-        vector = func.to_tsvector('english', func.concat(*[getattr(cls, field) for field in fields]))
-        query = func.plainto_tsquery('english', search_term)
-        
+        vector = func.to_tsvector(
+            "english", func.concat(*[getattr(cls, field) for field in fields])
+        )
+        query = func.plainto_tsquery("english", search_term)
+
         search_query = db_session.query(cls).filter(vector.match(query))
 
         if filters:
@@ -23,10 +29,14 @@ class SearchMixin:
         if facets:
             facet_counts = {}
             for facet_field in facets:
-                facet_results = db_session.query(
-                    getattr(cls, facet_field), func.count(cls.id)
-                ).group_by(getattr(cls, facet_field)).all()
-                facet_counts[facet_field] = {result[0]: result[1] for result in facet_results}
+                facet_results = (
+                    db_session.query(getattr(cls, facet_field), func.count(cls.id))
+                    .group_by(getattr(cls, facet_field))
+                    .all()
+                )
+                facet_counts[facet_field] = {
+                    result[0]: result[1] for result in facet_results
+                }
             return search_query, facet_counts
-        
+
         return search_query

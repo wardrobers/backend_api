@@ -3,7 +3,7 @@ from .routers.user import user_router
 from .routers.product import product_router
 from .routers.order import order_router
 
-from app.models import products, users, orders
+from app.models import products, subscriptions, common, promotions, users, orders, pricing
 
 
 api_router = APIRouter()

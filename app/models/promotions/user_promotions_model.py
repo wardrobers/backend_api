@@ -15,9 +15,9 @@ class UserPromotions(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    user_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
-    promotion_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("promotions_and_discounts.uuid"), nullable=False
+    promotion_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("promotions_and_discounts.id"), nullable=False
     )

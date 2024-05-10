@@ -18,7 +18,7 @@ class AddressType(Enum):
 class UserAddresses(Base):
     __tablename__ = "user_addresses"
 
-    uuid = Column(
+    id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     address_line1 = Column(String, nullable=True, comment="Улица, номер дома")
@@ -34,9 +34,9 @@ class UserAddresses(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
-    user_uuid = Column(
+    user_id = Column(
         UUID(as_uuid=True),
-        ForeignKey("users.uuid"),
+        ForeignKey("users.id"),
         nullable=False,
         comment="Пользователь",
     )

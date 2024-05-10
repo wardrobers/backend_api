@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class UserInfo(Base):
     __tablename__ = "user_info"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     first_name = Column(String, nullable=False, comment="Имя")
@@ -25,9 +25,9 @@ class UserInfo(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign keys
-    user_uuid = mapped_column(
+    user_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.uuid"),
+        ForeignKey("users.id"),
         nullable=False,
         comment="Пользовтаель",
     )

@@ -10,7 +10,7 @@ from ..common.base_model import Base
 class PriceFactors(Base):
     __tablename__ = "price_factors"
 
-    uuid = Column(
+    id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     rental_period = Column(Numeric, nullable=False, comment="Rental period")
@@ -22,9 +22,9 @@ class PriceFactors(Base):
     deleted_at = Column(DateTime, comment="Удалено")
 
     # Foreign keys
-    pricing_tier_uuid = mapped_column(
+    pricing_tier_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("pricing_tiers.uuid"),
+        ForeignKey("pricing_tiers.id"),
         nullable=False,
         comment="Индетифекатор",
     )

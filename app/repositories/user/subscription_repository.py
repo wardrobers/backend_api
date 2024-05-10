@@ -17,8 +17,8 @@ class SubscriptionRepository:
         self.db.refresh(new_subscription)
         return new_subscription
 
-    def get_subscription_by_uuid(self, uuid: str) -> Optional[Subscription]:
-        return self.db.query(Subscription).filter(Subscription.uuid == uuid).first()
+    def get_subscription_by_id(self, uuid: str) -> Optional[Subscription]:
+        return self.db.query(Subscription).filter(Subscription.id == uuid).first()
 
     def list_subscriptions(self, skip: int = 0, limit: int = 100) -> List[Subscription]:
         return self.db.query(Subscription).offset(skip).limit(limit).all()
@@ -26,7 +26,7 @@ class SubscriptionRepository:
     def update_subscription(
         self, uuid: str, subscription_data: SubscriptionUpdate
     ) -> Optional[Subscription]:
-        subscription = self.get_subscription_by_uuid(uuid)
+        subscription = self.get_subscription_by_id(uuid)
         if subscription:
             for key, value in subscription_data.dict(exclude_unset=True).items():
                 setattr(subscription, key, value)
@@ -35,7 +35,7 @@ class SubscriptionRepository:
         return None
 
     def delete_subscription(self, uuid: str):
-        subscription = self.get_subscription_by_uuid(uuid)
+        subscription = self.get_subscription_by_id(uuid)
         if subscription:
             self.db.delete(subscription)
             self.db.commit()

@@ -20,10 +20,10 @@ class SubscriptionTypeRepository:
         self.db.refresh(new_subscription_type)
         return new_subscription_type
 
-    def get_subscription_type_by_uuid(self, uuid: str) -> Optional[SubscriptionType]:
+    def get_subscription_type_by_id(self, uuid: str) -> Optional[SubscriptionType]:
         return (
             self.db.query(SubscriptionType)
-            .filter(SubscriptionType.uuid == uuid)
+            .filter(SubscriptionType.id == uuid)
             .first()
         )
 
@@ -35,7 +35,7 @@ class SubscriptionTypeRepository:
     def update_subscription_type(
         self, uuid: str, subscription_type_data: SubscriptionTypeUpdate
     ) -> Optional[SubscriptionType]:
-        subscription_type = self.get_subscription_type_by_uuid(uuid)
+        subscription_type = self.get_subscription_type_by_id(uuid)
         if subscription_type:
             for key, value in subscription_type_data.dict(exclude_unset=True).items():
                 setattr(subscription_type, key, value)
@@ -44,7 +44,7 @@ class SubscriptionTypeRepository:
         return None
 
     def delete_subscription_type(self, uuid: str):
-        subscription_type = self.get_subscription_type_by_uuid(uuid)
+        subscription_type = self.get_subscription_type_by_id(uuid)
         if subscription_type:
             self.db.delete(subscription_type)
             self.db.commit()

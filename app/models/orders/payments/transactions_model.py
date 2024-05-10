@@ -20,7 +20,7 @@ class TransactionStatus(Enum):
 class Transactions(Base):
     __tablename__ = "transactions"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     amount = Column(Numeric, nullable=False)
     currency = Column(String, nullable=False)
     transaction_date = Column(DateTime)
@@ -30,17 +30,17 @@ class Transactions(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    user_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
-    payment_method_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("payment_methods.uuid"), nullable=False
+    payment_method_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("payment_methods.id"), nullable=False
     )
-    order_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False
+    order_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False
     )
-    user_address_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user_addresses.uuid"), nullable=False
+    user_address_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("user_addresses.id"), nullable=False
     )
 
     # Relationships
@@ -49,4 +49,4 @@ class Transactions(Base):
     lender_payment = relationship("LenderPayments", backref="transactions")
 
     def __repr__(self):
-        return f"<Transaction(uuid={self.uuid}, amount={self.amount}, currency='{self.currency}', status='{self.status}')>"
+        return f"<Transaction(uuid={self.id}, amount={self.amount}, currency='{self.currency}', status='{self.status}')>"

@@ -7,17 +7,17 @@ class UserActivityRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_activity_by_user_uuid(self, user_uuid: str) -> Optional[UserActivity]:
+    def get_activity_by_user_id(self, user_id: str) -> Optional[UserActivity]:
         return (
             self.db.query(UserActivity)
-            .filter(UserActivity.user_uuid == user_uuid)
+            .filter(UserActivity.user_id == user_id)
             .first()
         )
 
     def update_user_activity(
-        self, user_uuid: str, activity_data: dict
+        self, user_id: str, activity_data: dict
     ) -> Optional[UserActivity]:
-        activity = self.get_activity_by_user_uuid(user_uuid)
+        activity = self.get_activity_by_user_id(user_id)
         if activity:
             for key, value in activity_data.items():
                 setattr(activity, key, value)

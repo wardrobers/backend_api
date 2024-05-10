@@ -22,7 +22,7 @@ class DeliveryStatus(Enum):
 class ShippingDetails(Base):
     __tablename__ = "shipping_details"
 
-    uuid = Column(
+    id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     tracking_number = Column(String, nullable=True)
@@ -42,15 +42,15 @@ class ShippingDetails(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
-    delivery_option_uuid = mapped_column(
+    delivery_option_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("delivery_options.uuid"),
+        ForeignKey("delivery_options.id"),
         nullable=False,
         comment="Тип доставки",
     )
-    user_address_uuid = mapped_column(
+    user_address_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("user_addresses.uuid"),
+        ForeignKey("user_addresses.id"),
         nullable=False,
         comment="Адрес",
     )

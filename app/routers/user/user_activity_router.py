@@ -9,24 +9,24 @@ from ...schemas.user.user_activity_schema import UserActivityUpdate, UserActivit
 router = APIRouter()
 
 
-@router.get("/{user_uuid}/activity", response_model=UserActivityRead)
-def get_user_activity(user_uuid: UUID4, request: Request):
+@router.get("/{user_id}/activity", response_model=UserActivityRead)
+def get_user_activity(user_id: UUID4, request: Request):
     db: Session = request.state.db
     activity_repository = UserActivityRepository(db)
-    activity = activity_repository.get_activity_by_user_uuid(user_uuid)
+    activity = activity_repository.get_activity_by_user_id(user_id)
     if not activity:
         raise HTTPException(status_code=404, detail="User activity not found")
     return activity
 
 
-@router.put("/{user_uuid}/activity", response_model=UserActivityRead)
+@router.put("/{user_id}/activity", response_model=UserActivityRead)
 def update_user_activity(
-    user_uuid: UUID4, activity_data: UserActivityUpdate, request: Request
+    user_id: UUID4, activity_data: UserActivityUpdate, request: Request
 ):
     db: Session = request.state.db
     activity_repository = UserActivityRepository(db)
     updated_activity = activity_repository.update_user_activity(
-        user_uuid, activity_data.dict()
+        user_id, activity_data.dict()
     )
     if not updated_activity:
         raise HTTPException(status_code=404, detail="User activity not found")

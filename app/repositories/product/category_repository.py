@@ -15,11 +15,11 @@ class CategoryRepository:
         self.db.refresh(new_category)
         return new_category
 
-    def get_category_by_uuid(self, uuid: UUID) -> Category:
-        return self.db.query(Category).filter(Category.uuid == uuid).first()
+    def get_category_by_id(self, uuid: UUID) -> Category:
+        return self.db.query(Category).filter(Category.id == uuid).first()
 
     def update_category(self, uuid: UUID, update_data: CategoryUpdate) -> Category:
-        category = self.get_category_by_uuid(uuid)
+        category = self.get_category_by_id(uuid)
         if category:
             for key, value in update_data.dict(exclude_unset=True).items():
                 setattr(category, key, value)
@@ -29,7 +29,7 @@ class CategoryRepository:
         return None
 
     def delete_category(self, uuid: UUID) -> None:
-        category = self.get_category_by_uuid(uuid)
+        category = self.get_category_by_id(uuid)
         if category:
             self.db.delete(category)
             self.db.commit()

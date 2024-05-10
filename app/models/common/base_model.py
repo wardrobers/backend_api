@@ -116,7 +116,10 @@ class BaseMixin(ABC):
         """
         query = db_session.query(cls)
         # Apply filters
-        conditions = [cls.apply_filter_conditions(query, attribute, value) for attribute, value in filters.items()]
+        conditions = [
+            cls.apply_filter_conditions(query, attribute, value)
+            for attribute, value in filters.items()
+        ]
         query = query.filter(*conditions)
         # Handle relationships
         query = cls.apply_relationship_filters(query, relationships or {})
@@ -146,7 +149,7 @@ class BaseMixin(ABC):
         return query
 
     @classmethod
-    def paginate_query(
+    def paginate(
         cls,
         db_session: Session,
         page_number: int,

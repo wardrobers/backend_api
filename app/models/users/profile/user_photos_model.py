@@ -10,10 +10,10 @@ from ...common.base_model import Base
 class UserPhotos(Base):
     __tablename__ = "user_photos"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     image_url = Column(String, nullable=False)
     created_at = Column(DateTime, default=func.now())
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    user_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("users.uuid"))
+    user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))

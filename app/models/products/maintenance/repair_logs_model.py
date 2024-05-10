@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class RepairLogs(Base):
     __tablename__ = "repair_logs"
 
-    uuid = Column(
+    id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     description = Column(Text, nullable=True, comment="Описание")
@@ -21,9 +21,9 @@ class RepairLogs(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign Keys
-    article_uuid = mapped_column(
+    article_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("article.uuid"),
+        ForeignKey("article.id"),
         nullable=False,
         comment="Индетифекатор",
     )

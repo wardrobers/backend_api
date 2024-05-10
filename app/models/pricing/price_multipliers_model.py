@@ -10,7 +10,7 @@ from ..common.base_model import Base
 class PriceMultipliers(Base):
     __tablename__ = "price_multipliers"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     category = Column(String, nullable=False)
     multiplier = Column(Numeric, nullable=False)
     created_at = Column(DateTime, default=func.now())

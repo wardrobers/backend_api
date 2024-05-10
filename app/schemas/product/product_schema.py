@@ -9,12 +9,12 @@ from .material_schema import MaterialRead
 class ProductRead(BaseModel):
     uuid: UUID4
     status_code: str
-    products_catalog_uuid: UUID4
-    color_uuid: UUID4
+    products_catalog_id: UUID4
+    color_id: UUID4
     number: str
     name: Optional[str] = None
     article: Optional[str] = None
-    size_uuid: UUID4
+    size_id: UUID4
     usage_count: int
     usage_seconds: int
     factory_number: Optional[str] = None
@@ -31,12 +31,12 @@ class ProductRead(BaseModel):
 
 class ProductCreate(BaseModel):
     status_code: Optional[str] = None
-    products_catalog_uuid: Optional[UUID4] = None
-    color_uuid: Optional[UUID4] = None
+    products_catalog_id: Optional[UUID4] = None
+    color_id: Optional[UUID4] = None
     number: Optional[str] = None
     name: Optional[str] = None
     article: Optional[str] = None
-    size_uuid: Optional[UUID4] = None
+    size_id: Optional[UUID4] = None
     usage_count: Optional[int] = None
     usage_seconds: Optional[int] = None
     factory_number: Optional[str] = None
@@ -50,12 +50,12 @@ class ProductCreate(BaseModel):
 
 class ProductUpdate(BaseModel):
     status_code: Optional[str] = None
-    products_catalog_uuid: Optional[UUID4] = None
-    color_uuid: Optional[UUID4] = None
+    products_catalog_id: Optional[UUID4] = None
+    color_id: Optional[UUID4] = None
     number: Optional[str] = None
     name: Optional[str] = None
     article: Optional[str] = None
-    size_uuid: Optional[UUID4] = None
+    size_id: Optional[UUID4] = None
     usage_count: Optional[int] = None
     usage_seconds: Optional[int] = None
     factory_number: Optional[str] = None

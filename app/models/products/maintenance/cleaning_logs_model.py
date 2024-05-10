@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class CleaningLogs(Base):
     __tablename__ = "cleaning_logs"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     article = Column(String, nullable=False)
     description = Column(Text)
     cost = Column(Numeric)
@@ -20,6 +20,6 @@ class CleaningLogs(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    article_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    article_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.id"), nullable=False
     )

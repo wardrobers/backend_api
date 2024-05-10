@@ -9,8 +9,8 @@ class SizeRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_size_by_uuid(self, uuid: UUID4) -> Optional[Size]:
-        return self.db.query(Size).filter(Size.uuid == uuid).first()
+    def get_size_by_id(self, uuid: UUID4) -> Optional[Size]:
+        return self.db.query(Size).filter(Size.id == uuid).first()
 
     def create_size(self, size_data: SizeCreate) -> Size:
         new_size = Size(**size_data.dict())
@@ -20,7 +20,7 @@ class SizeRepository:
         return new_size
 
     def update_size(self, uuid: UUID4, size_data: SizeUpdate) -> Optional[Size]:
-        size = self.get_size_by_uuid(uuid)
+        size = self.get_size_by_id(uuid)
         if size:
             for key, value in size_data.dict(exclude_unset=True).items():
                 setattr(size, key, value)
@@ -29,7 +29,7 @@ class SizeRepository:
         return None
 
     def delete_size(self, uuid: UUID4) -> None:
-        size = self.get_size_by_uuid(uuid)
+        size = self.get_size_by_id(uuid)
         if size:
             self.db.delete(size)
             self.db.commit()

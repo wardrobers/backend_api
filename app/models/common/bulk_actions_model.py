@@ -8,9 +8,11 @@ class BulkActionsMixin:
         db_session.bulk_save_objects(instances)
         db_session.flush()
         return instances
-    
+
     @classmethod
-    def bulk_insert(cls, db_session: Session, items: list[dict], return_defaults: bool = False):
+    def bulk_insert(
+        cls, db_session: Session, items: list[dict], return_defaults: bool = False
+    ):
         """
         Perform bulk inserts efficiently.
         """
@@ -30,5 +32,7 @@ class BulkActionsMixin:
         """
         Perform bulk deletes efficiently.
         """
-        db_session.query(cls).filter(cls.id.in_(ids)).delete(synchronize_session='fetch')
+        db_session.query(cls).filter(cls.id.in_(ids)).delete(
+            synchronize_session="fetch"
+        )
         db_session.flush()

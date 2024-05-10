@@ -20,7 +20,7 @@ class PaymentStatus(Enum):
 class LenderPayments(Base):
     __tablename__ = "lender_payments"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     payment_percentage = Column(Integer, nullable=False)
     payment_amount = Column(Numeric, nullable=False)
     payment_status = Column(SQLAEnum(PaymentStatus))
@@ -29,9 +29,9 @@ class LenderPayments(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    article_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    article_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.id"), nullable=False
     )
-    transaction_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("transactions.uuid"), nullable=False
+    transaction_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("transactions.id"), nullable=False
     )

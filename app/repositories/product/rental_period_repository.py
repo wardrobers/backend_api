@@ -22,7 +22,7 @@ class RentalPeriodRepository:
         return new_rental_period
 
     def get_rental_period(self, uuid: UUID) -> Optional[RentalPeriod]:
-        return self.db.query(RentalPeriod).filter(RentalPeriod.uuid == uuid).first()
+        return self.db.query(RentalPeriod).filter(RentalPeriod.id == uuid).first()
 
     def list_rental_periods(
         self, skip: int = 0, limit: int = 100

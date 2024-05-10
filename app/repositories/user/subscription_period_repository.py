@@ -20,12 +20,12 @@ class SubscriptionPeriodRepository:
         self.db.refresh(new_period)
         return new_period
 
-    def get_subscription_period_by_uuid(
+    def get_subscription_period_by_id(
         self, uuid: str
     ) -> Optional[SubscriptionPeriod]:
         return (
             self.db.query(SubscriptionPeriod)
-            .filter(SubscriptionPeriod.uuid == uuid)
+            .filter(SubscriptionPeriod.id == uuid)
             .first()
         )
 
@@ -37,7 +37,7 @@ class SubscriptionPeriodRepository:
     def update_subscription_period(
         self, uuid: str, subscription_period_data: SubscriptionPeriodUpdate
     ) -> Optional[SubscriptionPeriod]:
-        period = self.get_subscription_period_by_uuid(uuid)
+        period = self.get_subscription_period_by_id(uuid)
         if period:
             for key, value in subscription_period_data.dict(exclude_unset=True).items():
                 setattr(period, key, value)
@@ -46,7 +46,7 @@ class SubscriptionPeriodRepository:
         return None
 
     def delete_subscription_period(self, uuid: str):
-        period = self.get_subscription_period_by_uuid(uuid)
+        period = self.get_subscription_period_by_id(uuid)
         if period:
             self.db.delete(period)
             self.db.commit()

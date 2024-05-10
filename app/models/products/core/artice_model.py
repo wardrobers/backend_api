@@ -27,7 +27,7 @@ class Condition(Enum):
 class Article(Base):
     __tablename__ = "article"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     article = Column(String, nullable=False, comment="Артикул")
@@ -67,9 +67,9 @@ class Article(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign keys
-    sku_uuid = mapped_column(
+    sku_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("stock_keeping_unit.uuid"),
+        ForeignKey("stock_keeping_unit.id"),
         nullable=False,
         comment="Индетифекатор",
     )
@@ -79,9 +79,9 @@ class Article(Base):
         nullable=False,
         comment="Статус",
     )
-    types_of_operation_uuid = mapped_column(
+    types_of_operation_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("types_of_operations.uuid"),
+        ForeignKey("types_of_operations.id"),
         nullable=False,
         comment="Тип операций",
     )

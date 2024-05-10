@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class Variants(Base):
     __tablename__ = "variants"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)
     index = Column(Integer)
     created_at = Column(DateTime, default=func.now())
@@ -18,8 +18,8 @@ class Variants(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("products.uuid"))
-    sku_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"))
+    product_id = mapped_column(UUID(as_uuid=True), ForeignKey("products.id"))
+    sku_id = mapped_column(UUID(as_uuid=True), ForeignKey("stock_keeping_unit.id"))
 
     # Relationships
     sizing = relationship("Sizing", backref="variants")

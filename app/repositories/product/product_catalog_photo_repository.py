@@ -24,7 +24,7 @@ class ProductsCatalogPhotoRepository:
     def get_products_catalog_photo(self, uuid: UUID) -> Optional[ProductsCatalogPhoto]:
         return (
             self.db.query(ProductsCatalogPhoto)
-            .filter(ProductsCatalogPhoto.uuid == uuid)
+            .filter(ProductsCatalogPhoto.id == uuid)
             .first()
         )
 
@@ -51,13 +51,13 @@ class ProductsCatalogPhotoRepository:
             self.db.delete(photo)
             self.db.commit()
 
-    def set_showcase_for_product(self, product_uuid: UUID, photo_uuid: UUID) -> None:
+    def set_showcase_for_product(self, product_id: UUID, photo_id: UUID) -> None:
         # Assuming there could be multiple photos but only one showcase at a time
         photos = (
             self.db.query(ProductsCatalogPhoto)
-            .filter(ProductsCatalogPhoto.product_uuid == product_uuid)
+            .filter(ProductsCatalogPhoto.product_id == product_id)
             .all()
         )
         for photo in photos:
-            photo.showcase = photo.uuid == photo_uuid
+            photo.showcase = photo.id == photo_id
         self.db.commit()

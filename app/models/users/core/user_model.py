@@ -21,7 +21,7 @@ from ..roles.user_roles_model import UserRoles
 class User(Base):
     __tablename__ = "users"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     login = Column(String, nullable=False)
     password = Column(String, nullable=False)
     is_notificated = Column(Boolean, default=False)

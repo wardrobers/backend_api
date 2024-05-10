@@ -10,11 +10,11 @@ from ...common.base_model import Base
 class ProductPhotos(Base):
     __tablename__ = "product_photos"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     index = Column(Integer, default=1)
     showcase = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.now())
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    product_uuid = Column(UUID(as_uuid=True), ForeignKey("products.uuid"))
+    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id"))

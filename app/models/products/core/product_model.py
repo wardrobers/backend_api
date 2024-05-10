@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class Product(Base):
     __tablename__ = "products"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     sku_product = Column(String, nullable=False)
     name = Column(String, nullable=False)
     description = Column(Text)
@@ -20,15 +20,15 @@ class Product(Base):
     deleted_at = Column(DateTime)
 
     # Foreign Keys
-    sku_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stock_keeping_unit.uuid"), nullable=False
+    sku_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("stock_keeping_unit.id"), nullable=False
     )
-    brand_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("brands.uuid"))
-    clothing_size_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("clothing_sizes.uuid")
+    brand_id = mapped_column(UUID(as_uuid=True), ForeignKey("brands.id"))
+    clothing_size_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("clothing_sizes.id")
     )
-    clasp_type_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("clasp_types.uuid"))
-    product_fit_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.uuid"))
+    clasp_type_id = mapped_column(UUID(as_uuid=True), ForeignKey("clasp_types.id"))
+    product_fit_id = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.id"))
     status_code = mapped_column(String, ForeignKey("product_status.code"))
 
     # Relationships
@@ -42,4 +42,4 @@ class Product(Base):
     accessory_size = relationship("AccessoriesSize", backref="products")
 
     def __repr__(self):
-        return f"<Product(uuid={self.uuid}, name='{self.name}', sku_product='{self.sku_product}')>"
+        return f"<Product(uuid={self.id}, name='{self.name}', sku_product='{self.sku_product}')>"

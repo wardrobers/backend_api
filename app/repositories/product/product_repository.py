@@ -8,11 +8,11 @@ from app.models.products import Product, Category, Size, Brand, Material, Color
 
 
 class FilterKeys(Enum):
-    category_uuid = auto()
-    size_uuid = auto()
-    brand_uuid = auto()
-    material_uuid = auto()
-    color_uuid = auto()
+    category_id = auto()
+    size_id = auto()
+    brand_id = auto()
+    material_id = auto()
+    color_id = auto()
     price_range = auto()
     available_dates = auto()
 
@@ -29,7 +29,7 @@ class ProductRepository:
         return new_product
 
     def get_product(self, uuid: UUID4) -> Optional[Product]:
-        return self.db.query(Product).filter(Product.uuid == uuid).first()
+        return self.db.query(Product).filter(Product.id == uuid).first()
 
     def list_products(self, skip: int = 0, limit: int = 100) -> list[Product]:
         return self.db.query(Product).offset(skip).limit(limit).all()
@@ -50,67 +50,67 @@ class ProductRepository:
             self.db.delete(product)
             self.db.commit()
 
-    def add_category_to_product(self, product_uuid: UUID4, category_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def add_category_to_product(self, product_id: UUID4, category_id: UUID4):
+        product = self.get_product(product_id)
         category = (
-            self.db.query(Category).filter(Category.uuid == category_uuid).first()
+            self.db.query(Category).filter(Category.id == category_id).first()
         )
         if product and category:
             product.categories.append(category)
             self.db.commit()
 
-    def remove_category_from_product(self, product_uuid: UUID4, category_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def remove_category_from_product(self, product_id: UUID4, category_id: UUID4):
+        product = self.get_product(product_id)
         category = (
-            self.db.query(Category).filter(Category.uuid == category_uuid).first()
+            self.db.query(Category).filter(Category.id == category_id).first()
         )
         if product and category and category in product.categories:
             product.categories.remove(category)
             self.db.commit()
 
-    def add_material_to_product(self, product_uuid: UUID4, material_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def add_material_to_product(self, product_id: UUID4, material_id: UUID4):
+        product = self.get_product(product_id)
         material = (
-            self.db.query(Material).filter(Material.uuid == material_uuid).first()
+            self.db.query(Material).filter(Material.id == material_id).first()
         )
         if product and material:
             product.materials.append(material)
             self.db.commit()
 
-    def remove_material_from_product(self, product_uuid: UUID4, material_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def remove_material_from_product(self, product_id: UUID4, material_id: UUID4):
+        product = self.get_product(product_id)
         material = (
-            self.db.query(Material).filter(Material.uuid == material_uuid).first()
+            self.db.query(Material).filter(Material.id == material_id).first()
         )
         if product and material and material in product.materials:
             product.materials.remove(material)
             self.db.commit()
 
-    def set_color_for_product(self, product_uuid: UUID4, color_uuid: UUID4):
-        product = self.get_product(product_uuid)
-        color = self.db.query(Color).filter(Color.uuid == color_uuid).first()
+    def set_color_for_product(self, product_id: UUID4, color_id: UUID4):
+        product = self.get_product(product_id)
+        color = self.db.query(Color).filter(Color.id == color_id).first()
         if product and color:
             product.color = color
             self.db.commit()
 
-    def remove_color_from_product(self, product_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def remove_color_from_product(self, product_id: UUID4):
+        product = self.get_product(product_id)
         if product and product.color:
             product.color = None
             self.db.commit()
 
     # Methods for handling the product-price relationship
-    def add_price_to_product(self, product_uuid: UUID4, price_data: PriceCreate):
-        product = self.get_product(product_uuid)
+    def add_price_to_product(self, product_id: UUID4, price_data: PriceCreate):
+        product = self.get_product(product_id)
         if product:
             new_price = Price(**price_data.dict())
             product.prices.append(new_price)
             self.db.commit()
 
-    def remove_price_from_product(self, product_uuid: UUID4, price_uuid: UUID4):
+    def remove_price_from_product(self, product_id: UUID4, price_id: UUID4):
         price = (
             self.db.query(Price)
-            .filter(Price.uuid == price_uuid, Price.product_uuid == product_uuid)
+            .filter(Price.id == price_id, Price.product_id == product_id)
             .first()
         )
         if price:
@@ -118,29 +118,29 @@ class ProductRepository:
             self.db.commit()
 
     # Methods for handling the product-brand relationship
-    def set_brand_for_product(self, product_uuid: UUID4, brand_uuid: UUID4):
-        product = self.get_product(product_uuid)
-        brand = self.db.query(Brand).filter(Brand.uuid == brand_uuid).first()
+    def set_brand_for_product(self, product_id: UUID4, brand_id: UUID4):
+        product = self.get_product(product_id)
+        brand = self.db.query(Brand).filter(Brand.id == brand_id).first()
         if product and brand:
             product.brand = brand
             self.db.commit()
 
-    def remove_brand_from_product(self, product_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def remove_brand_from_product(self, product_id: UUID4):
+        product = self.get_product(product_id)
         if product and product.brand:
             product.brand = None
             self.db.commit()
 
     # Methods for handling the product-size relationship
-    def set_size_for_product(self, product_uuid: UUID4, size_uuid: UUID4):
-        product = self.get_product(product_uuid)
-        size = self.db.query(Size).filter(Size.uuid == size_uuid).first()
+    def set_size_for_product(self, product_id: UUID4, size_id: UUID4):
+        product = self.get_product(product_id)
+        size = self.db.query(Size).filter(Size.id == size_id).first()
         if product and size:
             product.size = size
             self.db.commit()
 
-    def remove_size_from_product(self, product_uuid: UUID4):
-        product = self.get_product(product_uuid)
+    def remove_size_from_product(self, product_id: UUID4):
+        product = self.get_product(product_id)
         if product and product.size:
             product.size = None
             self.db.commit()

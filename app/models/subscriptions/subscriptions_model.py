@@ -10,7 +10,7 @@ from ..common.base_model import Base
 class Subscriptions(Base):
     __tablename__ = "subscriptions"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     subscription_start = Column(DateTime, nullable=True, comment="Начало подписки")
@@ -29,15 +29,15 @@ class Subscriptions(Base):
     updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
 
     # Foreign Keys
-    user_uuid = mapped_column(
+    user_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.uuid"),
+        ForeignKey("users.id"),
         nullable=False,
         comment="Пользователь",
     )
-    subscription_type_uuid = mapped_column(
+    subscription_type_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("subscription_types.uuid"),
+        ForeignKey("subscription_types.id"),
         nullable=False,
         comment="Тип подписки",
     )

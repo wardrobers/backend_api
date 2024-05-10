@@ -7,8 +7,8 @@ from .rental_period_schema import RentalPeriodBase
 
 class PriceBase(BaseModel):
     uuid: Optional[UUID4] = Field(default_factory=UUID4)
-    product_uuid: UUID4
-    time_period_uuid: UUID4
+    product_id: UUID4
+    time_period_id: UUID4
     time_value: int
     price: float
     created_at: datetime
@@ -27,10 +27,10 @@ class PriceRead(PriceBase):
 
 
 class PriceUpdate(BaseModel):
-    product_uuid: Optional[UUID4] = Field(
+    product_id: Optional[UUID4] = Field(
         None, description="The UUID of the associated product."
     )
-    time_period_uuid: Optional[UUID4] = Field(
+    time_period_id: Optional[UUID4] = Field(
         None, description="The UUID of the associated rental period."
     )
     time_value: Optional[int] = Field(
@@ -43,8 +43,8 @@ class PriceUpdate(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "product_uuid": "123e4567-e89b-12d3-a456-426614174000",
-                "time_period_uuid": "123e4567-e89b-12d3-a456-426614174001",
+                "product_id": "123e4567-e89b-12d3-a456-426614174000",
+                "time_period_id": "123e4567-e89b-12d3-a456-426614174001",
                 "time_value": 30,
                 "price": 15.99,
             }

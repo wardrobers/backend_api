@@ -13,14 +13,14 @@ class SubscriptionBase(BaseModel):
 
 
 class SubscriptionCreate(SubscriptionBase):
-    user_uuid: UUID4
-    subscription_type_uuid: UUID4
+    user_id: UUID4
+    subscription_type_id: UUID4
 
 
 class SubscriptionRead(SubscriptionBase):
     uuid: UUID4
-    user_uuid: UUID4
-    subscription_type_uuid: UUID4
+    user_id: UUID4
+    subscription_type_id: UUID4
     created_at: datetime
     updated_at: Optional[datetime] = None
 

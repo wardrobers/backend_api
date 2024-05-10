@@ -9,8 +9,8 @@ class PriceRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_price_by_uuid(self, uuid: UUID4) -> Optional[Price]:
-        return self.db.query(Price).filter(Price.uuid == uuid).first()
+    def get_price_by_id(self, uuid: UUID4) -> Optional[Price]:
+        return self.db.query(Price).filter(Price.id == uuid).first()
 
     def create_price(self, price_data: PriceCreate) -> Price:
         new_price = Price(**price_data.dict())
@@ -20,7 +20,7 @@ class PriceRepository:
         return new_price
 
     def update_price(self, uuid: UUID4, price_data: PriceUpdate) -> Optional[Price]:
-        price = self.get_price_by_uuid(uuid)
+        price = self.get_price_by_id(uuid)
         if price:
             for key, value in price_data.dict(exclude_unset=True).items():
                 setattr(price, key, value)
@@ -29,14 +29,14 @@ class PriceRepository:
         return None
 
     def delete_price(self, uuid: UUID4):
-        price = self.get_price_by_uuid(uuid)
+        price = self.get_price_by_id(uuid)
         if price:
             self.db.delete(price)
             self.db.commit()
 
-    def get_prices_for_rental_period(self, rental_period_uuid: UUID4) -> list[Price]:
+    def get_prices_for_rental_period(self, rental_period_id: UUID4) -> list[Price]:
         return (
             self.db.query(Price)
-            .filter(Price.time_period_uuid == rental_period_uuid)
+            .filter(Price.time_period_id == rental_period_id)
             .all()
         )

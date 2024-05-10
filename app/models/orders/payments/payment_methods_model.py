@@ -30,7 +30,7 @@ class PaymentProvider(Enum):
 class PaymentMethods(Base):
     __tablename__ = "payment_methods"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     type = Column(SQLAEnum(PaymentMethodType))
     provider = Column(SQLAEnum(PaymentProvider))
     card_hash = Column(BYTEA)

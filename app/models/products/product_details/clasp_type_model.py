@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class ClaspType(Base):
     __tablename__ = "clasp_types"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(DateTime, nullable=True)

@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class Roles(Base):
     __tablename__ = "roles"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = Column(String, nullable=False)
     name = Column(String)
     created_at = Column(DateTime, default=func.now())

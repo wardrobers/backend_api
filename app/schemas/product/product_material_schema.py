@@ -7,8 +7,8 @@ from .material_schema import MaterialRead
 
 
 class ProductMaterialBase(BaseModel):
-    product_uuid: UUID4
-    material_uuid: UUID4
+    product_id: UUID4
+    material_id: UUID4
     percent: Optional[int] = None
 
 

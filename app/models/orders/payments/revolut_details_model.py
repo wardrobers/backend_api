@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class RevolutDetails(Base):
     __tablename__ = "revolut_details"
 
-    uuid = Column(
+    id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     revolut_account_id = Column(
@@ -21,12 +21,12 @@ class RevolutDetails(Base):
     deleted_at = Column(DateTime, comment="Удалено")
 
     # Foreign keys
-    transaction_uuid = Column(
+    transaction_id = Column(
         UUID(as_uuid=True),
-        ForeignKey("transactions.uuid"),
+        ForeignKey("transactions.id"),
         nullable=False,
         comment="Транзакция",
     )
 
     def __repr__(self):
-        return f"<RevolutDetails(uuid={self.uuid}, transaction_uuid={self.transaction_uuid})>"
+        return f"<RevolutDetails(uuid={self.id}, transaction_id={self.transaction_id})>"

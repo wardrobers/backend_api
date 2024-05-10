@@ -16,20 +16,20 @@ class CategoryForUserRepository:
         self.db.commit()
         return new_assignment
 
-    def get_categories_by_user_uuid(self, user_uuid: str) -> list[CategoryForUser]:
+    def get_categories_by_user_id(self, user_id: str) -> list[CategoryForUser]:
         return (
             self.db.query(CategoryForUser)
-            .filter(CategoryForUser.user_uuid == user_uuid)
+            .filter(CategoryForUser.user_id == user_id)
             .all()
         )
 
     def update_category_assignment(
-        self, assignment_uuid: str, category_user_data: dict
+        self, assignment_id: str, category_user_data: dict
     ) -> Optional[CategoryForUser]:
         """Update category assignment for a user."""
         assignment = (
             self.db.query(CategoryForUser)
-            .filter(CategoryForUser.uuid == assignment_uuid)
+            .filter(CategoryForUser.id == assignment_id)
             .first()
         )
         if assignment:

@@ -14,13 +14,13 @@ class UserInfoBase(BaseModel):
 
 
 class UserInfoCreate(UserInfoBase):
-    # Assuming user_uuid is provided externally, not through the client directly
+    # Assuming user_id is provided externally, not through the client directly
     pass
 
 
 class UserInfoRead(UserInfoBase):
     uuid: UUID4
-    user_uuid: UUID4
+    user_id: UUID4
     created_at: datetime
     updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None

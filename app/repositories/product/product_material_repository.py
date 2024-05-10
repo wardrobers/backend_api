@@ -12,10 +12,10 @@ class ProductMaterialRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_product_materials(self, product_uuid: UUID4) -> list[ProductMaterial]:
+    def get_product_materials(self, product_id: UUID4) -> list[ProductMaterial]:
         return (
             self.db.query(ProductMaterial)
-            .filter(ProductMaterial.product_uuid == product_uuid)
+            .filter(ProductMaterial.product_id == product_id)
             .all()
         )
 
@@ -30,15 +30,15 @@ class ProductMaterialRepository:
 
     def update_product_material(
         self,
-        product_uuid: UUID4,
-        material_uuid: UUID4,
+        product_id: UUID4,
+        material_id: UUID4,
         product_material_data: ProductMaterialUpdate,
     ) -> Optional[ProductMaterial]:
         product_material = (
             self.db.query(ProductMaterial)
             .filter(
-                ProductMaterial.product_uuid == product_uuid,
-                ProductMaterial.material_uuid == material_uuid,
+                ProductMaterial.product_id == product_id,
+                ProductMaterial.material_id == material_id,
             )
             .first()
         )
@@ -50,13 +50,13 @@ class ProductMaterialRepository:
         return None
 
     def remove_material_from_product(
-        self, product_uuid: UUID4, material_uuid: UUID4
+        self, product_id: UUID4, material_id: UUID4
     ) -> None:
         product_material = (
             self.db.query(ProductMaterial)
             .filter(
-                ProductMaterial.product_uuid == product_uuid,
-                ProductMaterial.material_uuid == material_uuid,
+                ProductMaterial.product_id == product_id,
+                ProductMaterial.material_id == material_id,
             )
             .first()
         )

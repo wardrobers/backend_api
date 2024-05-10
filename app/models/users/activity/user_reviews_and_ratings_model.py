@@ -10,16 +10,16 @@ from ...common.base_model import Base
 class UserReviewsAndRatings(Base):
     __tablename__ = "user_reviews_and_ratings"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     rating = Column(Integer)
     review = Column(Text)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
     # Foreign Keys
-    user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    user_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
-    product_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    product_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False
     )

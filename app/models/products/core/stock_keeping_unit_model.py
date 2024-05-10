@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class StockKeepingUnit(Base):
     __tablename__ = "stock_keeping_unit"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     sku_product = Column(String, nullable=False)
     sku_article = Column(String, nullable=False)
     created_at = Column(DateTime, default=func.now())

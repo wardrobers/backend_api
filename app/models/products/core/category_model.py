@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class Categories(Base):
     __tablename__ = "categories"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String)
     is_default = Column(Boolean)
     created_at = Column(DateTime, server_default=func.now())

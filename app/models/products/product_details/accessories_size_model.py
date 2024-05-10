@@ -10,12 +10,12 @@ from ...common.base_model import Base
 class AccessoriesSize(Base):
     __tablename__ = "accessories_size"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String)
     created_at = Column(DateTime, default=func.now())
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    product_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.uuid"), nullable=False
+    product_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False
     )

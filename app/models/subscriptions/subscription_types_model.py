@@ -10,7 +10,7 @@ from ..common.base_model import Base
 class SubscriptionTypes(Base):
     __tablename__ = "subscription_types"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     name = Column(String, nullable=True, comment="наименование")
@@ -23,9 +23,9 @@ class SubscriptionTypes(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено (?)")
 
     # Foreign Keys
-    period_uuid = mapped_column(
+    period_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("subscription_periods.uuid"),
+        ForeignKey("subscription_periods.id"),
         nullable=False,
         comment="Период",
     )

@@ -10,14 +10,14 @@ from ...common.base_model import Base
 class CategoriesForUser(Base):
     __tablename__ = "categories_for_user"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     coefficient = Column(String)
     raw = Column(JSON)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
     # Foreign keys
-    user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    user_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )
-    category_uuid = mapped_column(UUID(as_uuid=True), ForeignKey("types.uuid"))
+    category_id = mapped_column(UUID(as_uuid=True), ForeignKey("types.id"))

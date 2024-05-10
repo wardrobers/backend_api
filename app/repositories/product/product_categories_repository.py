@@ -10,21 +10,21 @@ class ProductCategoryRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_product_categories(self, product_uuid: UUID) -> list[Category]:
+    def get_product_categories(self, product_id: UUID) -> list[Category]:
         return (
             self.db.query(Category)
-            .join(ProductCategory, Category.uuid == ProductCategory.category_uuid)
-            .filter(ProductCategory.product_uuid == product_uuid)
+            .join(ProductCategory, Category.id == ProductCategory.category_id)
+            .filter(ProductCategory.product_id == product_id)
             .all()
         )
 
     def add_category_to_product(
-        self, product_uuid: UUID, category_uuid: UUID
+        self, product_id: UUID, category_id: UUID
     ) -> ProductCategory:
         product_category = ProductCategory(
             uuid=str(uuid4()),
-            product_uuid=product_uuid,
-            category_uuid=category_uuid,
+            product_id=product_id,
+            category_id=category_id,
             created_at=datetime.datetime.now(datetime.timezone.utc),
         )
         self.db.add(product_category)
@@ -33,11 +33,11 @@ class ProductCategoryRepository:
         return product_category
 
     def remove_category_from_product(
-        self, product_uuid: UUID, category_uuid: UUID
+        self, product_id: UUID, category_id: UUID
     ) -> None:
         product_category = (
             self.db.query(ProductCategory)
-            .filter_by(product_uuid=product_uuid, category_uuid=category_uuid)
+            .filter_by(product_id=product_id, category_id=category_id)
             .first()
         )
         if product_category:

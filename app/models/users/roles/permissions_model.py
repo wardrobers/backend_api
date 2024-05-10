@@ -19,7 +19,7 @@ class CRUDOperation(Enum):
 class Permissions(Base):
     __tablename__ = "permissions"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)
     code = Column(String, nullable=False, unique=True)
     crud = Column(SQLAEnum(CRUDOperation), nullable=False)

@@ -12,8 +12,8 @@ class OrderBase(BaseModel):
 
 
 class OrderCreate(OrderBase):
-    user_uuid: UUID4
-    product_uuid: UUID4
+    user_id: UUID4
+    product_id: UUID4
 
 
 class OrderRead(OrderBase):

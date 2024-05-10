@@ -10,7 +10,7 @@ from ..common.base_model import Base
 class SubscriptionPeriods(Base):
     __tablename__ = "subscription_periods"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     name = Column(String, nullable=True, comment="наименование")

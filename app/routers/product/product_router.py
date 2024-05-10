@@ -21,10 +21,10 @@ async def create_product(product: ProductCreate, request: Request):
 
 
 @router.get("/get", response_model=ProductRead)
-async def get_product(product_uuid: UUID4, request: Request):
+async def get_product(product_id: UUID4, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product = product_repository.get_product(product_uuid)
+    product = product_repository.get_product(product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
@@ -39,10 +39,10 @@ async def list_products(request: Request, skip: int = 0, limit: int = 100):
 
 
 @router.put("/update", response_model=ProductRead)
-async def update_product(product_uuid: UUID4, product: ProductUpdate, request: Request):
+async def update_product(product_id: UUID4, product: ProductUpdate, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    updated_product = product_repository.update_product(product_uuid, product)
+    updated_product = product_repository.update_product(product_id, product)
     if not updated_product:
         raise HTTPException(
             status_code=404, detail="Product not found or update failed"
@@ -51,10 +51,10 @@ async def update_product(product_uuid: UUID4, product: ProductUpdate, request: R
 
 
 @router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_product(product_uuid: UUID4, request: Request):
+async def delete_product(product_id: UUID4, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.delete_product(product_uuid)
+    product_repository.delete_product(product_id)
     return {"detail": "Product successfully deleted"}
 
 
@@ -64,11 +64,11 @@ async def delete_product(product_uuid: UUID4, request: Request):
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_category_to_product(
-    product_uuid: UUID4, category_uuid: UUID4, request: Request
+    product_id: UUID4, category_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.add_category_to_product(product_uuid, category_uuid)
+    product_repository.add_category_to_product(product_id, category_id)
     return {"detail": "Category added to product successfully"}
 
 
@@ -77,11 +77,11 @@ async def add_category_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_category_from_product(
-    product_uuid: UUID4, category_uuid: UUID4, request: Request
+    product_id: UUID4, category_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.remove_category_from_product(product_uuid, category_uuid)
+    product_repository.remove_category_from_product(product_id, category_id)
     return {"detail": "Category removed from product successfully"}
 
 
@@ -90,11 +90,11 @@ async def remove_category_from_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_material_to_product(
-    product_uuid: UUID4, material_uuid: UUID4, request: Request
+    product_id: UUID4, material_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.add_material_to_product(product_uuid, material_uuid)
+    product_repository.add_material_to_product(product_id, material_id)
     return {"detail": "Material added to product successfully"}
 
 
@@ -103,11 +103,11 @@ async def add_material_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_material_from_product(
-    product_uuid: UUID4, material_uuid: UUID4, request: Request
+    product_id: UUID4, material_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.remove_material_from_product(product_uuid, material_uuid)
+    product_repository.remove_material_from_product(product_id, material_id)
     return {"detail": "Material removed from product successfully"}
 
 
@@ -116,11 +116,11 @@ async def remove_material_from_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_color_to_product(
-    product_uuid: UUID4, color_uuid: UUID4, request: Request
+    product_id: UUID4, color_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.add_color_to_product(product_uuid, color_uuid)
+    product_repository.add_color_to_product(product_id, color_id)
     return {"detail": "Color added to product successfully"}
 
 
@@ -129,11 +129,11 @@ async def add_color_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_color_from_product(
-    product_uuid: UUID4, color_uuid: UUID4, request: Request
+    product_id: UUID4, color_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.remove_color_from_product(product_uuid, color_uuid)
+    product_repository.remove_color_from_product(product_id, color_id)
     return {"detail": "Color removed from product successfully"}
 
 
@@ -142,11 +142,11 @@ async def remove_color_from_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def add_brand_to_product(
-    product_uuid: UUID4, brand_uuid: UUID4, request: Request
+    product_id: UUID4, brand_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.add_brand_to_product(product_uuid, brand_uuid)
+    product_repository.add_brand_to_product(product_id, brand_id)
     return {"detail": "Brand added to product successfully"}
 
 
@@ -155,9 +155,9 @@ async def add_brand_to_product(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def remove_brand_from_product(
-    product_uuid: UUID4, brand_uuid: UUID4, request: Request
+    product_id: UUID4, brand_id: UUID4, request: Request
 ):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
-    product_repository.remove_brand_from_product(product_uuid, brand_uuid)
+    product_repository.remove_brand_from_product(product_id, brand_id)
     return {"detail": "Brand removed from product successfully"}

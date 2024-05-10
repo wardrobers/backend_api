@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class ClothingSizes(Base):
     __tablename__ = "clothing_sizes"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     back_length = Column(Numeric, nullable=True)
     sleeve_length = Column(Numeric, nullable=True)
     pants_length = Column(Numeric, nullable=True)

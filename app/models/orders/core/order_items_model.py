@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class OrderItems(Base):
     __tablename__ = "order_items"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     time_start = Column(Time, nullable=False)
@@ -22,15 +22,15 @@ class OrderItems(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     # Foreign keys
-    order_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("orders.uuid"), nullable=False
+    order_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False
     )
-    article_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.uuid"), nullable=False
+    article_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("article.id"), nullable=False
     )
-    shipping_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("shipping_details.uuid"), nullable=False
+    shipping_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("shipping_details.id"), nullable=False
     )
 
     def __repr__(self):
-        return f"<OrderItem(uuid={self.uuid}, order={self.order_uuid}, article={self.article_uuid}, start_date={self.start_date}, end_date={self.end_date})>"
+        return f"<OrderItem(uuid={self.id}, order={self.order_id}, article={self.article_id}, start_date={self.start_date}, end_date={self.end_date})>"

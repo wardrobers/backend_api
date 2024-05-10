@@ -9,14 +9,14 @@ class CategoryForUserBase(BaseModel):
 
 
 class CategoryForUserCreate(CategoryForUserBase):
-    user_uuid: UUID4
-    category_uuid: UUID4
+    user_id: UUID4
+    category_id: UUID4
 
 
 class CategoryForUserRead(CategoryForUserBase):
     uuid: UUID4
-    user_uuid: UUID4
-    category_uuid: UUID4
+    user_id: UUID4
+    category_id: UUID4
     created_at: datetime
     updated_at: Optional[datetime] = None
 

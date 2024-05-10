@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class DataPrivacyConsents(Base):
     __tablename__ = "data_privacy_consents"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     data_usage_consent = Column(Boolean, nullable=False, default=False)
     marketing_communications_consent = Column(Boolean, nullable=False, default=False)
     other_consent = Column(Boolean)
@@ -19,6 +19,6 @@ class DataPrivacyConsents(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     # Foreign keys
-    user_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.uuid"), nullable=False
+    user_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id"), nullable=False
     )

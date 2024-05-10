@@ -11,7 +11,7 @@ from ...common.base_model import Base
 class UserActivity(Base):
     __tablename__ = "user_activity"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     total_confirmed_orders = Column(
@@ -33,9 +33,9 @@ class UserActivity(Base):
     )
 
     # Foreign Keys
-    user_uuid = mapped_column(
+    user_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.uuid"),
+        ForeignKey("users.id"),
         nullable=False,
         comment="Пользователь",
     )

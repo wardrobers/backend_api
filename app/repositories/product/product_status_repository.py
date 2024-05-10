@@ -20,7 +20,7 @@ class ProductStatusRepository:
         return new_status
 
     def get_product_status(self, uuid: UUID) -> Optional[ProductStatus]:
-        return self.db.query(ProductStatus).filter(ProductStatus.uuid == uuid).first()
+        return self.db.query(ProductStatus).filter(ProductStatus.id == uuid).first()
 
     def list_product_statuses(
         self, skip: int = 0, limit: int = 100

@@ -41,7 +41,7 @@ async def register_user(user_create: UserrCreateRequest, request: Request):
     db.commit()
     db.refresh(new_user)
     return UserrCreateResponse(
-        uuid=new_user.uuid, login=new_user.login, created_at=new_user.created_at
+        uuid=new_user.id, login=new_user.login, created_at=new_user.created_at
     )
 
 
@@ -57,21 +57,21 @@ async def login_for_access_token(user_login: UserrLoginRequest, request: Request
         raise HTTPException(status_code=400, detail="1-0-0-4: Incorrect password")
     user.last_login_at = datetime.utcnow()
     db.commit()
-    return {"uuid": user.uuid, "last_login_at": user.last_login_at}
+    return {"uuid": user.id, "last_login_at": user.last_login_at}
 
 
 @router.post("/get", response_model=UserrGetResponse)
-async def get_user_data(user_uuid: UUID4, request: Request):
+async def get_user_data(user_id: UUID4, request: Request):
     db: Session = request.state.db
     user = (
-        db.query(User).filter(User.uuid == user_uuid, User.deleted_at.is_(None)).first()
+        db.query(User).filter(User.id == user_id, User.deleted_at.is_(None)).first()
     )
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     user_data, user_info, user_photo, user_role = user
     response = {
-        "uuid": user.uuid,
+        "uuid": user.id,
         "login": user.login,
         "is_notificated": user.is_notificated,
         "marketing_consent": user.marketing_consent,
@@ -87,7 +87,7 @@ async def get_user_data(user_uuid: UUID4, request: Request):
         ),
         "photos": (
             [
-                {"uuid": photo.uuid, "storage_url": photo.storage_url}
+                {"uuid": photo.id, "storage_url": photo.storage_url}
                 for photo in user.photos  # Access photos directly from the user
             ]
             if user.photos
@@ -95,7 +95,7 @@ async def get_user_data(user_uuid: UUID4, request: Request):
         ),
         "roles": (
             [
-                {"uuid": role.role_uuid, "code": role.code, "name": role.name}
+                {"uuid": role.role_id, "code": role.code, "name": role.name}
                 for role in user.roles  # Access roles directly from the user
             ]
             if user.roles

@@ -4,8 +4,8 @@ from datetime import datetime
 
 
 class ProductsCatalogPhotoBase(BaseModel):
-    products_catalog_uuid: UUID4
-    product_uuid: UUID4
+    products_catalog_id: UUID4
+    product_id: UUID4
     showcase: bool = False
 
 

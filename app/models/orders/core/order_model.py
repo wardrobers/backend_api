@@ -11,7 +11,7 @@ from ...common.base_model import Base
 class Order(Base):
     __tablename__ = "orders"
 
-    uuid = mapped_column(
+    id = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     total_price = Column(Numeric, nullable=False, comment="Цена за заказ")
@@ -24,15 +24,15 @@ class Order(Base):
     deleted_at = Column(DateTime, nullable=True, comment="Удалено")
 
     # Foreign keys
-    user_uuid = mapped_column(
+    user_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.uuid"),
+        ForeignKey("users.id"),
         nullable=False,
         comment="Пользователь",
     )
     status_code = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("order_status.uuid"),
+        ForeignKey("order_status.id"),
         nullable=False,
         comment="Статус",
     )

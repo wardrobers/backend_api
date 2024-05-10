@@ -10,7 +10,7 @@ from ...common.base_model import Base
 class RolePermissions(Base):
     __tablename__ = "role_permissions"
 
-    uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     to_create = Column(Boolean, default=False, name="create")
     to_read = Column(Boolean, default=False, name="read")
     to_update = Column(Boolean, default=False, name="update")
@@ -20,11 +20,11 @@ class RolePermissions(Base):
     deleted_at = Column(DateTime)
 
     # Foreign keys
-    role_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("roles.uuid"), nullable=False
+    role_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False
     )
-    permission_uuid = mapped_column(
-        UUID(as_uuid=True), ForeignKey("permissions.uuid"), nullable=False
+    permission_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("permissions.id"), nullable=False
     )
 
     # Relationships

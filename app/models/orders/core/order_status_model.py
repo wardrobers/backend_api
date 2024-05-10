@@ -22,7 +22,7 @@ class OrderStatus(Enum):
 class OrderStatus(Base):
     __tablename__ = "order_status"
 
-    uuid = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(
         SQLAEnum(OrderStatus),
         nullable=False,

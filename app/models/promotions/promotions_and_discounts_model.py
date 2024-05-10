@@ -17,7 +17,7 @@ class DiscountType(Enum):
 class PromotionsAndDiscounts(Base):
     __tablename__ = "promotions_and_discounts"
 
-    uuid = Column(
+    id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
     )
     code = Column(String, nullable=False, comment="Код")
