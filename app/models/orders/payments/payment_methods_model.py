@@ -1,12 +1,16 @@
 from enum import Enum
-from sqlalchemy import Column, String, Integer, Boolean, DateTime
-from sqlalchemy.dialects.postgresql import UUID, BYTEA
+from sqlalchemy import Column, String, Integer, Boolean
+from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
 class PaymentMethodType(Enum):
@@ -27,10 +31,9 @@ class PaymentProvider(Enum):
     Klarna = "Klarna"
 
 
-class PaymentMethods(Base):
+class PaymentMethods(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "payment_methods"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     type = Column(SQLAEnum(PaymentMethodType))
     provider = Column(SQLAEnum(PaymentProvider))
     card_hash = Column(BYTEA)
@@ -38,9 +41,6 @@ class PaymentMethods(Base):
     exp_month = Column(Integer)
     exp_year = Column(Integer)
     lender = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Relationships
     transactions = relationship("Transactions", backref="payment_methods")

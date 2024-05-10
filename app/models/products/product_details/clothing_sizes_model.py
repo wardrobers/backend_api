@@ -1,23 +1,22 @@
-from sqlalchemy import Column, DateTime, Numeric
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy.sql import func
-from uuid import uuid4
+from sqlalchemy import Column, Numeric
+from sqlalchemy.orm import relationship
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class ClothingSizes(Base):
+class ClothingSizes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "clothing_sizes"
 
-    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     back_length = Column(Numeric, nullable=True)
     sleeve_length = Column(Numeric, nullable=True)
     pants_length = Column(Numeric, nullable=True)
     skirt_length = Column(Numeric, nullable=True)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime, nullable=True)
 
     # Relationships
     product = relationship("Product", backref="clothing_sizes")

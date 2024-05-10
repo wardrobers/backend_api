@@ -9,9 +9,7 @@ class UserActivityRepository:
 
     def get_activity_by_user_id(self, user_id: str) -> Optional[UserActivity]:
         return (
-            self.db.query(UserActivity)
-            .filter(UserActivity.user_id == user_id)
-            .first()
+            self.db.query(UserActivity).filter(UserActivity.user_id == user_id).first()
         )
 
     def update_user_activity(

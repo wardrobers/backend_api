@@ -1,19 +1,20 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.sql import func
+
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-from ...common.base_model import Base
-
-
-class ProductMaterials(Base):
+class ProductMaterials(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "product_materials"
 
     percent = Column(Integer)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Foreign Keys
     product_id = mapped_column(

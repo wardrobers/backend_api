@@ -1,19 +1,20 @@
-from sqlalchemy import Column, DateTime, String, ForeignKey
+from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship, backref
-from sqlalchemy.sql import func
-from uuid import uuid4
+from sqlalchemy.orm import mapped_column
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class AccessoriesSize(Base):
+class AccessoriesSize(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "accessories_size"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String)
-    created_at = Column(DateTime, default=func.now())
-    deleted_at = Column(DateTime)
 
     # Foreign keys
     product_id = mapped_column(

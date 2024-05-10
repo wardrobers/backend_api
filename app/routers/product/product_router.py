@@ -115,9 +115,7 @@ async def remove_material_from_product(
     "/add_color",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def add_color_to_product(
-    product_id: UUID4, color_id: UUID4, request: Request
-):
+async def add_color_to_product(product_id: UUID4, color_id: UUID4, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.add_color_to_product(product_id, color_id)
@@ -141,9 +139,7 @@ async def remove_color_from_product(
     "/add_brand",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def add_brand_to_product(
-    product_id: UUID4, brand_id: UUID4, request: Request
-):
+async def add_brand_to_product(product_id: UUID4, brand_id: UUID4, request: Request):
     db: Session = request.state.db
     product_repository = ProductRepository(db)
     product_repository.add_brand_to_product(product_id, brand_id)

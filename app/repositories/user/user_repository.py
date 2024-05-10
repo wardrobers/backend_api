@@ -57,9 +57,7 @@ class UserRepository:
 
     def update_user_info(self, user_id: str, user_info_data: UserInfoUpdate):
         """Update a user's associated UserInfo."""
-        user_info = (
-            self.db.query(UserInfo).filter(UserInfo.user_id == user_id).first()
-        )
+        user_info = self.db.query(UserInfo).filter(UserInfo.user_id == user_id).first()
         if user_info:
             for key, value in user_info_data.dict(exclude_unset=True).items():
                 setattr(user_info, key, value)

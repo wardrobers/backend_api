@@ -32,9 +32,7 @@ class ProductCategoryRepository:
         self.db.refresh(product_category)
         return product_category
 
-    def remove_category_from_product(
-        self, product_id: UUID, category_id: UUID
-    ) -> None:
+    def remove_category_from_product(self, product_id: UUID, category_id: UUID) -> None:
         product_category = (
             self.db.query(ProductCategory)
             .filter_by(product_id=product_id, category_id=category_id)

@@ -20,9 +20,7 @@ class SubscriptionPeriodRepository:
         self.db.refresh(new_period)
         return new_period
 
-    def get_subscription_period_by_id(
-        self, uuid: str
-    ) -> Optional[SubscriptionPeriod]:
+    def get_subscription_period_by_id(self, uuid: str) -> Optional[SubscriptionPeriod]:
         return (
             self.db.query(SubscriptionPeriod)
             .filter(SubscriptionPeriod.id == uuid)

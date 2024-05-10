@@ -36,7 +36,5 @@ class PriceRepository:
 
     def get_prices_for_rental_period(self, rental_period_id: UUID4) -> list[Price]:
         return (
-            self.db.query(Price)
-            .filter(Price.time_period_id == rental_period_id)
-            .all()
+            self.db.query(Price).filter(Price.time_period_id == rental_period_id).all()
         )

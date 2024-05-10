@@ -66,9 +66,7 @@ def get_user_profile(user_id: UUID4, request: Request):
 
 
 @router.patch("/patch/profile", response_model=UserRead)
-def update_user_profile(
-    user_id: UUID4, user_update: UserInfoUpdate, request: Request
-):
+def update_user_profile(user_id: UUID4, user_update: UserInfoUpdate, request: Request):
     """
     Update user profile information.
     """

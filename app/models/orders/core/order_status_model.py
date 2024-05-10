@@ -1,12 +1,15 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.sql import func
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy import Column
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
 class OrderStatus(Enum):
@@ -19,18 +22,13 @@ class OrderStatus(Enum):
     Cancelled = "Cancelled"
 
 
-class OrderStatus(Base):
+class OrderStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "order_status"
 
-    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(
         SQLAEnum(OrderStatus),
         nullable=False,
-        comment="Placed, Confirmed, Processing, Shipped, Delivered, Returned, Cancelled",
     )
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Relationships
     order = relationship("Order", backref="order_status")

@@ -1,12 +1,16 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, Integer, ForeignKey, String, Boolean
+from sqlalchemy import Column, Integer, ForeignKey, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
 class OwnerType(Enum):
@@ -24,47 +28,21 @@ class Condition(Enum):
     Poor = "Poor"
 
 
-class Article(Base):
+class Article(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "article"
 
-    id = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
-    article = Column(String, nullable=False, comment="Артикул")
-    sku_article = Column(
-        String, nullable=False, comment="Артикул для каждой уникальной вещи"
-    )
-    owner_type = Column(
-        SQLAEnum(OwnerType), nullable=False, comment="Platform, Lender, Brand, Partner"
-    )
-    factory_number = Column(String, nullable=True, comment="Заводской номер")
-    times_used = Column(
-        Integer, nullable=False, default=0, comment="Кол-во использованей"
-    )
-    hours_used = Column(
-        Integer, nullable=False, default=0, comment="Часов в использование"
-    )
-    min_rental_days = Column(
-        Integer, nullable=False, default=2, comment="Минимальная аренда в днях"
-    )
-    buffer_days = Column(
-        Integer, nullable=False, default=1, comment="Дней на обслуживание после заказа"
-    )
+    article = Column(String, nullable=False)
+    sku_article = Column(String, nullable=False)
+    owner_type = Column(SQLAEnum(OwnerType), nullable=False)
+    factory_number = Column(String, nullable=True)
+    times_used = Column(Integer, nullable=False, default=0)
+    hours_used = Column(Integer, nullable=False, default=0)
+    min_rental_days = Column(Integer, nullable=False, default=2)
+    buffer_days = Column(Integer, nullable=False, default=1)
     pre_rental_buffer = Column(Integer, nullable=True, default=0)
-    for_cleaning = Column(
-        Boolean, nullable=True, default=False, comment="Требуется чистка?"
-    )
-    for_repair = Column(
-        Boolean, nullable=True, default=False, comment="Требуется ремонт?"
-    )
-    condition = Column(
-        SQLAEnum(Condition), nullable=False, comment="Описание состояния"
-    )
-    created_at = Column(DateTime, nullable=False, default=func.now(), comment="Создано")
-    updated_at = Column(
-        DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано"
-    )
-    deleted_at = Column(DateTime, nullable=True, comment="Удалено")
+    for_cleaning = Column(Boolean, nullable=True, default=False)
+    for_repair = Column(Boolean, nullable=True, default=False)
+    condition = Column(SQLAEnum(Condition), nullable=False)
 
     # Foreign keys
     sku_id = mapped_column(

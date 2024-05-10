@@ -1,12 +1,16 @@
 from enum import Enum
-from sqlalchemy import Column, ForeignKey, DateTime, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
 class AddressType(Enum):
@@ -15,31 +19,18 @@ class AddressType(Enum):
     Both = "Both"
 
 
-class UserAddresses(Base):
+class UserAddresses(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "user_addresses"
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
-    address_line1 = Column(String, nullable=True, comment="Улица, номер дома")
-    address_line2 = Column(String, nullable=True, comment="Номер квартиры/офиса")
-    city = Column(String, nullable=True, comment="Город")
-    country = Column(String, nullable=True, comment="Страна")
-    postal_code = Column(String, nullable=True, comment="Индекс")
-    address_type = Column(
-        SQLAEnum(AddressType), nullable=True, comment="Shipping, Billing, Both"
-    )
-    created_at = Column(DateTime, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
-    deleted_at = Column(DateTime, nullable=True, comment="Удалено")
+    address_line1 = Column(String, nullable=True)
+    address_line2 = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    postal_code = Column(String, nullable=True)
+    address_type = Column(SQLAEnum(AddressType), nullable=True)
 
     # Foreign Keys
-    user_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id"),
-        nullable=False,
-        comment="Пользователь",
-    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
     # Relationships
     shipping_details = relationship("ShippingDetails", back_populates="user_addresses")

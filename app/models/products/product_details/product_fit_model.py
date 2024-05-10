@@ -1,20 +1,19 @@
-from sqlalchemy import Column, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy.sql import func
-from uuid import uuid4
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class ProductFit(Base):
+class ProductFit(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "product_fit"
 
-    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     type = Column(String, nullable=False)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Relationships
     product = relationship("Product", backref="product_fit")

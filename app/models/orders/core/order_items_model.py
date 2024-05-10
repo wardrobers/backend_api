@@ -1,25 +1,25 @@
 from sqlalchemy import Column, DateTime, Time, ForeignKey, Numeric, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
-from uuid import uuid4
+from sqlalchemy.orm import mapped_column
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class OrderItems(Base):
+class OrderItems(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "order_items"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     time_start = Column(Time, nullable=False)
     price = Column(Numeric, nullable=True)
     delivery_price = Column(Numeric, nullable=True)
     comment = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime, nullable=True)
 
     # Foreign keys
     order_id = mapped_column(

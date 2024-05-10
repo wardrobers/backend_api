@@ -1,31 +1,23 @@
-from sqlalchemy import Column, ForeignKey, String, DateTime
+from sqlalchemy import Column, ForeignKey, Strings
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class RevolutDetails(Base):
+class RevolutDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "revolut_details"
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
-    revolut_account_id = Column(
-        String, nullable=True, comment="Revolut account identifier"
-    )
-    created_at = Column(DateTime, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
-    deleted_at = Column(DateTime, comment="Удалено")
+    revolut_account_id = Column(String, nullable=True)
 
     # Foreign keys
     transaction_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("transactions.id"),
-        nullable=False,
-        comment="Транзакция",
+        UUID(as_uuid=True), ForeignKey("transactions.id"), nullable=False
     )
 
     def __repr__(self):

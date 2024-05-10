@@ -1,33 +1,28 @@
-from sqlalchemy import Column, DateTime, Integer, ForeignKey, String, Numeric
+from sqlalchemy import Column, Integer, ForeignKey, String, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
-from uuid import uuid4
 
-from ..common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class SubscriptionTypes(Base):
+class SubscriptionTypes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "subscription_types"
 
-    id = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
-    name = Column(String, nullable=True, comment="наименование")
-    price = Column(Numeric, nullable=False, comment="Цена")
-    count_free_orders = Column(
-        Integer, nullable=False, comment="Кол-во шмоток в подписке"
-    )
-    created_at = Column(DateTime, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
-    deleted_at = Column(DateTime, nullable=True, comment="Удалено (?)")
+    name = Column(String, nullable=True)
+    price = Column(Numeric, nullable=False)
+    count_free_orders = Column(Integer, nullable=False)
 
     # Foreign Keys
     period_id = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("subscription_periods.id"),
         nullable=False,
-        comment="Период",
     )
 
     # Relationships

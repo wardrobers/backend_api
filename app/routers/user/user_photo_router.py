@@ -40,9 +40,7 @@ def get_user_photos(user_id: UUID4, request: Request):
 
 
 @router.put("/{user_id}/photos", response_model=UserPhotoRead)
-def update_user_photo(
-    photo_id: UUID4, photo_update: UserPhotoUpdate, request: Request
-):
+def update_user_photo(photo_id: UUID4, photo_update: UserPhotoUpdate, request: Request):
     """
     Update user photo information.
     """

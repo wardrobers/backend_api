@@ -9,7 +9,7 @@ from sqlalchemy.orm import (
     aliased,
 )
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import Column, DateTime, func, or_
+from sqlalchemy import Column, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 
 

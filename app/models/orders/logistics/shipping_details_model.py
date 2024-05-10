@@ -2,11 +2,15 @@ from enum import Enum
 from sqlalchemy import Column, ForeignKey, DateTime, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
 class DeliveryStatus(Enum):
@@ -19,40 +23,26 @@ class DeliveryStatus(Enum):
     Returned = "Returned"
 
 
-class ShippingDetails(Base):
+class ShippingDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "shipping_details"
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
     tracking_number = Column(String, nullable=True)
     shipping_provider = Column(String, nullable=True)
-    delivery_status = Column(
-        SQLAEnum(DeliveryStatus),
-        nullable=True,
-        comment="e.g., Pending, Shipped, Delivered, Cancelled",
-    )
+    delivery_status = Column(SQLAEnum(DeliveryStatus), nullable=True)
     estimated_delivery_date = Column(DateTime, nullable=True)
     actual_delivery_date = Column(DateTime, nullable=True)
-    is_peer_to_peer = Column(
-        Boolean, nullable=True, comment="Доставка от пользователя к пользователю"
-    )
-    created_at = Column(DateTime, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
-    deleted_at = Column(DateTime, nullable=True, comment="Удалено")
+    is_peer_to_peer = Column(Boolean, nullable=True)
 
     # Foreign Keys
     delivery_option_id = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("delivery_options.id"),
         nullable=False,
-        comment="Тип доставки",
     )
     user_address_id = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("user_addresses.id"),
         nullable=False,
-        comment="Адрес",
     )
 
     # Relationships

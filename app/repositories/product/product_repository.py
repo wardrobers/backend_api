@@ -52,36 +52,28 @@ class ProductRepository:
 
     def add_category_to_product(self, product_id: UUID4, category_id: UUID4):
         product = self.get_product(product_id)
-        category = (
-            self.db.query(Category).filter(Category.id == category_id).first()
-        )
+        category = self.db.query(Category).filter(Category.id == category_id).first()
         if product and category:
             product.categories.append(category)
             self.db.commit()
 
     def remove_category_from_product(self, product_id: UUID4, category_id: UUID4):
         product = self.get_product(product_id)
-        category = (
-            self.db.query(Category).filter(Category.id == category_id).first()
-        )
+        category = self.db.query(Category).filter(Category.id == category_id).first()
         if product and category and category in product.categories:
             product.categories.remove(category)
             self.db.commit()
 
     def add_material_to_product(self, product_id: UUID4, material_id: UUID4):
         product = self.get_product(product_id)
-        material = (
-            self.db.query(Material).filter(Material.id == material_id).first()
-        )
+        material = self.db.query(Material).filter(Material.id == material_id).first()
         if product and material:
             product.materials.append(material)
             self.db.commit()
 
     def remove_material_from_product(self, product_id: UUID4, material_id: UUID4):
         product = self.get_product(product_id)
-        material = (
-            self.db.query(Material).filter(Material.id == material_id).first()
-        )
+        material = self.db.query(Material).filter(Material.id == material_id).first()
         if product and material and material in product.materials:
             product.materials.remove(material)
             self.db.commit()

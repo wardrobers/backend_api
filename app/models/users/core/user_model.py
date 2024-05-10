@@ -1,34 +1,35 @@
 from sqlalchemy import Column, DateTime, String, Boolean
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
-from uuid import uuid4
+from sqlalchemy.orm import relationship
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 # Import models that are directly related and need explicit import for relationships
-from .user_info_model import UserInfo
-from ..activity.user_activity_model import UserActivity
-from ..profile.user_basket_model import UserBasket
-from ..profile.user_addresses_model import UserAddresses
-from ..activity.user_saved_items_model import UserSavedItems
-from ...subscriptions.subscriptions_model import Subscriptions
-from ..activity.user_reviews_and_ratings_model import UserReviewsAndRatings
-from ...promotions.user_promotions_model import UserPromotions
-from ..roles.user_roles_model import UserRoles
+from app.models.users import (
+    UserInfo,
+    UserActivity,
+    UserAddresses,
+    UserBasket,
+    UserSavedItems,
+    UserRoles,
+    UserReviewsAndRatings,
+)
+from app.models.subscriptions import Subscriptions
+from app.models.promotions import UserPromotions
 
 
-class User(Base):
+class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "users"
 
-    id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     login = Column(String, nullable=False)
     password = Column(String, nullable=False)
     is_notificated = Column(Boolean, default=False)
     last_login_at = Column(DateTime)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Relationships
     info = relationship("UserInfo", uselist=False, backref="users")

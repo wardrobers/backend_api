@@ -1,28 +1,26 @@
-from uuid import uuid4
-from sqlalchemy import Column, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class RolePermissions(Base):
+class RolePermissions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "role_permissions"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     to_create = Column(Boolean, default=False, name="create")
     to_read = Column(Boolean, default=False, name="read")
     to_update = Column(Boolean, default=False, name="update")
     to_delete = Column(Boolean, default=False, name="delete")
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Foreign keys
-    role_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False
-    )
+    role_id = mapped_column(UUID(as_uuid=True), ForeignKey("roles.id"), nullable=False)
     permission_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("permissions.id"), nullable=False
     )

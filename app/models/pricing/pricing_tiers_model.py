@@ -1,24 +1,24 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Numeric
+from sqlalchemy import Column, ForeignKey, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
-from uuid import uuid4
 
-from ..common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class PricingTier(Base):
+class PricingTier(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "pricing_tiers"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     retail_price = Column(Numeric, nullable=False)
     max_price_threshold = Column(Numeric)
     max_price_discount = Column(Numeric)
     tax_percentage = Column(Numeric, nullable=False)
     additional_discount = Column(Numeric)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Foreign keys
     product_id = mapped_column(

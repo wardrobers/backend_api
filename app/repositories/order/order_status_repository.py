@@ -25,9 +25,7 @@ class OrderStatusRepository:
         return new_order_status
 
     def get_order_status_by_id(self, uuid: UUID4) -> Optional[OrderStatusRead]:
-        return (
-            self.db_session.query(OrderStatus).filter(OrderStatus.id == uuid).first()
-        )
+        return self.db_session.query(OrderStatus).filter(OrderStatus.id == uuid).first()
 
     def list_order_statuses(
         self, skip: int = 0, limit: int = 100

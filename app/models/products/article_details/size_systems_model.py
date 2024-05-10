@@ -1,21 +1,20 @@
-from sqlalchemy import Column, String, Text, DateTime
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class SizeSystems(Base):
+class SizeSystems(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "size_systems"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False)
     description = Column(Text)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-    deleted_at = Column(DateTime)
 
     # Relationships
     sizings = relationship("Sizing", back_populates="size_system")

@@ -1,40 +1,33 @@
-from sqlalchemy import Column, ForeignKey, DateTime, Numeric, String
+from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy.sql import func
-from uuid import uuid4
+
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-from ...common.base_model import Base
-
-
-class Order(Base):
+class Order(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "orders"
 
-    id = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
-    total_price = Column(Numeric, nullable=False, comment="Цена за заказ")
-    total_delivery_price = Column(Numeric, nullable=False, comment="Цена за доставку")
-    comment = Column(String, nullable=True, comment="Коммент")
-    created_at = Column(DateTime, nullable=True, default=func.now(), comment="Создано")
-    updated_at = Column(
-        DateTime, nullable=True, onupdate=func.now(), comment="Отредактировано"
-    )
-    deleted_at = Column(DateTime, nullable=True, comment="Удалено")
+    total_price = Column(Numeric, nullable=False)
+    total_delivery_price = Column(Numeric, nullable=False)
+    comment = Column(String, nullable=True)
 
     # Foreign keys
     user_id = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id"),
         nullable=False,
-        comment="Пользователь",
     )
     status_code = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("order_status.id"),
         nullable=False,
-        comment="Статус",
     )
 
     # Relationships

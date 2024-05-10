@@ -22,9 +22,7 @@ class SubscriptionTypeRepository:
 
     def get_subscription_type_by_id(self, uuid: str) -> Optional[SubscriptionType]:
         return (
-            self.db.query(SubscriptionType)
-            .filter(SubscriptionType.id == uuid)
-            .first()
+            self.db.query(SubscriptionType).filter(SubscriptionType.id == uuid).first()
         )
 
     def list_subscription_types(

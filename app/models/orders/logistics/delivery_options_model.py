@@ -1,26 +1,21 @@
-from sqlalchemy import Column, Numeric, String, DateTime, Boolean
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Numeric, String, Boolean
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from uuid import uuid4
 
-from ...common.base_model import Base
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class DeliveryOptions(Base):
+class DeliveryOptions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "delivery_options"
 
-    id = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid4, comment="Индетифекатор"
-    )
-    name = Column(
-        String, nullable=False, comment="e.g., Standard, Express, Uber Delivery"
-    )
-    cost = Column(Numeric, nullable=True, comment="Стоимость доставки")
-    active = Column(Boolean, default=True, comment="Активен ли метод")
-    created_at = Column(DateTime, default=func.now(), comment="Создано")
-    updated_at = Column(DateTime, onupdate=func.now(), comment="Отредактировано")
-    deleted_at = Column(DateTime, comment="Удалено")
+    name = Column(String, nullable=False)
+    cost = Column(Numeric, nullable=True)
+    active = Column(Boolean, default=True)
 
     # Relationships
     shipping_details = relationship("ShippingDetails", backref="delivery_options")
