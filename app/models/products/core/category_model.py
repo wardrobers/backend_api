@@ -22,3 +22,4 @@ class Categories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     categories_for_user = relationship("CategoriesForUser", backref="categories")
     types = relationship("Types", backref="categories")
     pricing_tiers = relationship("PricingTier", backref="categories")
+    price_multiplier = relationship("PriceMultipliers", backref="categories")

@@ -14,7 +14,7 @@ from app.models.common import (
 class PriceFactors(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "price_factors"
 
-    rental_period = Column(Numeric, nullable=False, comment="Rental period")
+    rental_period = Column(Numeric, nullable=False)
     percentage = Column(Numeric, nullable=False)
 
     # Foreign keys

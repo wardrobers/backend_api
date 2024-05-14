@@ -17,8 +17,10 @@ class PricingTier(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     retail_price = Column(Numeric, nullable=False)
     max_price_threshold = Column(Numeric)
     max_price_discount = Column(Numeric)
-    tax_percentage = Column(Numeric, nullable=False)
     additional_discount = Column(Numeric)
+    tax_percentage = Column(Numeric, nullable=False)
+    insurance = Column(Numeric)
+    cleaning = Column(Numeric)
 
     # Foreign keys
     product_id = mapped_column(
