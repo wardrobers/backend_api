@@ -56,6 +56,8 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     pricing_tiers = relationship("PricingTier", backref="products")
     accessory_size = relationship("AccessoriesSize", backref="products")
 
+    NEW_ITEM_PREMIUM = 1.10
+
     def __repr__(self):
         return f"<Product(uuid={self.id}, name='{self.name}', sku_product='{self.sku_product}')>"
     
@@ -186,3 +188,61 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         
         # Return 0 if no pricing tier is found
         return 0
+    
+    def new_item_premium(self, db_session: Session) -> bool:
+        """Checks if the product is considered new based on the condition of its articles."""
+        article = (
+            db_session.query(Article)
+            .filter(Article.id == self.id)
+            .first()
+        )
+        if article.condition == "New":
+            return self.NEW_ITEM_PREMIUM
+        else:
+            return 1.0
+    
+    def calculate_rental_price(self, rental_days: int):
+        """Calculates the total price for renting an article for a specified number of days."""
+        pricing_tier = self.get_pricing_tier()
+        base_price = pricing_tier.retail_price
+        price_multiplier = self.get_price_multiplier(rental_days, pricing_tier)
+        category_multiplier = self.get_category_multiplier(pricing_tier)
+
+        rental_price = base_price * price_multiplier * category_multiplier
+        rental_price *= self.new_item_premium()
+        rental_price += self.calculate_additional_costs(pricing_tier)
+        rental_price += self.calculate_vat(rental_price)
+
+        return rental_price
+
+    def get_pricing_tier(self):
+        """Retrieve the pricing tier associated with the article."""
+        return self.db_session.query(PricingTier).filter_by(id=self.article.pricing_tier_id).first()
+
+    def get_price_multiplier(self, rental_days, pricing_tier):
+        """Retrieves the price multiplier based on the rental period from PriceFactors."""
+        factor = self.db_session.query(PriceFactors).filter(
+            and_(
+                PriceFactors.pricing_tier_id == pricing_tier.id,
+                PriceFactors.rental_period <= rental_days
+            )
+        ).order_by(PriceFactors.rental_period.desc()).first()
+        return factor.percentage if factor else 1.0
+
+    def get_category_multiplier(self, pricing_tier):
+        """Applies a category-specific multiplier to adjust the pricing."""
+        multiplier = self.db_session.query(PriceMultipliers).filter_by(id=pricing_tier.price_multiplier_id).first()
+        return multiplier.multiplier if multiplier else 1.0
+
+    def calculate_additional_costs(self, pricing_tier):
+        """Calculates additional costs including taxes, insurance, and cleaning fees."""
+        insurance = 2.00  # Fixed insurance cost
+        cleaning = 2.00  # Fixed cleaning cost
+        return insurance + cleaning
+    
+    def calculate_vat(self, price):
+        """
+        Applies VAT to the price based on the pricing tier settings.
+        """
+        vat_percentage = self.pricing_tiers.vat_percentage
+        return price * vat_percentage / 100

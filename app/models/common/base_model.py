@@ -49,18 +49,28 @@ class BaseMixin(ABC):
     def create(cls, db_session: Session, **kwargs) -> None:
         instance = cls(**kwargs)
         db_session.add(instance)
-        db_session.flush()
-        db_session.refresh(instance)
+        db_session.commit()
         return instance
 
     @classmethod
     def update(cls, db_session: Session, _id: UUID, **kwargs) -> None:
         instance = cls.find_by_id(db_session, _id)
-        if instance:
-            for attr, value in kwargs.items():
-                setattr(instance, attr, value)
-        db_session.flush()
-        db_session.refresh(instance)
+        for attr, value in kwargs.items():
+            setattr(instance, attr, value)
+        db_session.commit()
+
+    @classmethod
+    def soft_delete(cls, db_session: Optional[Session], _id: UUID) -> None:
+        instance = cls.find_by_id(db_session, _id)
+        setattr(instance, 'is_active', False)
+        instance.deleted_at = func.now()
+        db_session.commit()
+
+    @classmethod
+    def delete(cls, db_session: Optional[Session], _id: UUID) -> None:
+        instance = cls.find_by_id(db_session, _id)
+        db_session.delete(instance)
+        db_session.commit()
 
     @classmethod
     def apply_filter_conditions(cls, query, attribute, value):
@@ -170,17 +180,6 @@ class BaseMixin(ABC):
         offset = (page_number - 1) * page_size
         query = query.offset(offset).limit(page_size)
         return query
-
-    def delete(self, db_session: Optional[Session] = None) -> None:
-        self.is_active = False
-        self.deleted_at = func.now()
-        db_session = db_session or object_session(self)
-        db_session.flush()
-
-    def hard_delete(self, db_session: Optional[Session] = None) -> None:
-        db_session = db_session or object_session(self)
-        db_session.delete(self)
-        db_session.flush()
 
     @abstractmethod
     def validate(self):  # Method should be created later and updated
