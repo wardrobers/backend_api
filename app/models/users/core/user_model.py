@@ -1,5 +1,5 @@
 from sqlalchemy import Column, DateTime, String, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 
 from app.models.common import (
     Base,
@@ -46,3 +46,16 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     categories_for_user = relationship("CategoriesForUser", backref="users")
     data_privacy_consents = relationship("DataPrivacyConsents", backref="users")
     transactions = relationship("Transactions", backref="users")
+
+    @classmethod
+    def get_user_by_login(cls, db_session: Session, login: str):
+        """
+        Retrieves a user from the database by their login.
+
+        Args:
+            login (str): The login of the user to retrieve.
+
+        Returns:
+            Optional[User]: The User object if found, otherwise None.
+        """
+        return db_session.query(cls).filter(cls.login == login, cls.deleted_at.is_(None)).first()

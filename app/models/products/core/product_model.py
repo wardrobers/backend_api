@@ -215,13 +215,13 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
         return rental_price
 
-    def get_pricing_tier(self):
+    def get_pricing_tier(self, db_session: Session):
         """Retrieve the pricing tier associated with the article."""
-        return self.db_session.query(PricingTier).filter_by(id=self.article.pricing_tier_id).first()
+        return db_session.query(PricingTier).filter_by(id=self.article.pricing_tier_id).first()
 
-    def get_price_multiplier(self, rental_days, pricing_tier):
+    def get_price_multiplier(self, db_session: Session, rental_days, pricing_tier):
         """Retrieves the price multiplier based on the rental period from PriceFactors."""
-        factor = self.db_session.query(PriceFactors).filter(
+        factor = db_session.query(PriceFactors).filter(
             and_(
                 PriceFactors.pricing_tier_id == pricing_tier.id,
                 PriceFactors.rental_period <= rental_days
@@ -229,9 +229,9 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         ).order_by(PriceFactors.rental_period.desc()).first()
         return factor.percentage if factor else 1.0
 
-    def get_category_multiplier(self, pricing_tier):
+    def get_category_multiplier(self, db_session: Session, pricing_tier):
         """Applies a category-specific multiplier to adjust the pricing."""
-        multiplier = self.db_session.query(PriceMultipliers).filter_by(id=pricing_tier.price_multiplier_id).first()
+        multiplier = db_session.query(PriceMultipliers).filter_by(id=pricing_tier.price_multiplier_id).first()
         return multiplier.multiplier if multiplier else 1.0
 
     def calculate_additional_costs(self, pricing_tier):
