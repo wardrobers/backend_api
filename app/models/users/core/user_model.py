@@ -58,4 +58,8 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         Returns:
             Optional[User]: The User object if found, otherwise None.
         """
-        return db_session.query(cls).filter(cls.login == login, cls.deleted_at.is_(None)).first()
+        return (
+            db_session.query(cls)
+            .filter(cls.login == login, cls.deleted_at.is_(None))
+            .first()
+        )

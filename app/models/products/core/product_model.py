@@ -1,7 +1,13 @@
 from enum import Enum, auto
 from sqlalchemy import Column, ForeignKey, String, Text, func, and_
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship, joinedload, selectinload, Session
+from sqlalchemy.orm import (
+    mapped_column,
+    relationship,
+    joinedload,
+    selectinload,
+    Session,
+)
 
 from app.models.common import (
     Base,
@@ -10,9 +16,20 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products import ProductCategories, StockKeepingUnit, Article, ArticleStatus, ProductStatus, Variants
+from app.models.products import (
+    ProductCategories,
+    StockKeepingUnit,
+    Article,
+    ArticleStatus,
+    ProductStatus,
+    Variants,
+)
 from app.models.users import User
-from app.models.promotions import UserPromotions, PromotionsAndDiscounts, PromotionsProducts
+from app.models.promotions import (
+    UserPromotions,
+    PromotionsAndDiscounts,
+    PromotionsProducts,
+)
 from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
 
 
@@ -60,7 +77,7 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     def __repr__(self):
         return f"<Product(uuid={self.id}, name='{self.name}', sku_product='{self.sku_product}')>"
-    
+
     @classmethod
     def get_available_products(cls, db_session: Session, category=None, brand=None):
         """
@@ -77,7 +94,9 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
         query = db_session.query(cls).options(selectinload(cls.variants))
         if category:
-            query = query.join(ProductCategories).filter(ProductCategories.category_id == category)
+            query = query.join(ProductCategories).filter(
+                ProductCategories.category_id == category
+            )
         if brand:
             query = query.filter(cls.brand_id == brand)
 
@@ -85,27 +104,37 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         query = query.filter(article_subquery)
 
         return query.all()
-    
+
     @classmethod
     def get_available_variants(cls, db_session: Session, product_id):
         """
         Retrieves available variants of a product based on availability of articles,
         with optimized loading for related objects to prevent N+1 problems.
         """
-        return db_session.query(Variants).options(joinedload(Variants.articles)).join(Product).filter(
-            Product.id == product_id,
-            Article.status_code == ArticleStatus.Available
-        ).all()
+        return (
+            db_session.query(Variants)
+            .options(joinedload(Variants.articles))
+            .join(Product)
+            .filter(
+                Product.id == product_id, Article.status_code == ArticleStatus.Available
+            )
+            .all()
+        )
 
     def get_stock_count(self, db_session: Session):
         """
         Calculates the available stock for the product.
         """
-        return db_session.query(Article).join(StockKeepingUnit).filter(
-            StockKeepingUnit.sku_product == self.sku_product, 
-            Article.status_code == ArticleStatus.Available
-        ).count()
-        
+        return (
+            db_session.query(Article)
+            .join(StockKeepingUnit)
+            .filter(
+                StockKeepingUnit.sku_product == self.sku_product,
+                Article.status_code == ArticleStatus.Available,
+            )
+            .count()
+        )
+
     def check_stock_and_notify(self):
         """
         Checks stock levels and triggers notifications if needed.
@@ -118,33 +147,45 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         Retires the product and marks associated articles as retired.
         """
-        db_session.query(Article).join(StockKeepingUnit).filter(StockKeepingUnit.sku_product == self.sku_product).update({Article.status_code: ArticleStatus.Retired})
+        db_session.query(Article).join(StockKeepingUnit).filter(
+            StockKeepingUnit.sku_product == self.sku_product
+        ).update({Article.status_code: ArticleStatus.Retired})
         db_session.commit()
-    
+
     def apply_promotions(self, db_session: Session, user_id: UUID = None) -> float:
         """
         Applies product-specific and user-specific promotions, calculating the total discount percentage.
         This method considers both the validity and availability of promotions.
         """
         # Query for active product-specific promotions
-        product_promotions = db_session.query(PromotionsAndDiscounts).join(
-            PromotionsProducts, PromotionsProducts.promotion_id == PromotionsAndDiscounts.id
-        ).filter(
-            PromotionsProducts.product_id == self.id,
-            PromotionsAndDiscounts.active == True,
-            PromotionsAndDiscounts.valid_from <= func.now(),
-            PromotionsAndDiscounts.valid_to >= func.now()
+        product_promotions = (
+            db_session.query(PromotionsAndDiscounts)
+            .join(
+                PromotionsProducts,
+                PromotionsProducts.promotion_id == PromotionsAndDiscounts.id,
+            )
+            .filter(
+                PromotionsProducts.product_id == self.id,
+                PromotionsAndDiscounts.active == True,
+                PromotionsAndDiscounts.valid_from <= func.now(),
+                PromotionsAndDiscounts.valid_to >= func.now(),
+            )
         )
 
         # Query for active user-specific promotions if user_id is provided
         if user_id:
-            user_promotions = db_session.query(PromotionsAndDiscounts).join(
-                UserPromotions, UserPromotions.promotion_id == PromotionsAndDiscounts.id
-            ).filter(
-                UserPromotions.user_id == user_id,
-                PromotionsAndDiscounts.active == True,
-                PromotionsAndDiscounts.valid_from <= func.now(),
-                PromotionsAndDiscounts.valid_to >= func.now()
+            user_promotions = (
+                db_session.query(PromotionsAndDiscounts)
+                .join(
+                    UserPromotions,
+                    UserPromotions.promotion_id == PromotionsAndDiscounts.id,
+                )
+                .filter(
+                    UserPromotions.user_id == user_id,
+                    PromotionsAndDiscounts.active == True,
+                    PromotionsAndDiscounts.valid_from <= func.now(),
+                    PromotionsAndDiscounts.valid_to >= func.now(),
+                )
             )
             all_promotions = product_promotions.union(user_promotions)
         else:
@@ -155,9 +196,13 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
             if promo.uses_left > 0:
                 # Calculate the discount based on type
                 if promo.discount_type == "Percentage":
-                    total_discount += promo.discount_value  # Assume this is already a percentage value (e.g., 10 for 10%)
+                    total_discount += (
+                        promo.discount_value
+                    )  # Assume this is already a percentage value (e.g., 10 for 10%)
                 elif promo.discount_type == "FixedAmount":
-                    total_discount += self.calculate_fixed_discount(promo.discount_value)
+                    total_discount += self.calculate_fixed_discount(
+                        promo.discount_value
+                    )
 
                 # Decrement uses left and save changes
                 promo.uses_left -= 1
@@ -178,29 +223,28 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         Retrieves the base price of the product from the pricing tier linked through the StockKeepingUnit.
         """
         # Retrieve the first SKU related to this product that has an associated pricing tier
-        sku = db_session.query(StockKeepingUnit).join(PricingTier).filter(
-            StockKeepingUnit.sku_product == self.sku_product
-        ).first()
+        sku = (
+            db_session.query(StockKeepingUnit)
+            .join(PricingTier)
+            .filter(StockKeepingUnit.sku_product == self.sku_product)
+            .first()
+        )
 
         # If an SKU with a pricing tier is found, return its retail price
         if sku and sku.pricing_tier:
             return sku.pricing_tier.retail_price
-        
+
         # Return 0 if no pricing tier is found
         return 0
-    
+
     def new_item_premium(self, db_session: Session) -> bool:
         """Checks if the product is considered new based on the condition of its articles."""
-        article = (
-            db_session.query(Article)
-            .filter(Article.id == self.id)
-            .first()
-        )
+        article = db_session.query(Article).filter(Article.id == self.id).first()
         if article.condition == "New":
             return self.NEW_ITEM_PREMIUM
         else:
             return 1.0
-    
+
     def calculate_rental_price(self, rental_days: int):
         """Calculates the total price for renting an article for a specified number of days."""
         pricing_tier = self.get_pricing_tier()
@@ -217,21 +261,34 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     def get_pricing_tier(self, db_session: Session):
         """Retrieve the pricing tier associated with the article."""
-        return db_session.query(PricingTier).filter_by(id=self.article.pricing_tier_id).first()
+        return (
+            db_session.query(PricingTier)
+            .filter_by(id=self.article.pricing_tier_id)
+            .first()
+        )
 
     def get_price_multiplier(self, db_session: Session, rental_days, pricing_tier):
         """Retrieves the price multiplier based on the rental period from PriceFactors."""
-        factor = db_session.query(PriceFactors).filter(
-            and_(
-                PriceFactors.pricing_tier_id == pricing_tier.id,
-                PriceFactors.rental_period <= rental_days
+        factor = (
+            db_session.query(PriceFactors)
+            .filter(
+                and_(
+                    PriceFactors.pricing_tier_id == pricing_tier.id,
+                    PriceFactors.rental_period <= rental_days,
+                )
             )
-        ).order_by(PriceFactors.rental_period.desc()).first()
+            .order_by(PriceFactors.rental_period.desc())
+            .first()
+        )
         return factor.percentage if factor else 1.0
 
     def get_category_multiplier(self, db_session: Session, pricing_tier):
         """Applies a category-specific multiplier to adjust the pricing."""
-        multiplier = db_session.query(PriceMultipliers).filter_by(id=pricing_tier.price_multiplier_id).first()
+        multiplier = (
+            db_session.query(PriceMultipliers)
+            .filter_by(id=pricing_tier.price_multiplier_id)
+            .first()
+        )
         return multiplier.multiplier if multiplier else 1.0
 
     def calculate_additional_costs(self, pricing_tier):
@@ -239,7 +296,7 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         insurance = 2.00  # Fixed insurance cost
         cleaning = 2.00  # Fixed cleaning cost
         return insurance + cleaning
-    
+
     def calculate_vat(self, price):
         """
         Applies VAT to the price based on the pricing tier settings.

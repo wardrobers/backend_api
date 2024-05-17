@@ -13,7 +13,7 @@ from app.models.common import (
 
 class PriceMultipliers(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "price_multipliers"
-    
+
     multiplier = Column(Numeric, nullable=False)
 
     # Foreign keys

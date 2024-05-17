@@ -62,7 +62,7 @@ class BaseMixin(ABC):
     @classmethod
     def soft_delete(cls, db_session: Optional[Session], _id: UUID) -> None:
         instance = cls.find_by_id(db_session, _id)
-        setattr(instance, 'is_active', False)
+        setattr(instance, "is_active", False)
         instance.deleted_at = func.now()
         db_session.commit()
 

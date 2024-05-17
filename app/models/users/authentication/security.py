@@ -12,7 +12,6 @@ from sqlalchemy.orm import Session
 from app.models.users import User
 
 
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
@@ -30,9 +29,7 @@ class AuthHandler:
         except argon2.exceptions.VerifyMismatchError:
             return False
 
-    def authenticate_user(
-        self, db_session: Session, username: str, password: str
-    ):
+    def authenticate_user(self, db_session: Session, username: str, password: str):
         user_repo = User(db_session)
         user = user_repo.get_user_by_login(
             username
@@ -82,9 +79,7 @@ class AuthHandler:
 
     # If you have specific logic to determine if a user is active or not,
     # implement it in this method.
-    async def get_current_active_user(
-        self, current_user
-    ):
+    async def get_current_active_user(self, current_user):
         if not current_user.is_active:
             raise HTTPException(status_code=400, detail="Inactive user")
         return current_user
