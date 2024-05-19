@@ -11,9 +11,10 @@ google-cloud-core==2.4.1
 google-cloud-storage==2.14.0
 pydantic[email]
 python-multipart==0.0.6
-cloud-sql-python-connector[asyncpg]==0.29.0
+cloud-sql-python-connector[asyncpg]==1.6.0
 passlib==1.7.4
 redis==5.0.4
 aioredis==2.0.1
 python-Levenshtein==0.25.1
 firebase_admin==6.5.0
+asyncpg==0.29.0
