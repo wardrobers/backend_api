@@ -1,22 +1,16 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, Depends, status, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import UUID4
+from sqlalchemy.dialects.postgresql import UUID
 
-from app.models.authentication import AuthHandler
 from app.models.users import User, UserPhotos
 from app.database import get_async_session
+from app.routers.users import auth_handler
 
 
-# Initialize the routers and AuthHandler
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-users_router = APIRouter(
-    prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)]
-)
-auth_handler = AuthHandler()
+router = APIRouter()
 
 
-@users_router.post("/photos", status_code=status.HTTP_201_CREATED)
+@router.post("/photos", status_code=status.HTTP_201_CREATED)
 async def upload_user_photo(
     photo_data,
     db_session: AsyncSession = Depends(get_async_session),
@@ -43,7 +37,7 @@ async def upload_user_photo(
     return new_photo
 
 
-@users_router.get("/photos")
+@router.get("/photos")
 async def get_user_photos(
     db_session: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),
@@ -59,9 +53,9 @@ async def get_user_photos(
     return current_user.photos
 
 
-@users_router.put("/photos")
+@router.put("/photos")
 async def update_user_photo(
-    photo_id: UUID4,
+    photo_id: UUID,
     photo_update,
     db_session: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),
@@ -93,9 +87,9 @@ async def update_user_photo(
     return photo
 
 
-@users_router.delete("/photos", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/photos", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_photo(
-    photo_id: UUID4,
+    photo_id: UUID,
     db_session: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),
 ):

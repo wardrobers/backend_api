@@ -1,21 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, Depends, status, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.authentication import AuthHandler
 from app.models.users import User
 from app.database import get_async_session
+from app.routers.users import auth_handler
 
 
-# Initialize the routers and AuthHandler
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-users_router = APIRouter(
-    prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)]
-)
-auth_handler = AuthHandler()
+router = APIRouter()
 
-
-@users_router.post("/subscriptions", status_code=status.HTTP_201_CREATED)
+@router.post("/subscriptions", status_code=status.HTTP_201_CREATED)
 async def create_user_subscription(
     # subscription_data: SubscriptionCreate = Body(...),  # Define this Pydantic model
     db: AsyncSession = Depends(get_async_session),
@@ -42,7 +35,7 @@ async def create_user_subscription(
     pass
 
 
-@users_router.put("/subscriptions", status_code=status.HTTP_200_OK)
+@router.put("/subscriptions", status_code=status.HTTP_200_OK)
 async def update_user_subscription(
     # subscription_data: SubscriptionUpdate = Body(...),  # Define this Pydantic model
     db: AsyncSession = Depends(get_async_session),
@@ -64,7 +57,7 @@ async def update_user_subscription(
     pass
 
 
-@users_router.delete("/subscriptions", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/subscriptions", status_code=status.HTTP_204_NO_CONTENT)
 async def cancel_user_subscription(
     db: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),

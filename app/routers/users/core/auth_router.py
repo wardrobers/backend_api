@@ -1,21 +1,19 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import HTTPException, Depends, status, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.authentication import AuthHandler
 from app.models.users import User
 from app.database import get_async_session
+from app.routers.users import auth_handler
 
 
-# Initialize the routers
-auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-# Initialize your AuthHandler
-auth_handler = AuthHandler()
+router = APIRouter()
 
 
-@auth_router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(
-    user_create, db_session: AsyncSession = Depends(get_async_session)
+    user_create, 
+    db_session: AsyncSession = Depends(get_async_session)
 ):
     """
     Registers a new user.
@@ -23,16 +21,25 @@ async def register_user(
     Request Body:
         - login (str): Unique user login.
         - password (str): User's password.
+        - password_confirmation (str): Confirmation of the user's password. 
 
     Response (Success - 201 Created):
         - UserRead (schema)
 
     Error Codes:
-        - 400 Bad Request: If the login is already in use.
+        - 400 Bad Request: If the login is already in use or passwords don't match. 
     """
+    if user_create.password != user_create.password_confirmation:
+        raise HTTPException(status_code=400, detail="Passwords don't match")
+
     existing_user = await User.get_user_by_login(db_session, user_create.login)
     if existing_user:
         raise HTTPException(status_code=400, detail="Login already in use")
+
+    try: 
+        User.validate_password_strength(user_create.password) 
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     hashed_password = AuthHandler.get_password_hash(user_create.password)
     new_user = User(login=user_create.login, password=hashed_password)
@@ -42,7 +49,7 @@ async def register_user(
     return new_user
 
 
-@auth_router.post("/login", status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login_user(login_data, db_session: AsyncSession = Depends(get_async_session)):
     """
     Logs in a user and generates a JWT access token.
@@ -68,7 +75,7 @@ async def login_user(login_data, db_session: AsyncSession = Depends(get_async_se
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@auth_router.post("/password/forgot", status_code=status.HTTP_200_OK)
+@router.post("/password/forgot", status_code=status.HTTP_200_OK)
 async def initiate_password_reset(
     email, db_session: AsyncSession = Depends(get_async_session)
 ):
@@ -96,32 +103,45 @@ async def initiate_password_reset(
     return {"message": "Password reset instructions sent to your email"}
 
 
-@auth_router.post("/password/reset", status_code=status.HTTP_200_OK)
+@router.post("/password/reset", status_code=status.HTTP_200_OK)
 async def reset_password(
-    token,
-    new_password,
-    db_session: AsyncSession = Depends(get_async_session),
+    reset_data, 
+    db: AsyncSession = Depends(get_async_session),
 ):
     """
-    Resets a user's password using a valid password reset token.
+    Resets a user's password using a reset token (for future email verification)
+    or directly with the old password. 
 
     Request Body:
-        - token (str): The password reset token received by the user.
-        - new_password (str): The user's desired new password.
+        - token (str, optional): Password reset token.
+        - old_password (str, optional): User's current password.
+        - new_password (str): User's new password.
 
     Response (Success - 200 OK):
         - message (str): A confirmation message.
 
     Error Codes:
-        - 400 Bad Request: If the token is invalid or expired.
+        - 400 Bad Request: If token is invalid, old password is incorrect,
+                          or no reset method is provided.
+        - 404 Not Found: If no user is found with the token or login.
     """
-    # TODO: Verify the token, extract user information, and reset the password
-    # Replace this with your actual token verification and password reset logic
-    user = verify_password_reset_token(token, db_session)  # Implement this function
-    if not user:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    user = None
+    if reset_data.token:
+        # Future email-based reset logic
+        user = verify_password_reset_token(reset_data.token, db)  
+        if not user:
+            raise HTTPException(status_code=400, detail="Invalid or expired token")
+    elif reset_data.old_password:
+        # Basic reset with old password
+        user = await User.get_user_by_login(db, reset_data.login)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if not auth_handler.verify_password(reset_data.old_password, user.password):
+            raise HTTPException(status_code=400, detail="Incorrect old password")
+    else:
+        raise HTTPException(status_code=400, detail="No password reset method provided")
 
-    hashed_password = AuthHandler.get_password_hash(new_password)
+    hashed_password = AuthHandler.get_password_hash(reset_data.new_password)
     user.password = hashed_password
-    await db_session.commit()
+    await db.commit()
     return {"message": "Password reset successfully"}

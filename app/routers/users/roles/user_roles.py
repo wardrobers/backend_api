@@ -1,24 +1,18 @@
-from fastapi import APIRouter, HTTPException, Depends, status, select
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, Depends, status, APIRouter, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import UUID4
+from sqlalchemy.dialects.postgresql import UUID
 
-from app.models.authentication import AuthHandler
 from app.models.users import User, Roles
 from app.database import get_async_session
+from app.routers.users import auth_handler
 
 
-# Initialize the routers and AuthHandler
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-users_router = APIRouter(
-    prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)]
-)
-auth_handler = AuthHandler()
+router = APIRouter()
 
 
-@users_router.post("/roles", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/roles", status_code=status.HTTP_204_NO_CONTENT)
 async def assign_role_to_user(
-    role_id: UUID4,
+    role_id: UUID,
     db: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),
 ):
@@ -45,9 +39,9 @@ async def assign_role_to_user(
     await db.commit()
 
 
-@users_router.delete("/roles", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/roles", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_role_from_user(
-    role_id: UUID4,
+    role_id: UUID,
     db: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),
 ):

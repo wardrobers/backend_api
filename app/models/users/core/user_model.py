@@ -17,15 +17,7 @@ from app.models.common import (
 
 # Import models that are directly related and need explicit import for relationships
 from app.models.common import AuthHandler
-from app.models.users import (
-    UserInfo,
-    UserActivity,
-    UserAddresses,
-    UserBasket,
-    UserSavedItems,
-    UserRoles,
-    UserReviewsAndRatings,
-)
+from app.models.users import UserInfo, UserRoles
 from app.models.subscriptions import Subscriptions
 from app.models.promotions import UserPromotions
 
