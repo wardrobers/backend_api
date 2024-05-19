@@ -9,7 +9,9 @@ from app.database import get_async_session
 
 # Initialize the routers and AuthHandler
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-users_router = APIRouter(prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)])
+users_router = APIRouter(
+    prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)]
+)
 auth_handler = AuthHandler()
 
 
@@ -81,3 +83,25 @@ async def delete_current_user_account(
     Response (Success - 204 No Content): Indicates successful account deactivation.
     """
     await current_user.soft_delete(db_session)
+
+
+@users_router.put("/notifications", status_code=status.HTTP_200_OK)
+async def update_notification_preferences(
+    enabled: bool,
+    db: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(auth_handler.get_current_user),
+):
+    """
+    Enables or disables notifications for the currently authenticated user.
+
+    Requires Authentication (JWT).
+
+    Request Body:
+        - enabled (bool): True to enable notifications, False to disable.
+
+    Response (Success - 200 OK):
+        - message (str): A confirmation message.
+    """
+    current_user.is_notificated = enabled
+    await db.commit()
+    return {"message": "Notification preferences updated successfully"}

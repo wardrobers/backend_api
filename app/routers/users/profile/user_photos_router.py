@@ -10,8 +10,11 @@ from app.database import get_async_session
 
 # Initialize the routers and AuthHandler
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-users_router = APIRouter(prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)])
+users_router = APIRouter(
+    prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)]
+)
 auth_handler = AuthHandler()
+
 
 @users_router.post("/photos", status_code=status.HTTP_201_CREATED)
 async def upload_user_photo(
@@ -33,10 +36,7 @@ async def upload_user_photo(
     Error Codes:
         - 400 Bad Request: If the provided photo data is invalid.
     """
-    new_photo = UserPhotos(
-        user_id=current_user.id, 
-        storage_url=photo_data.storage_url
-    )
+    new_photo = UserPhotos(user_id=current_user.id, storage_url=photo_data.storage_url)
     db_session.add(new_photo)
     await db_session.commit()
     await db_session.refresh(new_photo)

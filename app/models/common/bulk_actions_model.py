@@ -43,7 +43,7 @@ class BulkActionsMixin:
                 await session.execute(
                     update(cls)
                     .where(cls.id == item["id"])
-                    .values(**{k: v for k, v in item.items() if k != 'id'})
+                    .values(**{k: v for k, v in item.items() if k != "id"})
                 )
             await session.commit()
 
@@ -71,15 +71,17 @@ class BulkActionsMixin:
         """
         async with db_session as session:
             await session.execute(
-                update(cls)
-                .where(cls.id.in_(ids))
-                .values(deleted_at=func.now())
+                update(cls).where(cls.id.in_(ids)).values(deleted_at=func.now())
             )
             await session.commit()
 
     @classmethod
-    async def bulk_upsert(cls, db_session: AsyncSession, items: list[dict[str, Any]], 
-                          unique_constraint: Optional[tuple[str, ...]] = None):
+    async def bulk_upsert(
+        cls,
+        db_session: AsyncSession,
+        items: list[dict[str, Any]],
+        unique_constraint: Optional[tuple[str, ...]] = None,
+    ):
         """
         Perform a bulk upsert operation (insert or update) asynchronously.
 
@@ -87,18 +89,22 @@ class BulkActionsMixin:
             db_session (AsyncSession): The asynchronous database session.
             items (List[Dict[str, Any]]): A list of dictionaries representing the data to upsert.
             unique_constraint (Optional[Tuple[str, ...]]): The unique constraint
-                to use for determining whether to insert or update. If None, the primary key is used. 
+                to use for determining whether to insert or update. If None, the primary key is used.
         """
         async with db_session as session:
             for item in items:
                 if unique_constraint:
                     # Use unique constraint for checking existing records
-                    filter_condition = and_(*[getattr(cls, col) == item[col] for col in unique_constraint])
+                    filter_condition = and_(
+                        *[getattr(cls, col) == item[col] for col in unique_constraint]
+                    )
                 else:
                     # Use primary key for checking existing records
                     filter_condition = cls.id == item.get("id")
 
-                existing_record = await session.execute(select(cls).where(filter_condition))
+                existing_record = await session.execute(
+                    select(cls).where(filter_condition)
+                )
                 existing_record = existing_record.scalars().first()
 
                 if existing_record:
@@ -107,13 +113,19 @@ class BulkActionsMixin:
                         await session.execute(
                             update(cls)
                             .where(filter_condition)
-                            .values(**{k: v for k, v in item.items() if k not in unique_constraint})
+                            .values(
+                                **{
+                                    k: v
+                                    for k, v in item.items()
+                                    if k not in unique_constraint
+                                }
+                            )
                         )
                     else:
                         await session.execute(
                             update(cls)
                             .where(cls.id == item["id"])
-                            .values(**{k: v for k, v in item.items() if k != 'id'})
+                            .values(**{k: v for k, v in item.items() if k != "id"})
                         )
                 else:
                     # Insert a new record

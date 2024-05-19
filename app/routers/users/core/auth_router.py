@@ -41,10 +41,9 @@ async def register_user(
     await db_session.refresh(new_user)
     return new_user
 
+
 @auth_router.post("/login", status_code=status.HTTP_200_OK)
-async def login_user(
-    login_data, db_session: AsyncSession = Depends(get_async_session)
-):
+async def login_user(login_data, db_session: AsyncSession = Depends(get_async_session)):
     """
     Logs in a user and generates a JWT access token.
 
@@ -59,7 +58,9 @@ async def login_user(
     Error Codes:
         - 401 Unauthorized: If the provided credentials are incorrect.
     """
-    user = await auth_handler.authenticate_user(db_session, login_data.login, login_data.password)
+    user = await auth_handler.authenticate_user(
+        db_session, login_data.login, login_data.password
+    )
     if not user:
         raise HTTPException(status_code=401, detail="Incorrect login or password")
 
@@ -72,15 +73,15 @@ async def initiate_password_reset(
     email, db_session: AsyncSession = Depends(get_async_session)
 ):
     """
-    Initiates the password reset process. 
-    For simplicity, we'll assume the token is generated and sent via email here. 
+    Initiates the password reset process.
+    For simplicity, we'll assume the token is generated and sent via email here.
     In a real application, you'd integrate with an email service.
 
     Request Body:
         - email (EmailStr): The user's registered email address.
 
     Response (Success - 200 OK):
-        - message (str): A confirmation message. 
+        - message (str): A confirmation message.
 
     Error Codes:
         - 404 Not Found: If no user is found with the provided email address.
@@ -91,13 +92,13 @@ async def initiate_password_reset(
 
     # TODO: Generate and send a password reset token to the user's email
     # Replace this with your actual token generation and email sending logic
-    print(f"Password reset token for {email}: {generate_password_reset_token(email)}") 
+    print(f"Password reset token for {email}: {generate_password_reset_token(email)}")
     return {"message": "Password reset instructions sent to your email"}
 
 
 @auth_router.post("/password/reset", status_code=status.HTTP_200_OK)
 async def reset_password(
-    token, 
+    token,
     new_password,
     db_session: AsyncSession = Depends(get_async_session),
 ):
@@ -116,7 +117,7 @@ async def reset_password(
     """
     # TODO: Verify the token, extract user information, and reset the password
     # Replace this with your actual token verification and password reset logic
-    user = verify_password_reset_token(token, db_session)  # Implement this function 
+    user = verify_password_reset_token(token, db_session)  # Implement this function
     if not user:
         raise HTTPException(status_code=400, detail="Invalid or expired token")
 

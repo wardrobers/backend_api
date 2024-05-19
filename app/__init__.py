@@ -13,4 +13,4 @@ from app.models import (
     pricing,
 )
 from app.database import db_engine, get_db, SessionLocal
-from app.routers import user
+from app.routers import users
