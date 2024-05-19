@@ -113,7 +113,7 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
             # Hash the user's password before storing it in the database
             hashed_password = AuthHandler.get_password_hash(user_data["password"])
             user_data["password"] = hashed_password
-            user_data["is_active"] = True  # User is inactive until email verification
+            user_data["is_active"] = False  # User is inactive until email verification
 
             # Create the user in the database
             new_user = User(**user_data)
