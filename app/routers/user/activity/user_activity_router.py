@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import UUID4
 
-from ...database.session import get_db
+from ....database.session import get_db
 from ...repositories.user.user_activity_repository import UserActivityRepository
-from ...schemas.user.user_activity_schema import UserActivityUpdate, UserActivityRead
+from ....schemas.user.user_activity_schema import UserActivityUpdate, UserActivityRead
 
 router = APIRouter()
 

@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.database import get_async_session
 from app.models.common import Base
+from app.routers.user import users_router, auth_router
 
 
 app = FastAPI(title="Wardrobers API", version="2.0")
@@ -86,15 +87,6 @@ async def liveness_check(db_session: AsyncSession = Depends(get_async_session)):
         raise HTTPException(status_code=503, detail=f"Service Unavailable: {str(e)}")
 
 
-# Including routers
-from app.routers import (
-    auth_router,
-    user_router,
-    product_router,
-    order_router,
-)  # Adjust path as necessary
 
 app.include_router(auth_router.router, prefix="/auth", tags=["Auth"])
-app.include_router(user_router.router, prefix="/users", tags=["Users"])
-app.include_router(product_router.router, prefix="/products", tags=["Products"])
-app.include_router(order_router.router, prefix="/orders", tags=["Orders"])
+app.include_router(users_router.router, prefix="/users", tags=["Users"])
