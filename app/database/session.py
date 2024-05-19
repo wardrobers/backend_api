@@ -1,7 +1,7 @@
 import os
 import json
-from sqlalchemy import create_engine, engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from google.cloud.sql.connector import Connector, IPTypes
 
 
@@ -12,37 +12,34 @@ db_credentials = json.loads(os.environ["DBCRED"])
 connector = Connector()
 
 
-def getconn() -> engine.base.Connection:
-    conn = connector.connect(
-        db_credentials["project"]
-        + ":"
-        + db_credentials["region"]
-        + ":"
-        + db_credentials["instance"],
-        "pg8000",
+async def get_async_conn():
+    conn = await connector.connect(
+        f"{db_credentials['project']}:{db_credentials['region']}:{db_credentials['instance']}",
+        "asyncpg",
         user=db_credentials["user"],
         password=db_credentials["password"],
         db=db_credentials["database"],
-        ip_type=IPTypes.PUBLIC,  # Use PRIVATE if connecting via private IP
+        ip_type=IPTypes.PUBLIC,
     )
     return conn
 
 
-# Create a SQLAlchemy engine with Cloud SQL Connector
-db_engine = create_engine(
-    "postgresql+pg8000://",
-    creator=getconn,
+# Create an asynchronous SQLAlchemy engine
+async_engine = create_async_engine(
+    "postgresql+asyncpg://",
+    creator=get_async_conn,
 )
 
-# Create a sessionmaker
-SessionLocal = scoped_session(
-    sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+# Asynchronous session factory
+AsyncSessionLocal = sessionmaker(
+    async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_async_session() -> AsyncSession:
+    async with AsyncSessionLocal() as session:
+        yield session

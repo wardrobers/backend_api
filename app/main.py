@@ -1,27 +1,26 @@
-import os
-from fastapi import FastAPI, HTTPException, Request
-import uvicorn
-from .database.session import db_engine, get_db, SessionLocal
-from .models.common.base_model import Base  # Adjust path as necessary
+from fastapi import FastAPI, HTTPException, Request, Depends
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
+
+from app.database import get_async_session
+from app.models.common import Base
 
 
 app = FastAPI(title="Wardrobers API", version="2.0")
 
 
-def create_tables():
-    Base.metadata.create_all(bind=db_engine)
-
-
 @app.on_event("startup")
 async def startup_event():
-    create_tables()
+    async with get_async_session() as session:
+        await session.run_sync(Base.metadata.create_all)
 
 
 # Middleware for DB session management
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
     response = None
-    request.state.db = SessionLocal()
+    request.state.db = await get_async_session()
     try:
         # Attach a new session to the request state
         response = await call_next(request)
@@ -67,20 +66,24 @@ async def root():
 
 
 @app.get("/healthz", tags=["Test"])
-async def liveness_check():
+async def liveness_check(db_session: AsyncSession = Depends(get_async_session)):
     try:
-        # 1. Database Connectivity
-        with get_db() as db:
-            # Test a simple query to verify the connection
-            db.execute("SELECT 1")
+        # Database connectivity check
+        result = await db_session.execute(
+            select(1)
+        )  # Executing an async query to check database connectivity
+        result.fetchone()  # Optionally fetch the result to ensure complete execution
 
-        # 2. (Optional) External Dependency Checks
-        # If Wardrobers relies on other services (e.g., image storage, third-party APIs)
-        # Add checks to make API requests to those external dependencies here
+        # Optional: Check other external dependencies here
+        # e.g., API calls to third-party services, connectivity checks to external data sources
 
         return {"status": "ok", "dependencies": {"database": "ok"}}
+    except SQLAlchemyError as e:
+        # Specific database related errors can be caught and handled separately
+        raise HTTPException(status_code=503, detail=f"Database Unavailable: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=503, detail="Service Unavailable")
+        # Catch-all for any other issues that occur during the health check
+        raise HTTPException(status_code=503, detail=f"Service Unavailable: {str(e)}")
 
 
 # Including routers
