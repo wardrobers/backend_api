@@ -22,3 +22,15 @@ class Types(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     # Relationships
     product = relationship("Product", secondary="product_types", backref="types")
     product_types = relationship("ProductTypes", backref="types")
+
+
+class ProductTypes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+    __tablename__ = "product_types"
+
+    # Foreign Keys
+    product_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False, comment="Товар"
+    )
+    type_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("types.id"), nullable=False, comment="Тип вещи"
+    )

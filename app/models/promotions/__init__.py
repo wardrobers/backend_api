@@ -1,4 +1,6 @@
 from .promotions_variants_model import PromotionsVariants
 from .user_promotions_model import UserPromotions
 from .promotions_and_discounts_model import PromotionsAndDiscounts
-from .order_promotion_model import OrderPromotions
+from .order_promotions_model import OrderPromotions
+from .order_items_promotions_model import OrderItemsPromotions
+from .promotions_occasional_categories_model import PromotionsOccasionalCategories

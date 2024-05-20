@@ -18,7 +18,7 @@ from app.models.common import (
 )
 from app.models.products import (
     ProductCategories,
-    StockKeepingUnit,
+    StockKeepingUnits,
     Articles,
     ArticleStatus,
     ProductStatus,
@@ -87,7 +87,7 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         # Subquery for checking available articles
         article_subquery = (
             db_session.query(Articles.id)
-            .join(StockKeepingUnit, StockKeepingUnit.sku_product == Articlessku_article)
+            .join(StockKeepingUnits, StockKeepingUnits.sku_product == Articlessku_article)
             .filter(Articles.status_code == ArticleStatus.Available)
             .exists()
         )
@@ -128,9 +128,9 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         return (
             db_session.query(Articles)
-            .join(StockKeepingUnit)
+            .join(StockKeepingUnits)
             .filter(
-                StockKeepingUnit.sku_product == self.sku_product,
+                StockKeepingUnits.sku_product == self.sku_product,
                 Articles.status_code == ArticleStatus.Available,
             )
             .count()
@@ -148,8 +148,8 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         Retires the product and marks associated articles as retired.
         """
-        db_session.query(Articles).join(StockKeepingUnit).filter(
-            StockKeepingUnit.sku_product == self.sku_product
+        db_session.query(Articles).join(StockKeepingUnits).filter(
+            StockKeepingUnits.sku_product == self.sku_product
         ).update({Articles.status_code: ArticleStatus.Retired})
         db_session.commit()
 
@@ -221,13 +221,13 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     def get_base_price(self, db_session: Session):
         """
-        Retrieves the base price of the product from the pricing tier linked through the StockKeepingUnit.
+        Retrieves the base price of the product from the pricing tier linked through the StockKeepingUnits.
         """
         # Retrieve the first SKU related to this product that has an associated pricing tier
         sku = (
-            db_session.query(StockKeepingUnit)
+            db_session.query(StockKeepingUnits)
             .join(PricingTier)
-            .filter(StockKeepingUnit.sku_product == self.sku_product)
+            .filter(StockKeepingUnits.sku_product == self.sku_product)
             .first()
         )
 

@@ -1,25 +1,23 @@
-from .core import Product, StockKeepingUnit, Articles
-from .article_details import (
-    SizeSystems,
-    Colors,
+from .core import Product, StockKeepingUnits, Articles, TypesOfOperations
+from .inventorization import (
     Specifications,
     ArticleStatus,
     Variants,
     TypesOfOperations,
-    Sizing,
+    OccasionalCategories,
+    ProductOccasionalCategories,
+    ProductTypes,
+    ProductStatus,
 )
 from .maintenance import CleaningLogs, RepairLogs
 from .product_details import (
     ProductPhotos,
-    ClothingSizes,
     Types,
     Materials,
     ClaspType,
     ProductMaterials,
     ProductCategories,
-    ProductStatus,
-    AccessoriesSize,
-    ProductFit,
     Brand,
-    ProductTypes,
+    Colors,
 )
+from .sizing import SizeSystems, ClothingSizes, Sizing, AccessoriesSize, ProductFit

@@ -19,7 +19,7 @@ class Variants(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     # Foreign Keys
     product_id = mapped_column(UUID(as_uuid=True), ForeignKey("products.id"))
-    sku_id = mapped_column(UUID(as_uuid=True), ForeignKey("stock_keeping_unit.id"))
+    sku_id = mapped_column(UUID(as_uuid=True), ForeignKey("stock_keeping_units.id"))
 
     # Relationships
     sizing = relationship("Sizing", backref="variants")

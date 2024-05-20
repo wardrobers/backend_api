@@ -19,5 +19,5 @@ class UserBasket(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     # Foreign keys
     user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     stock_keeping_unit_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stock_keeping_unit.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("stock_keeping_units.id"), nullable=False
     )
