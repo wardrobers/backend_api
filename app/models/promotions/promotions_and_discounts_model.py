@@ -36,17 +36,13 @@ class PromotionsAndDiscounts(
 
     # Relationships
     user_promotions = relationship("UserPromotions", backref="promotions_and_discounts")
-    promotions_variants = relationship("PromotionsVariants", backref="promotions_and_discounts")
+    promotions_variants = relationship(
+        "PromotionsVariants", backref="promotions_and_discounts"
+    )
     occasional_categories = relationship(
-        "PromotionsOccasionalCategories", 
-        backref="promotion", 
-        lazy='dynamic'
+        "PromotionsOccasionalCategories", backref="promotion", lazy="dynamic"
     )
-    variants = relationship(
-        "PromotionsVariants", 
-        backref="promotion", 
-        lazy='dynamic' 
-    )
+    variants = relationship("PromotionsVariants", backref="promotion", lazy="dynamic")
 
     def is_applicable_to_product(self, product, db_session) -> bool:
         """
@@ -59,7 +55,8 @@ class PromotionsAndDiscounts(
                 .filter(
                     PromotionsOccasionalCategories.occasional_category_id
                     == product_oc.occasional_category_id,
-                    PromotionsOccasionalCategories.promotions_and_discounts_id == self.id,
+                    PromotionsOccasionalCategories.promotions_and_discounts_id
+                    == self.id,
                 )
                 .first()
             ):

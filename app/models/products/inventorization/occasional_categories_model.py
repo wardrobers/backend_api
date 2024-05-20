@@ -28,9 +28,9 @@ class OccasionalCategories(
         "PromotionsOccasionalCategories", backref="occasional_categories"
     )
     products = relationship(
-        "Products", 
-        secondary="product_occasional_categories", 
-        backref="occasional_categories" 
+        "Products",
+        secondary="product_occasional_categories",
+        backref="occasional_categories",
     )
 
     def get_product_count(self, db_session):
@@ -40,12 +40,12 @@ class OccasionalCategories(
             .join(ProductOccasionalCategories)
             .filter(
                 ProductOccasionalCategories.occasional_category_id == self.id,
-                Product.deleted_at.is_(None)
+                Product.deleted_at.is_(None),
             )
             .count()
         )
-    
-    
+
+
 class ProductOccasionalCategories(
     Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
 ):

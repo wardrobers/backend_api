@@ -73,9 +73,9 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     pricing_tiers = relationship("PricingTier", backref="products")
     accessory_size = relationship("AccessoriesSize", backref="products")
     occasional_categories = relationship(
-        "ProductOccasionalCategories", 
-        backref="products", 
-        lazy='joined'  # Eager load for improved performance 
+        "ProductOccasionalCategories",
+        backref="products",
+        lazy="joined",  # Eager load for improved performance
     )
 
     NEW_ITEM_PREMIUM = 1.10
@@ -311,7 +311,7 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         vat_percentage = self.pricing_tiers.vat_percentage
         return price * vat_percentage / 100
-    
+
     def get_occasional_category_names(self):
         """Returns a list of names of occasional categories associated with the product."""
         return [oc.occasional_category.name for oc in self.occasional_categories]
