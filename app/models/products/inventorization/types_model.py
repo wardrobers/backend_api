@@ -20,7 +20,7 @@ class Types(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     category_id = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id"))
 
     # Relationships
-    product = relationship("Product", secondary="product_types", backref="types")
+    product = relationship("Products", secondary="product_types", backref="types")
     product_types = relationship("ProductTypes", backref="types")
 
 

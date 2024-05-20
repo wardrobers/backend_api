@@ -51,7 +51,7 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     info = relationship("UserInfo", uselist=False, backref="users")
     activity = relationship("UserActivity", uselist=False, backref="users")
     basket = relationship("UserBasket", uselist=False, backref="users")
-    photos = relationship("UsersPhotos", backref="users")
+    photos = relationship("UserPhotos", backref="users")
     role = relationship("Roles", secondary="user_roles", backref="users")
     order = relationship("Order", backref="users")
     subscriptions = relationship("Subscriptions", backref="users")

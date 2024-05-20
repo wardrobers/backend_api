@@ -16,4 +16,4 @@ class ProductFit(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     type = Column(String, nullable=False)
 
     # Relationships
-    product = relationship("Product", backref="product_fit")
+    product = relationship("Products", backref="product_fit")

@@ -27,4 +27,4 @@ class ProductStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     name = Column(SQLAEnum(ProductStatus), nullable=False)
 
     # Relationships
-    product = relationship("Product", backref="product_status")
+    product = relationship("Products", backref="product_status")

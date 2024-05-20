@@ -16,4 +16,4 @@ class ClaspType(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     name = Column(String, nullable=True)
 
     # Relationships
-    product = relationship("Product", backref="clasp_types")
+    product = relationship("Products", backref="clasp_types")

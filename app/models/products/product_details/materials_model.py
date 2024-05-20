@@ -23,7 +23,7 @@ class Materials(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     # Relationships
     product = relationship(
-        "Product", secondary="product_materials", backref="materials"
+        "Products", secondary="product_materials", backref="materials"
     )
 
 

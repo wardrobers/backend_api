@@ -9,7 +9,7 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products import Product
+from app.models.products import Products
 
 
 class OccasionalCategories(
@@ -36,11 +36,11 @@ class OccasionalCategories(
     def get_product_count(self, db_session):
         """Returns the number of active products associated with this occasional category."""
         return (
-            db_session.query(Product)
+            db_session.query(Products)
             .join(ProductOccasionalCategories)
             .filter(
                 ProductOccasionalCategories.occasional_category_id == self.id,
-                Product.deleted_at.is_(None),
+                Products.deleted_at.is_(None),
             )
             .count()
         )

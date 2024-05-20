@@ -19,4 +19,4 @@ class ClothingSizes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     skirt_length = Column(Numeric, nullable=True)
 
     # Relationships
-    product = relationship("Product", backref="clothing_sizes")
+    product = relationship("Products", backref="clothing_sizes")

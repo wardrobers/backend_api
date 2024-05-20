@@ -16,4 +16,4 @@ class Brand(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     name = Column(String, nullable=False)
 
     # Relationships
-    product = relationship("Product", backref="brands")
+    product = relationship("Products", backref="brands")
