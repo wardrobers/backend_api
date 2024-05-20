@@ -1,11 +1,19 @@
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
 
 
-class PromotionsOccasionalCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class PromotionsOccasionalCategories(
+    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
+):
     __tablename__ = "promotions_occasional_categories"
 
     # Foreign Keys

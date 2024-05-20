@@ -10,6 +10,7 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
+from app.models.promotions import PromotionsVariants, PromotionsOccasionalCategories
 
 
 class DiscountType(Enum):
@@ -33,6 +34,47 @@ class PromotionsAndDiscounts(
     uses_left = Column(Integer, nullable=True)
     active = Column(Boolean, default=True)
 
-    # Relationships for promotions involved in user and variants promotions
-    user_promotions = relationship("UserPromotions", backref="promotion")
-    promotions_variants = relationship("PromotionsVariants", backref="promotion")
+    # Relationships
+    user_promotions = relationship("UserPromotions", backref="promotions_and_discounts")
+    promotions_variants = relationship("PromotionsVariants", backref="promotions_and_discounts")
+    occasional_categories = relationship(
+        "PromotionsOccasionalCategories", 
+        backref="promotion", 
+        lazy='dynamic'
+    )
+    variants = relationship(
+        "PromotionsVariants", 
+        backref="promotion", 
+        lazy='dynamic' 
+    )
+
+    def is_applicable_to_product(self, product, db_session) -> bool:
+        """
+        Checks if the promotion is applicable to a given product based on associated categories and variants.
+        """
+        # Check if the promotion is linked to any of the product's occasional categories
+        for product_oc in product.occasional_categories:
+            if (
+                db_session.query(PromotionsOccasionalCategories)
+                .filter(
+                    PromotionsOccasionalCategories.occasional_category_id
+                    == product_oc.occasional_category_id,
+                    PromotionsOccasionalCategories.promotions_and_discounts_id == self.id,
+                )
+                .first()
+            ):
+                return True
+
+        # Check if the promotion is linked to any of the product's variants
+        for variant in product.variants:
+            if (
+                db_session.query(PromotionsVariants)
+                .filter(
+                    PromotionsVariants.variants_id == variant.id,
+                    PromotionsVariants.promotions_and_discounts_id == self.id,
+                )
+                .first()
+            ):
+                return True
+
+        return False

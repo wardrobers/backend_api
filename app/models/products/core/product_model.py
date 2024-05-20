@@ -72,6 +72,11 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     promotions_products = relationship("PromotionsVariants", backref="products")
     pricing_tiers = relationship("PricingTier", backref="products")
     accessory_size = relationship("AccessoriesSize", backref="products")
+    occasional_categories = relationship(
+        "ProductOccasionalCategories", 
+        backref="products", 
+        lazy='joined'  # Eager load for improved performance 
+    )
 
     NEW_ITEM_PREMIUM = 1.10
 
@@ -87,7 +92,9 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         # Subquery for checking available articles
         article_subquery = (
             db_session.query(Articles.id)
-            .join(StockKeepingUnits, StockKeepingUnits.sku_product == Articlessku_article)
+            .join(
+                StockKeepingUnits, StockKeepingUnits.sku_product == Articles.sku_article
+            )
             .filter(Articles.status_code == ArticleStatus.Available)
             .exists()
         )
@@ -304,3 +311,7 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         vat_percentage = self.pricing_tiers.vat_percentage
         return price * vat_percentage / 100
+    
+    def get_occasional_category_names(self):
+        """Returns a list of names of occasional categories associated with the product."""
+        return [oc.occasional_category.name for oc in self.occasional_categories]

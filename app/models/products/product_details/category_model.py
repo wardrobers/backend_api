@@ -32,4 +32,3 @@ class ProductCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsM
     # Foreign Keys
     product_id = mapped_column(UUID(as_uuid=True), ForeignKey("products.id"))
     category_id = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id"))
-

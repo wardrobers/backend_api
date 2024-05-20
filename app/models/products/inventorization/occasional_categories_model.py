@@ -2,10 +2,19 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, mapped_column
 
-from app.models.common import Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
+from app.models.common import (
+    Base,
+    BaseMixin,
+    SearchMixin,
+    CachingMixin,
+    BulkActionsMixin,
+)
+from app.models.products import Product
 
 
-class OccasionalCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class OccasionalCategories(
+    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
+):
     __tablename__ = "occasional_categories"
 
     name = Column(String, nullable=False)
@@ -18,9 +27,28 @@ class OccasionalCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActio
     promotions_occasional_categories = relationship(
         "PromotionsOccasionalCategories", backref="occasional_categories"
     )
+    products = relationship(
+        "Products", 
+        secondary="product_occasional_categories", 
+        backref="occasional_categories" 
+    )
 
-
-class ProductOccasionalCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+    def get_product_count(self, db_session):
+        """Returns the number of active products associated with this occasional category."""
+        return (
+            db_session.query(Product)
+            .join(ProductOccasionalCategories)
+            .filter(
+                ProductOccasionalCategories.occasional_category_id == self.id,
+                Product.deleted_at.is_(None)
+            )
+            .count()
+        )
+    
+    
+class ProductOccasionalCategories(
+    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
+):
     __tablename__ = "product_occasional_categories"
 
     # Foreign Keys

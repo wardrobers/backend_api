@@ -24,3 +24,8 @@ class Variants(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     # Relationships
     sizing = relationship("Sizing", backref="variants")
     colors = relationship("Colors", backref="variants")
+    promotions = relationship(
+        "PromotionsAndDiscounts", 
+        secondary="promotions_variants",
+        backref="variants"
+    )
