@@ -1,5 +1,5 @@
 fastapi==0.110.0
-firebase_admin==6.4.0
+firebase_admin==6.5.0
 argon2==0.1.10
 protobuf==4.25.3
 pydantic==2.6.3
@@ -16,5 +16,4 @@ passlib==1.7.4
 redis==5.0.4
 aioredis==2.0.1
 python-Levenshtein==0.25.1
-firebase_admin==6.5.0
 asyncpg==0.29.0
