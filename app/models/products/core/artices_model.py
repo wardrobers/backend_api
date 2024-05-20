@@ -1,7 +1,7 @@
 from enum import Enum
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, and_
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship, Session
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.common import (
@@ -11,7 +11,7 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products import StockKeepingUnit, Article, Product
+from app.models.products import StockKeepingUnit, Articles, Product
 from app.models.users import User
 from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
 
@@ -31,8 +31,8 @@ class Condition(Enum):
     Poor = "Poor"
 
 
-class Article(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
-    __tablename__ = "article"
+class Articles(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+    __tablename__ = "articles"
 
     article = Column(String, nullable=False)
     sku_article = Column(String, nullable=False)
@@ -50,7 +50,7 @@ class Article(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     # Foreign keys
     sku_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("stock_keeping_unit.id"),
+        ForeignKey("stock_keeping_units.id"),
         nullable=False,
     )
     status_code = mapped_column(
@@ -65,9 +65,9 @@ class Article(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
     # Relationships
-    specification = relationship("Specificatios", backref="article")
-    cleaning_logs = relationship("CleaningLogs", backref="article")
-    repair_logs = relationship("RepairLogs", backref="article")
-    lender_payments = relationship("LenderPayments", backref="article")
-    user_saved_items = relationship("UserSavedItems", backref="article")
-    order_items = relationship("OrderItems", backref="article")
+    specification = relationship("Specificatios", backref="articles")
+    cleaning_logs = relationship("CleaningLogs", backref="articles")
+    repair_logs = relationship("RepairLogs", backref="articles")
+    lender_payments = relationship("LenderPayments", backref="articles")
+    user_saved_items = relationship("UserSavedItems", backref="articles")
+    order_items = relationship("OrderItems", backref="articles")

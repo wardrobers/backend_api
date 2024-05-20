@@ -19,7 +19,7 @@ async def get_current_user_profile(
     Requires Authentication (JWT).
 
     Response (Success - 200 OK):
-        - User object (including related info, photos, roles, etc.). 
+        - User object (including related info, photos, roles, etc.).
     """
     return current_user
 
@@ -36,7 +36,7 @@ async def update_current_user_profile(
     Requires Authentication (JWT).
 
     Request Body:
-        - user_info_update (UserInfoUpdate): Contains fields to be updated in the 'user_info' table. 
+        - user_info_update (UserInfoUpdate): Contains fields to be updated in the 'user_info' table.
 
     Response (Success - 200 OK):
         - User object (with updated profile information).
@@ -45,7 +45,9 @@ async def update_current_user_profile(
         - 400 Bad Request: If update data is invalid or a conflict occurs (e.g., duplicate email).
     """
     await current_user.update_user_info(
-        db_session, user_info_update.dict(exclude_unset=True), UpdateContext.FULL_PROFILE
+        db_session,
+        user_info_update.dict(exclude_unset=True),
+        UpdateContext.FULL_PROFILE,
     )
     await db_session.refresh(current_user)
     return current_user

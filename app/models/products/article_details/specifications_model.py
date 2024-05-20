@@ -18,4 +18,4 @@ class Specifications(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixi
     value = Column(String)
 
     # Foreign keys
-    article_id = mapped_column(String, ForeignKey("article.id"), nullable=False)
+    article_id = mapped_column(String, ForeignKey("articles.id"), nullable=False)

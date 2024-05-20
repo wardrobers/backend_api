@@ -8,6 +8,7 @@ from app.routers.users import auth_handler
 
 router = APIRouter()
 
+
 @router.post("/subscriptions", status_code=status.HTTP_201_CREATED)
 async def create_user_subscription(
     # subscription_data: SubscriptionCreate = Body(...),  # Define this Pydantic model

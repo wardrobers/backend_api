@@ -17,6 +17,6 @@ class StockKeepingUnit(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMi
     sku_article = Column(String, nullable=False)
 
     # Relationships
-    articles = relationship("Article", backref="stock_keeping_unit")
+    articles = relationship("Articles", backref="stock_keeping_unit")
     variants = relationship("Variants", backref="stock_keeping_unit")
     user_basket = relationship("UserBasket", backref="stock_keeping_unit")

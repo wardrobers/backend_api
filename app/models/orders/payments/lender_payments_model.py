@@ -30,7 +30,7 @@ class LenderPayments(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixi
 
     # Foreign Keys
     article_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("articles.id"), nullable=False
     )
     transaction_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("transactions.id"), nullable=False

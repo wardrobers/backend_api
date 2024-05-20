@@ -21,5 +21,5 @@ class CleaningLogs(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin)
 
     # Foreign keys
     article_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("articles.id"), nullable=False
     )

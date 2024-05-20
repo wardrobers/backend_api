@@ -12,8 +12,7 @@ router = APIRouter()
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(
-    user_create, 
-    db_session: AsyncSession = Depends(get_async_session)
+    user_create, db_session: AsyncSession = Depends(get_async_session)
 ):
     """
     Registers a new user.
@@ -21,13 +20,13 @@ async def register_user(
     Request Body:
         - login (str): Unique user login.
         - password (str): User's password.
-        - password_confirmation (str): Confirmation of the user's password. 
+        - password_confirmation (str): Confirmation of the user's password.
 
     Response (Success - 201 Created):
         - UserRead (schema)
 
     Error Codes:
-        - 400 Bad Request: If the login is already in use or passwords don't match. 
+        - 400 Bad Request: If the login is already in use or passwords don't match.
     """
     if user_create.password != user_create.password_confirmation:
         raise HTTPException(status_code=400, detail="Passwords don't match")
@@ -36,8 +35,8 @@ async def register_user(
     if existing_user:
         raise HTTPException(status_code=400, detail="Login already in use")
 
-    try: 
-        User.validate_password_strength(user_create.password) 
+    try:
+        User.validate_password_strength(user_create.password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -105,12 +104,12 @@ async def initiate_password_reset(
 
 @router.post("/password/reset", status_code=status.HTTP_200_OK)
 async def reset_password(
-    reset_data, 
+    reset_data,
     db: AsyncSession = Depends(get_async_session),
 ):
     """
     Resets a user's password using a reset token (for future email verification)
-    or directly with the old password. 
+    or directly with the old password.
 
     Request Body:
         - token (str, optional): Password reset token.
@@ -128,7 +127,7 @@ async def reset_password(
     user = None
     if reset_data.token:
         # Future email-based reset logic
-        user = verify_password_reset_token(reset_data.token, db)  
+        user = verify_password_reset_token(reset_data.token, db)
         if not user:
             raise HTTPException(status_code=400, detail="Invalid or expired token")
     elif reset_data.old_password:

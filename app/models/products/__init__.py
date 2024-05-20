@@ -1,4 +1,4 @@
-from .core import Product, StockKeepingUnit, Article
+from .core import Product, StockKeepingUnit, Articles
 from .article_details import (
     SizeSystems,
     Colors,

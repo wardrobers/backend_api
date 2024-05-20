@@ -33,4 +33,4 @@ class ArticleStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     name = Column(SQLAEnum(ArticleStatus))
 
     # Relationships
-    article = relationship("Article", backref="article_status")
+    article = relationship("Articles", backref="article_status")

@@ -21,7 +21,7 @@ class RepairLogs(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     # Foreign Keys
     article_id = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("article.id"),
+        ForeignKey("articles.id"),
         nullable=False,
         comment="Индетифекатор",
     )

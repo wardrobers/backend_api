@@ -28,10 +28,7 @@ async def add_user_address(
     Response (Success - 201 Created):
         - UserAddressUpdate (schema): The newly created address object in JSON format.
     """
-    new_address = UserAddresses(
-        user_id=current_user.id, 
-        **address_data.dict()
-    )
+    new_address = UserAddresses(user_id=current_user.id, **address_data.dict())
     db.add(new_address)
     await db.commit()
     await db.refresh(new_address)
@@ -75,7 +72,7 @@ async def update_user_address(
 
 @router.delete("/addresses", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_address(
-    address_id: UUID, 
+    address_id: UUID,
     db: AsyncSession = Depends(get_async_session),
     current_user: User = Depends(auth_handler.get_current_user),
 ):

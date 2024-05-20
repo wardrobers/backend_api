@@ -26,7 +26,7 @@ class OrderItems(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False
     )
     article_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("article.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("articles.id"), nullable=False
     )
     shipping_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("shipping_details.id"), nullable=False

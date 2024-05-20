@@ -11,12 +11,12 @@ from app.models.common import (
 )
 
 
-class CategoriesForUser(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
-    __tablename__ = "categories_for_user"
+class TypesForUser(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+    __tablename__ = "types_for_user"
 
     coefficient = Column(String)
     raw = Column(JSON)
 
     # Foreign keys
     user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    category_id = mapped_column(UUID(as_uuid=True), ForeignKey("types.id"))
+    type_id = mapped_column(UUID(as_uuid=True), ForeignKey("types.id"))

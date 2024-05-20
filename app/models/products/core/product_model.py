@@ -19,7 +19,7 @@ from app.models.common import (
 from app.models.products import (
     ProductCategories,
     StockKeepingUnit,
-    Article,
+    Articles,
     ArticleStatus,
     ProductStatus,
     Variants,
@@ -43,7 +43,7 @@ class FilterKeys(Enum):
     available_dates = auto()
 
 
-class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "products"
 
     sku_product = Column(String, nullable=False)
@@ -53,7 +53,7 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     # Foreign Keys
     sku_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stock_keeping_unit.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("stock_keeping_units.id"), nullable=False
     )
     brand_id = mapped_column(UUID(as_uuid=True), ForeignKey("brands.id"))
     clothing_size_id = mapped_column(
@@ -86,9 +86,9 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         # Subquery for checking available articles
         article_subquery = (
-            db_session.query(Article.id)
-            .join(StockKeepingUnit, StockKeepingUnit.sku_product == Article.sku_article)
-            .filter(Article.status_code == ArticleStatus.Available)
+            db_session.query(Articles.id)
+            .join(StockKeepingUnit, StockKeepingUnit.sku_product == Articlessku_article)
+            .filter(Articles.status_code == ArticleStatus.Available)
             .exists()
         )
 
@@ -114,9 +114,10 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         return (
             db_session.query(Variants)
             .options(joinedload(Variants.articles))
-            .join(Product)
+            .join(Products)
             .filter(
-                Product.id == product_id, Article.status_code == ArticleStatus.Available
+                Products.id == product_id,
+                Articles.status_code == ArticleStatus.Available,
             )
             .all()
         )
@@ -126,11 +127,11 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         Calculates the available stock for the product.
         """
         return (
-            db_session.query(Article)
+            db_session.query(Articles)
             .join(StockKeepingUnit)
             .filter(
                 StockKeepingUnit.sku_product == self.sku_product,
-                Article.status_code == ArticleStatus.Available,
+                Articles.status_code == ArticleStatus.Available,
             )
             .count()
         )
@@ -147,9 +148,9 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         Retires the product and marks associated articles as retired.
         """
-        db_session.query(Article).join(StockKeepingUnit).filter(
+        db_session.query(Articles).join(StockKeepingUnit).filter(
             StockKeepingUnit.sku_product == self.sku_product
-        ).update({Article.status_code: ArticleStatus.Retired})
+        ).update({Articles.status_code: ArticleStatus.Retired})
         db_session.commit()
 
     def apply_promotions(self, db_session: Session, user_id: UUID = None) -> float:
@@ -238,8 +239,8 @@ class Product(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         return 0
 
     def new_item_premium(self, db_session: Session) -> bool:
-        """Checks if the product is considered new based on the condition of its articles."""
-        article = db_session.query(Article).filter(Article.id == self.id).first()
+        """Checks if the product is considered new based on the condition of its article."""
+        article = db_session.query(Articles).filter(Articles.id == self.id).first()
         if article.condition == "New":
             return self.NEW_ITEM_PREMIUM
         else:

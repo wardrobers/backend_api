@@ -1,4 +1,11 @@
-from .core import User, UserInfo, DataPrivacyConsents, UpdateContext, RoleAction, SubscriptionAction
+from .core import (
+    User,
+    UserInfo,
+    DataPrivacyConsents,
+    UpdateContext,
+    RoleAction,
+    SubscriptionAction,
+)
 from .activity import (
     UserActivity,
     UserReviewsAndRatings,
