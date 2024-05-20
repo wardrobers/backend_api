@@ -28,7 +28,7 @@ from app.models.users import User
 from app.models.promotions import (
     UserPromotions,
     PromotionsAndDiscounts,
-    PromotionsProducts,
+    PromotionsVariants,
 )
 from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
 
@@ -69,7 +69,7 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     variants = relationship("Variants", backref="products")
     user_reviews_and_ratings = relationship("UserReviewsAndRatings", backref="products")
     categories = relationship("ProductCategories", backref="products")
-    promotions_products = relationship("PromotionsProducts", backref="products")
+    promotions_products = relationship("PromotionsVariants", backref="products")
     pricing_tiers = relationship("PricingTier", backref="products")
     accessory_size = relationship("AccessoriesSize", backref="products")
 
@@ -155,18 +155,18 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     def apply_promotions(self, db_session: Session, user_id: UUID = None) -> float:
         """
-        Applies product-specific and user-specific promotions, calculating the total discount percentage.
+        Applies variant-specific and user-specific promotions, calculating the total discount percentage.
         This method considers both the validity and availability of promotions.
         """
-        # Query for active product-specific promotions
-        product_promotions = (
+        # Query for active variant-specific promotions
+        variant_promotions = (
             db_session.query(PromotionsAndDiscounts)
             .join(
-                PromotionsProducts,
-                PromotionsProducts.promotion_id == PromotionsAndDiscounts.id,
+                PromotionsVariants,
+                PromotionsVariants.promotion_id == PromotionsAndDiscounts.id,
             )
             .filter(
-                PromotionsProducts.product_id == self.id,
+                PromotionsVariants.variant_id == self.id,
                 PromotionsAndDiscounts.active == True,
                 PromotionsAndDiscounts.valid_from <= func.now(),
                 PromotionsAndDiscounts.valid_to >= func.now(),
@@ -188,9 +188,9 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
                     PromotionsAndDiscounts.valid_to >= func.now(),
                 )
             )
-            all_promotions = product_promotions.union(user_promotions)
+            all_promotions = variant_promotions.union(user_promotions)
         else:
-            all_promotions = product_promotions
+            all_promotions = variant_promotions
 
         total_discount = 0.0
         for promo in all_promotions:

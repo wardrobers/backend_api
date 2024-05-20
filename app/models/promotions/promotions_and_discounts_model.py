@@ -33,6 +33,6 @@ class PromotionsAndDiscounts(
     uses_left = Column(Integer, nullable=True)
     active = Column(Boolean, default=True)
 
-    # Relationships for promotions involved in user and product promotions
+    # Relationships for promotions involved in user and variants promotions
     user_promotions = relationship("UserPromotions", backref="promotion")
-    promotions_products = relationship("PromotionsProducts", backref="promotion")
+    promotions_variants = relationship("PromotionsVariants", backref="promotion")
