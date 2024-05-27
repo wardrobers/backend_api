@@ -1,4 +1,4 @@
-from .core import Products, StockKeepingUnits, Articles, TypesOfOperations
+from .core import Products, StockKeepingUnits, Articles, TypesOfOperations, FilterKeys
 from .inventorization import (
     Specifications,
     ArticleStatus,

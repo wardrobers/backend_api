@@ -1,43 +1,55 @@
 import os
 import json
 import asyncpg
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 from google.cloud.sql.connector import Connector, IPTypes, create_async_connector
 
 
 # Get database credentials from the DBCRED environment variable
 db_credentials = json.loads(os.environ["DBCRED"])
+connector = Connector()
 
 
-async def init_connection_pool(connector: Connector) -> AsyncEngine:
-    # initialize Connector object for connections to Cloud SQL
-    async def get_async_conn() -> asyncpg.Connection:
-        conn: asyncpg.Connection = await connector.connect_async(
-            f"{db_credentials['project']}:{db_credentials['region']}:{db_credentials['instance']}",
-            "asyncpg",
-            user=db_credentials["user"],
-            password=db_credentials["password"],
-            db=db_credentials["database"],
-            ip_type=IPTypes.PUBLIC,
-        )
-        return conn
-
-    # Create an asynchronous SQLAlchemy engine
-    async_engine = create_async_engine(
-        "postgresql+asyncpg://",
-        creator=get_async_conn,
+# initialize Connector object for connections to Cloud SQL
+async def get_async_conn() -> asyncpg.Connection:
+    conn: asyncpg.Connection = await connector.connect_async(
+        f"{db_credentials['project']}:{db_credentials['region']}:{db_credentials['instance']}",
+        "asyncpg",
+        user=db_credentials["user"],
+        password=db_credentials["password"],
+        db=db_credentials["database"],
+        ip_type=IPTypes.PUBLIC,
     )
-    return async_engine
+    return conn
 
+# Create an asynchronous SQLAlchemy engine
+engine = create_async_engine(
+    "postgresql+asyncpg://",
+    creator=get_async_conn,
+    echo=True,  # Set to False in production
+)
 
-async def get_async_session():
-    # initialize Connector object for connections to Cloud SQL
-    connector = await create_async_connector()
-    # initialize connection pool
-    async_session = await init_connection_pool(connector)
-    async with async_session.connect() as session:
+# Session Factory
+async_session_factory = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+async def get_async_session() -> AsyncSession:
+    async with async_session_factory() as session:
         yield session
-    # close Connector
-    await connector.close_async()
-    # dispose of connection pool
-    await async_session.dispose()
+
+@asynccontextmanager
+async def app_lifespan(app: FastAPI):
+    # Startup logic here
+    async with engine.begin() as conn:
+        # Optional: Create database tables
+        # await conn.run_sync(Base.metadata.create_all)
+        pass
+    yield  # The application is now ready to handle requests.
+    # Shutdown logic here
+    await engine.dispose()

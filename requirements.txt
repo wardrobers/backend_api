@@ -17,3 +17,4 @@ redis==5.0.4
 aioredis==2.0.1
 python-Levenshtein==0.25.1
 asyncpg==0.29.0
+contextlib2==21.6.0

@@ -7,4 +7,4 @@ from app.models import (
     orders,
     pricing,
 )
-from app.database import AsyncSessionLocal, async_engine, get_async_session
+from app.database import app_lifespan, get_async_session

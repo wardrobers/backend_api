@@ -9,11 +9,11 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy import Column, DateTime, func, select, update
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, AsyncAttrs
 from sqlalchemy.dialects.postgresql import UUID
 
 
-class Base(DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 

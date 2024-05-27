@@ -3,18 +3,14 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.database import get_async_session
+from app.database import get_async_session, app_lifespan
 from app.models.common import Base
 from app.routers.users import users_router, auth_router
 
 
-app = FastAPI(title="Wardrobers API", version="2.0")
 
 
-@app.on_event("startup")
-async def startup_event():
-    async with get_async_session() as session:
-        await session.run_sync(Base.metadata.create_all)
+app = FastAPI(title="Wardrobers API", version="2.0", lifespan=app_lifespan)
 
 
 # Middleware for DB session management

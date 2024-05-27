@@ -2,7 +2,6 @@ from typing import Optional, Any
 from sqlalchemy import func, or_, select, String
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, RelationshipProperty
-import Levenshtein  # Import the Levenshtein library
 
 
 class SearchMixin:
