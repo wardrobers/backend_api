@@ -9,7 +9,7 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products.core import Products
+# from app.models.products.core import Products
 
 
 class OccasionalCategories(
@@ -33,17 +33,17 @@ class OccasionalCategories(
         backref="occasional_categories",
     )
 
-    def get_product_count(self, db_session):
-        """Returns the number of active products associated with this occasional category."""
-        return (
-            db_session.query(Products)
-            .join(ProductOccasionalCategories)
-            .filter(
-                ProductOccasionalCategories.occasional_category_id == self.id,
-                Products.deleted_at.is_(None),
-            )
-            .count()
-        )
+    # def get_product_count(self, db_session):
+    #     """Returns the number of active products associated with this occasional category."""
+    #     return (
+    #         db_session.query(Products)
+    #         .join(ProductOccasionalCategories)
+    #         .filter(
+    #             ProductOccasionalCategories.occasional_category_id == self.id,
+    #             Products.deleted_at.is_(None),
+    #         )
+    #         .count()
+    #     )
 
 
 class ProductOccasionalCategories(
