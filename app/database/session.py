@@ -25,6 +25,7 @@ async def get_async_conn() -> asyncpg.Connection:
     )
     return conn
 
+
 # Create an asynchronous SQLAlchemy engine
 engine = create_async_engine(
     "postgresql+asyncpg://",
@@ -34,14 +35,14 @@ engine = create_async_engine(
 
 # Session Factory
 async_session_factory = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+    bind=engine, class_=AsyncSession, expire_on_commit=False
 )
+
 
 async def get_async_session() -> AsyncSession:
     async with async_session_factory() as session:
         yield session
+
 
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):

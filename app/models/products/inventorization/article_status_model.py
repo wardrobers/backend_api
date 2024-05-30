@@ -14,7 +14,7 @@ from app.models.common import (
 )
 
 
-class ArticleStatus(Enum):
+class ArticleCurrentStatus(Enum):
     Available = "Available"
     Rented = "Rented"
     Cleaning = "Cleaning"
@@ -30,7 +30,7 @@ class ArticleStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     status_code = mapped_column(
         UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
     )
-    name = Column(SQLAEnum(ArticleStatus))
+    name = Column(SQLAEnum(ArticleCurrentStatus))
 
     # Relationships
     article = relationship("Articles", backref="article_status")

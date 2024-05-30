@@ -13,7 +13,6 @@ from app.models.common import (
 )
 
 
-
 class OwnerType(Enum):
     Platform = "Platform"
     Lender = "Lender"

@@ -9,7 +9,7 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products import Products
+from app.models.products.core import Products
 
 
 class OccasionalCategories(

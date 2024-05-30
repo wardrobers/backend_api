@@ -8,8 +8,6 @@ from app.models.common import Base
 from app.routers.users import users_router, auth_router
 
 
-
-
 app = FastAPI(title="Wardrobers API", version="2.0", lifespan=app_lifespan)
 
 

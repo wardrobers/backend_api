@@ -12,7 +12,7 @@ from app.models.common import (
 )
 
 
-class ProductStatus(Enum):
+class ProductCurrentStatus(Enum):
     InUse = "InUse"
     Available = "Available"
     NotAvailable = "NotAvailable"
@@ -24,7 +24,7 @@ class ProductStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     __tablename__ = "product_status"
 
     code = Column(String, nullable=False)
-    name = Column(SQLAEnum(ProductStatus), nullable=False)
+    name = Column(SQLAEnum(ProductCurrentStatus), nullable=False)
 
     # Relationships
     product = relationship("Products", backref="product_status")
