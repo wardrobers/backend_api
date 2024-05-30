@@ -11,8 +11,8 @@ from app.models.common import (
 )
 
 
-class TypesForUser(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
-    __tablename__ = "types_for_user"
+class TypesFromUser(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+    __tablename__ = "types_from_user"
 
     coefficient = Column(String)
     raw = Column(JSON)

@@ -11,9 +11,7 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products import StockKeepingUnits, Articles, Products
-from app.models.users import User
-from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
+
 
 
 class OwnerType(Enum):
