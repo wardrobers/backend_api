@@ -9,13 +9,18 @@ from sqlalchemy.orm import (
     aliased,
 )
 from sqlalchemy import Column, DateTime, func, select, update
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncAttrs
+from sqlalchemy.ext.declarative import declared_attr, declarative_base
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import UUID
 
 
-class Base(AsyncAttrs, DeclarativeBase):
-    pass
+class ModelBase:
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
+
+
+Base = declarative_base(cls=ModelBase)
 
 
 class BaseMixin(ABC, metaclass=DeclarativeMeta):
@@ -35,10 +40,6 @@ class BaseMixin(ABC, metaclass=DeclarativeMeta):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
-
-    @declared_attr.directive
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
 
     @classmethod
     async def get_by_id(cls, db_session: AsyncSession, _id: UUID):
