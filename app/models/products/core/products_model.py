@@ -16,21 +16,21 @@ from app.models.common import (
     CachingMixin,
     BulkActionsMixin,
 )
-from app.models.products import (
+from . import (
     ProductCategories,
     StockKeepingUnits,
     Articles,
     ArticleStatus,
     ProductStatus,
     Variants,
-)
-from app.models.users import User
-from app.models.promotions import (
+    User,
     UserPromotions,
     PromotionsAndDiscounts,
     PromotionsVariants,
+    PriceFactors,
+    PricingTier,
+    PriceMultipliers,
 )
-from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
 
 
 class FilterKeys(Enum):
