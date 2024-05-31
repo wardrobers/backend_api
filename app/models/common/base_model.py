@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from sqlalchemy.orm import (
     declared_attr,
     DeclarativeBase,
+    DeclarativeMeta,
     mapped_column,
     RelationshipProperty,
     aliased,
@@ -17,7 +18,7 @@ class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 
-class BaseMixin(ABC):
+class BaseMixin(ABC, metaclass=DeclarativeMeta):
     """
     Base mixin providing common attributes and methods for all models.
 

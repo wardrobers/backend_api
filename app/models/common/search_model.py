@@ -1,10 +1,10 @@
 from typing import Optional, Any
 from sqlalchemy import func, or_, select, String
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased, RelationshipProperty
+from sqlalchemy.orm import aliased, RelationshipProperty, DeclarativeMeta
 
 
-class SearchMixin:
+class SearchMixin(metaclass=DeclarativeMeta):
     """
     Provides robust and efficient search functionality, leveraging PostgreSQL's
     tsvector and tsquery for full-text searching and the Levenshtein library

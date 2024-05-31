@@ -4,6 +4,7 @@ import pickle
 import hashlib
 from typing import Any, Optional
 from redis.asyncio import Redis
+from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 redis_credentials = json.loads(os.environ["REDISCRED"])
 
 
-class CachingMixin:
+class CachingMixin(metaclass=DeclarativeMeta):
     """
     Enhanced mixin for caching data using Redis, featuring:
 
