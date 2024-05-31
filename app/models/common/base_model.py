@@ -2,7 +2,6 @@ from typing import Any, Optional
 from abc import ABC, abstractmethod
 from sqlalchemy.orm import (
     declared_attr,
-    DeclarativeBase,
     DeclarativeMeta,
     mapped_column,
     RelationshipProperty,
