@@ -1,12 +1,7 @@
-from . import (
-    Products,
-    FilterKeys,
-    OwnerType,
-    Condition,
-    Articles,
-    StockKeepingUnits,
-    TypesOfOperations,
-)
+from .artices_model import Articles, OwnerType, Condition
+from .products_model import Products, FilterKeys
+from .stock_keeping_units_model import StockKeepingUnits
+from .types_of_operations_model import TypesOfOperations
 from app.models.products.inventorization import (
     ArticleStatus,
     ProductStatus,

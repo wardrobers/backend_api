@@ -1,12 +1,6 @@
-from . import core, inventorization, maintenance, product_details, sizing
-
 __all__ = [
-    "core",
-    "inventorization",
-    "maintenance",
-    "product_details",
-    "sizing",
     "AccessoriesSize",
+    "Articles",
     "ArticleStatus",
     "Brand",
     "CleaningLogs",
@@ -14,6 +8,7 @@ __all__ = [
     "ClothingSizes",
     "Colors",
     "OccasionalCategories",
+    "Products",
     "ProductCategories",
     "ProductFit",
     "ProductMaterials",
