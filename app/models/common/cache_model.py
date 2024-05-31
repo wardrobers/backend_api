@@ -2,8 +2,8 @@ import os
 import json
 import pickle
 import hashlib
-from aioredis import create_redis_pool
-from typing import Any, Dict, Optional
+from typing import Any, Optional
+from redis.asyncio import Redis
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,24 +23,23 @@ class CachingMixin:
     - Cache invalidation methods.
     """
 
-    _redis_pool = None
+    _redis = None
 
     @classmethod
-    async def get_redis_pool(cls):
-        """Get or create a Redis connection pool."""
-        if cls._redis_pool is None:
-            cls._redis_pool = await create_redis_pool(
-                f"redis://{redis_credentials['host']}:{redis_credentials['port']}",
-                password=redis_credentials["password"],
-                encoding="utf-8",  # Ensure proper string encoding
-                minsize=5,  # Maintain a minimum of 5 connections in the pool
-                maxsize=10,  # Maximum of 10 connections
+    async def get_redis(cls):
+        """Get or create a Redis client."""
+        if cls._redis is None:
+            cls._redis = Redis(
+                host=redis_credentials['host'],
+                port=redis_credentials['port'],
+                password=redis_credentials['password'],
+                decode_responses=True
             )
-        return cls._redis_pool
+        return cls._redis
 
     @classmethod
     def _generate_cache_key(
-        cls, _id: UUID, extra_params: Optional[Dict[str, Any]] = None
+        cls, _id: UUID, extra_params: Optional[dict[str, Any]] = None
     ) -> str:
         """
         Generates a personalized cache key incorporating model name, ID, and optional parameters.
@@ -61,7 +60,7 @@ class CachingMixin:
         db_session: AsyncSession,
         _id: UUID,
         ttl: int = 3600,
-        extra_params: Optional[Dict[str, Any]] = None,
+        extra_params: Optional[dict[str, Any]] = None,
     ):
         """
         Retrieves an entry by ID, utilizing Redis caching.
@@ -72,31 +71,31 @@ class CachingMixin:
             ttl (int): Time-to-live for the cached data in seconds (default: 1 hour).
             extra_params (Optional[Dict[str, Any]]): Additional parameters to personalize the cache key.
         """
-        redis_pool = await cls.get_redis_pool()
+        redis = await cls.get_redis()
         cache_key = cls._generate_cache_key(_id, extra_params)
-        data = await redis_pool.get(cache_key)
+        data = await redis.get(cache_key)
 
         if data:
             return pickle.loads(data)  # Deserialize using pickle
 
         instance = await cls.get_by_id(db_session, _id)
         if instance:
-            await redis_pool.set(cache_key, pickle.dumps(instance), expire=ttl)
+            await redis.set(cache_key, pickle.dumps(instance), expire=ttl)
         return instance
 
     @classmethod
     async def invalidate_cache_by_id(
-        cls, _id: UUID, extra_params: Optional[Dict[str, Any]] = None
+        cls, _id: UUID, extra_params: Optional[dict[str, Any]] = None
     ):
         """Invalidate the cache for a specific ID and optional parameters."""
-        redis_pool = await cls.get_redis_pool()
+        redis = await cls.get_redis()
         cache_key = cls._generate_cache_key(_id, extra_params)
-        await redis_pool.delete(cache_key)
+        await redis.delete(cache_key)
 
     @classmethod
     async def invalidate_all_cache(cls):
         """Invalidate all cache entries for this model."""
-        redis_pool = await cls.get_redis_pool()
+        redis = await cls.get_redis()
         pattern = f"{cls.__name__}:*"
-        async for key in redis_pool.iscan(match=pattern):
-            await redis_pool.delete(key)
+        async for key in redis.iscan(match=pattern):
+            await redis.delete(key)
