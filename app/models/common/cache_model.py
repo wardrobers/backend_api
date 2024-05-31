@@ -2,7 +2,7 @@ import os
 import json
 import pickle
 import hashlib
-import aioredis
+from aioredis import create_redis_pool
 from typing import Any, Dict, Optional
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +29,7 @@ class CachingMixin:
     async def get_redis_pool(cls):
         """Get or create a Redis connection pool."""
         if cls._redis_pool is None:
-            cls._redis_pool = await aioredis.create_redis_pool(
+            cls._redis_pool = await create_redis_pool(
                 f"redis://{redis_credentials['host']}:{redis_credentials['port']}",
                 password=redis_credentials["password"],
                 encoding="utf-8",  # Ensure proper string encoding
