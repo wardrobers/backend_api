@@ -1,11 +1,11 @@
 import os
 import json
-import hashlib
 import pickle
+import hashlib
+import aioredis
 from typing import Any, Dict, Optional
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-import aioredis
 
 
 # Get Redis credentials
