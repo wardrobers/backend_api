@@ -10,6 +10,7 @@ def test_circular_imports():
         from app import schemas
         from app import authentication
         from app import services
+
         assert True
     except ImportError as e:
         pytest.fail(f"Circular import detected: {str(e)}")
