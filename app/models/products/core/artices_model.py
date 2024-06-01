@@ -32,7 +32,6 @@ class Articles(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "articles"
 
     article = Column(String, nullable=False)
-    sku_article = Column(String, nullable=False)
     owner_type = Column(SQLAEnum(OwnerType), nullable=False)
     factory_number = Column(String, nullable=True)
     times_used = Column(Integer, nullable=False, default=0)

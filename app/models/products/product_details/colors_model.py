@@ -1,6 +1,5 @@
-from sqlalchemy import Column, ForeignKey, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 from app.models.common import (
     Base,
@@ -16,7 +15,5 @@ class Colors(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     name = Column(String)
 
-    # Foreign keys
-    variant_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("variants.id"), nullable=False
-    )
+    # Relationships
+    variant = relationship("Variants", backref="colors")

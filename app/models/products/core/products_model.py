@@ -50,22 +50,19 @@ class FilterKeys(Enum):
 class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "products"
 
-    sku_product = Column(String, nullable=False)
     name = Column(String, nullable=False)
     description = Column(Text)
     instructions = Column(String)
 
     # Foreign Keys
-    sku_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stock_keeping_units.id"), nullable=False
-    )
     brand_id = mapped_column(UUID(as_uuid=True), ForeignKey("brands.id"))
     clothing_size_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("clothing_sizes.id")
     )
     clasp_type_id = mapped_column(UUID(as_uuid=True), ForeignKey("clasp_types.id"))
-    product_fit_id = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.id"))
+    size_and_fit_id = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.id"))
     status_code = mapped_column(String, ForeignKey("product_status.code"))
+    accessories_size_id = mapped_column(UUID(as_uuid=True), ForeignKey("accessories_size.id"), nullable=False)
 
     # Relationships
     types = relationship("ProductTypes", backref="products")
@@ -74,8 +71,6 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     user_reviews_and_ratings = relationship("UserReviewsAndRatings", backref="products")
     categories = relationship("ProductCategories", backref="products")
     promotions_products = relationship("PromotionsVariants", backref="products")
-    pricing_tiers = relationship("PricingTier", backref="products")
-    accessory_size = relationship("AccessoriesSize", backref="products")
     occasional_categories = relationship(
         "ProductOccasionalCategories",
         backref="products",
@@ -85,7 +80,7 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     NEW_ITEM_PREMIUM = 1.10
 
     def __repr__(self):
-        return f"<Product(uuid={self.id}, name='{self.name}', sku_product='{self.sku_product}')>"
+        return f"<Product(uuid={self.id}, name='{self.name}'')>"
 
     @classmethod
     def get_available_products(cls, db_session: Session, category=None, brand=None):
@@ -95,10 +90,11 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         # Subquery for checking available articles
         article_subquery = (
-            db_session.query(Articles.id)
+            db_session.query(Variants)
             .join(
-                StockKeepingUnits, StockKeepingUnits.sku_product == Articles.sku_article
+                StockKeepingUnits, StockKeepingUnits.id == Variants.sku_id
             )
+            .join(Articles, StockKeepingUnits.id == Articles.sku_id)
             .filter(Articles.status_code == ArticleStatus.Available)
             .exists()
         )
@@ -135,14 +131,14 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
     def get_stock_count(self, db_session: Session):
         """
-        Calculates the available stock for the product.
+        Calculates the stock for the product.
         """
         return (
-            db_session.query(Articles)
+            db_session.query(Variants)
             .join(StockKeepingUnits)
             .filter(
-                StockKeepingUnits.sku_product == self.sku_product,
-                Articles.status_code == ArticleStatus.Available,
+                Variants.product_id == self.id,
+                StockKeepingUnits.id == Variants.sku_id,
             )
             .count()
         )
@@ -159,8 +155,9 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         Retires the product and marks associated articles as retired.
         """
-        db_session.query(Articles).join(StockKeepingUnits).filter(
-            StockKeepingUnits.sku_product == self.sku_product
+        db_session.query(Variants).join(StockKeepingUnits).join(Articles).filter(
+            Variants.product_id == self.id,
+            StockKeepingUnits.id == Variants.sku_id,
         ).update({Articles.status_code: ArticleStatus.Retired})
         db_session.commit()
 
@@ -236,9 +233,11 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         # Retrieve the first SKU related to this product that has an associated pricing tier
         sku = (
-            db_session.query(StockKeepingUnits)
+            db_session.query(Variants)
+            .filter(Variants.product_id == self.id)
+            .join(StockKeepingUnits, StockKeepingUnits.id == Variants.sku_id)
             .join(PricingTier)
-            .filter(StockKeepingUnits.sku_product == self.sku_product)
+            .filter(StockKeepingUnits.id == PricingTier.sku_id)
             .first()
         )
 

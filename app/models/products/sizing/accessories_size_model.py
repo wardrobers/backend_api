@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 from app.models.common import (
     Base,
@@ -16,7 +15,5 @@ class AccessoriesSize(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMix
 
     name = Column(String)
 
-    # Foreign keys
-    product_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False
-    )
+    # Relationships
+    product = relationship("Products", backref="accessories_size")
