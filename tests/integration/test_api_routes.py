@@ -1,7 +1,10 @@
 # tests/integration/test_api_routes.py
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import UUID
+
 from app.main import app
+
 
 client = TestClient(app)
 

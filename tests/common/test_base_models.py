@@ -1,9 +1,9 @@
 # tests/common/test_base_models.py
 import pytest
 from sqlalchemy import func, Column, String
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from uuid import UUID
+from sqlalchemy.orm import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.common import BaseMixin, Base
 from app.models.users.core import User, UserInfo
@@ -219,16 +219,11 @@ async def test_user_creation_with_duplicate_email(session: AsyncSession):
 @pytest.mark.asyncio
 async def test_product_creation_with_stock_and_article(session: AsyncSession):
     """Test creating a Product with associated StockKeepingUnits and Articles."""
-    sku = StockKeepingUnits(sku_product="SKU123", sku_article="SKU123-A1")
-    article = Articles(
-        sku_article="SKU123-A1",
-        owner_type="Platform",
-        condition="New",
-        status_code=ArticleStatus.Available,
-    )
-    product = Products(name="Test Product", sku_product="SKU123")
-    product.sku = sku
-    sku.articles.append(article)  # Set relationship
+    sku = StockKeepingUnits(sku_name="SKU123", free_articles_count=1)
+    article = Articles(sku_id=sku.id, owner_type="Platform", condition="New", status_code='Available')
+    product = Products(name="Test Product", brand_id=UUID('00000000-0000-0000-0000-000000000001'), clothing_size_id=UUID('00000000-0000-0000-0000-000000000001'), size_and_fit_id=UUID('00000000-0000-0000-0000-000000000001'), status_code='Available', accessories_size_id=UUID('00000000-0000-0000-0000-000000000001'))
+    sku.variants.append(article)  # Set relationship
+    product.variants.append(article)
 
     session.add_all([product, sku, article])
     await session.commit()

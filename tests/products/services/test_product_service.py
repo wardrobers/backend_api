@@ -1,7 +1,7 @@
 # tests/products/services/test_product_service.py
 import pytest
 from unittest.mock import MagicMock
-from uuid import UUID
+from sqlalchemy.orm import UUID
 
 from app.services.product_service import ProductService
 from app.models.products.core import Products, StockKeepingUnits, Articles, Variants

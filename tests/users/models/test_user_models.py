@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from uuid import UUID
+from sqlalchemy.orm import UUID
 
 from app.models.users.core import (
     User,

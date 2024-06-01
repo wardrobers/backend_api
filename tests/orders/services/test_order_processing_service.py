@@ -7,8 +7,6 @@ from datetime import timedelta
 from app.services.order_processing_service import OrderProcessingService
 from app.models.orders.core import Order, OrderStatus, OrderItems
 from app.models.orders.payments import Transactions
-from app.schemas.order.order_schema import OrderCreate, OrderRead, OrderUpdate
-from app.schemas.order.order_status_schema import OrderStatusCreate, OrderStatusRead
 
 
 @pytest.fixture
