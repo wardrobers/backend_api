@@ -1,9 +1,7 @@
 # tests/orders/models/test_order_model.py
 import pytest
+from sqlalchemy.orm import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
-from uuid import UUID
-from datetime import datetime, timedelta
 
 from app.models.orders import Order, OrderStatus, OrderItems
 from app.models.products import Products

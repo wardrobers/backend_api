@@ -1,7 +1,8 @@
 # tests/orders/services/test_order_processing_service.py
 import pytest
+from sqlalchemy import func
 from unittest.mock import MagicMock
-from sqlalchemy import UUID, func
+from sqlalchemy.orm import UUID
 from datetime import timedelta
 
 from app.services.order_processing_service import OrderProcessingService
