@@ -1,36 +1,33 @@
 import os
-import json
 import asyncpg
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from google.cloud.sql.connector import Connector, IPTypes, create_async_connector
 
 
-# Get database credentials from the DBCRED environment variable
-db_credentials = json.loads(os.environ["DBCRED"])
-connector = Connector()
 
+ENV = os.getenv("ENV", "development")
 
-# initialize Connector object for connections to Cloud SQL
-async def get_async_conn() -> asyncpg.Connection:
-    conn: asyncpg.Connection = await connector.connect_async(
-        f"{db_credentials['project']}:{db_credentials['region']}:{db_credentials['instance']}",
-        "asyncpg",
-        user=db_credentials["user"],
-        password=db_credentials["password"],
-        db=db_credentials["database"],
-        ip_type=IPTypes.PUBLIC,
-    )
-    return conn
-
+if ENV == "production":
+    echo = False
+    async def get_async_conn() -> asyncpg.Connection:
+        # Construct connection string for production using environment variables
+        connection_name = os.getenv("CLOUD_SQL_CONNECTION_NAME")
+        db_user = os.getenv("DB_USER")
+        db_pass = os.getenv("DB_PASS")
+        db_name = os.getenv("DB_NAME")
+        return f"postgresql+asyncpg://{db_user}:{db_pass}@/{db_name}?host=/cloudsql/{connection_name}"
+else:
+    echo = True
+    async def get_async_conn() -> asyncpg.Connection:
+        return await asyncpg.connect(dsn=os.environ["DATABASE_URL"])
 
 # Create an asynchronous SQLAlchemy engine
 engine = create_async_engine(
     "postgresql+asyncpg://",
     creator=get_async_conn,
-    echo=True,  # Set to False in production
+    echo=echo,  # Set to False in production
 )
 
 # Session Factory
