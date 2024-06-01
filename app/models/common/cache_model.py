@@ -31,10 +31,10 @@ class CachingMixin(metaclass=DeclarativeMeta):
         """Get or create a Redis client."""
         if cls._redis is None:
             cls._redis = Redis(
-                host=redis_credentials['host'],
-                port=redis_credentials['port'],
-                password=redis_credentials['password'],
-                decode_responses=True
+                host=redis_credentials["host"],
+                port=redis_credentials["port"],
+                password=redis_credentials["password"],
+                decode_responses=True,
             )
         return cls._redis
 

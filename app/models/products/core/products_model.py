@@ -37,7 +37,6 @@ from app.models.promotions import (
 from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
 
 
-
 class FilterKeys(Enum):
     category_id = auto()
     size_id = auto()
