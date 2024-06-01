@@ -20,4 +20,4 @@ class StockKeepingUnits(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsM
     articles = relationship("Articles", backref="stock_keeping_units")
     variants = relationship("Variants", backref="stock_keeping_units")
     user_basket = relationship("UserBasket", backref="stock_keeping_units")
-    pricing_tiers = relationship("PricingTiers", backref='stock_keeping_unit')
+    pricing_tiers = relationship("PricingTiers", backref="stock_keeping_unit")

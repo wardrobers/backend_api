@@ -220,8 +220,17 @@ async def test_user_creation_with_duplicate_email(session: AsyncSession):
 async def test_product_creation_with_stock_and_article(session: AsyncSession):
     """Test creating a Product with associated StockKeepingUnits and Articles."""
     sku = StockKeepingUnits(sku_name="SKU123", free_articles_count=1)
-    article = Articles(sku_id=sku.id, owner_type="Platform", condition="New", status_code='Available')
-    product = Products(name="Test Product", brand_id=UUID('00000000-0000-0000-0000-000000000001'), clothing_size_id=UUID('00000000-0000-0000-0000-000000000001'), size_and_fit_id=UUID('00000000-0000-0000-0000-000000000001'), status_code='Available', accessories_size_id=UUID('00000000-0000-0000-0000-000000000001'))
+    article = Articles(
+        sku_id=sku.id, owner_type="Platform", condition="New", status_code="Available"
+    )
+    product = Products(
+        name="Test Product",
+        brand_id=UUID("00000000-0000-0000-0000-000000000001"),
+        clothing_size_id=UUID("00000000-0000-0000-0000-000000000001"),
+        size_and_fit_id=UUID("00000000-0000-0000-0000-000000000001"),
+        status_code="Available",
+        accessories_size_id=UUID("00000000-0000-0000-0000-000000000001"),
+    )
     sku.variants.append(article)  # Set relationship
     product.variants.append(article)
 

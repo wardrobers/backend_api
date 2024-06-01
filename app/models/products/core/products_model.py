@@ -62,7 +62,9 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     clasp_type_id = mapped_column(UUID(as_uuid=True), ForeignKey("clasp_types.id"))
     size_and_fit_id = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.id"))
     status_code = mapped_column(String, ForeignKey("product_status.code"))
-    accessories_size_id = mapped_column(UUID(as_uuid=True), ForeignKey("accessories_size.id"), nullable=False)
+    accessories_size_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("accessories_size.id"), nullable=False
+    )
 
     # Relationships
     types = relationship("ProductTypes", backref="products")
@@ -91,9 +93,7 @@ class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         # Subquery for checking available articles
         article_subquery = (
             db_session.query(Variants)
-            .join(
-                StockKeepingUnits, StockKeepingUnits.id == Variants.sku_id
-            )
+            .join(StockKeepingUnits, StockKeepingUnits.id == Variants.sku_id)
             .join(Articles, StockKeepingUnits.id == Articles.sku_id)
             .filter(Articles.status_code == ArticleStatus.Available)
             .exists()
