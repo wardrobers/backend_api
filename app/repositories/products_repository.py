@@ -5,19 +5,16 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, joinedload, selectinload
 
-from app.models.pricing.price_factors_model import PriceFactors
-from app.models.pricing.price_multipliers_model import PriceMultipliers
-from app.models.pricing.pricing_tiers_model import PricingTier
-from app.models.products.core.artices_model import Articles
-from app.models.products.core.products_model import Products
-from app.models.products.inventorization import ArticleStatus, Variants
-from app.models.products.inventorization.occasional_categories_model import (
+from app.models.pricing import PriceFactors, PriceMultipliers, PricingTier
+from app.models.products import (
+    Articles,
+    ArticleStatus,
+    ProductCategories,
     ProductOccasionalCategories,
-)
-from app.models.products.inventorization.stock_keeping_units_model import (
+    Products,
     StockKeepingUnits,
+    Variants,
 )
-from app.models.products.product_details import ProductCategories
 from app.models.promotions import (
     PromotionsAndDiscounts,
     PromotionsVariants,

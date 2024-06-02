@@ -8,14 +8,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
-from app.models.subscriptions.subscriptions_model import Subscriptions
-from app.models.users.core.user_info_model import UserInfo
-from app.models.users.core.users_model import Users
-from app.models.users.profile.user_addresses_model import UserAddresses
-from app.models.users.roles.user_roles_model import UserRoles
-from app.repositories.users_repository import UsersRepository
-
-from .auth_service import AuthService
+from app.models.subscriptions import Subscriptions
+from app.models.users import UserAddresses, UserInfo, UserRoles, Users
+from app.repositories import UsersRepository
+from app.services.users.auth_service import AuthService
 
 
 class UpdateContext(Enum):

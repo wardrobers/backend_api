@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
-from app.models.users.core.users_model import Users
+from app.models.users import Users
 
 
 class UsersRepository:
