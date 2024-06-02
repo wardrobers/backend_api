@@ -6,7 +6,7 @@ from sqlalchemy.orm import UUID
 from app.models.orders import Order, OrderItems, OrderStatus
 from app.models.orders.payments import Transactions
 from app.models.products import Products
-from app.models.users import User
+from app.models.users.core.user_model import User
 
 
 @pytest.fixture

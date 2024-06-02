@@ -11,7 +11,7 @@ from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.users import User
+from app.models.users.core.user_model import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

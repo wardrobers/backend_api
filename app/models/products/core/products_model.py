@@ -10,27 +10,18 @@ from sqlalchemy.orm import (
     selectinload,
 )
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
-from app.models.pricing import PriceFactors, PriceMultipliers, PricingTier
-from app.models.products import (
-    AccessoriesSize,
-    ProductCategories,
-    ProductOccasionalCategories,
-    ProductPhotos,
-    ProductTypes,
-)
-from app.models.products.core import (
-    Articles,
-    ArticleStatus,
-    StockKeepingUnits,
-    Variants,
-)
+from app.models.common.base_model import Base, BaseMixin
+from app.models.common.bulk_actions_model import BulkActionsMixin
+from app.models.common.cache_model import CachingMixin
+from app.models.common.search_model import SearchMixin
+from app.models.pricing.price_factors_model import PriceFactors
+from app.models.pricing.price_multipliers_model import PriceMultipliers
+from app.models.pricing.pricing_tiers_model import PricingTier
+from app.models.products.core.artices_model import Articles
+from app.models.products.core.products_model import Products
+from app.models.products.core.stock_keeping_units_model import StockKeepingUnits
+from app.models.products.inventorization import ArticleStatus, Variants
+from app.models.products.product_details import ProductCategories
 from app.models.promotions import (
     PromotionsAndDiscounts,
     PromotionsVariants,

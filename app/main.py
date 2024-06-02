@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import app_lifespan, get_async_session
+from app.database.session import app_lifespan, get_async_session
 from app.models.common import Base
 from app.routers.users import auth_router, users_router
 

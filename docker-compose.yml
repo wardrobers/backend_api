@@ -4,8 +4,6 @@ services:
     build: .
     ports:
       - "8080:8080"
-    volumes:
-      - ./app:/app  # Maps the local 'app' directory to '/app' inside the container
-      - ./tests:/tests  # Maps the local 'tests' directory to '/tests' inside the container
     environment:
       - DATABASE_URL=postgresql://postgres:password@localhost/wardrobers_test
+      - ENV=development  # You can manage this with .env files too

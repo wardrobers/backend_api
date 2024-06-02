@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
-from app.models.authentication import AuthHandler
+from app.models.authentication.security import AuthHandler
 from app.models.users.core import (
     RoleAction,
     SubscriptionAction,

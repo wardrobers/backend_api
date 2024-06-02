@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from app.models.authentication import AuthHandler
+from app.models.authentication.security import AuthHandler
 from app.routers.users.activity import user_activity_router
 from app.routers.users.core import auth_router, user_router
 from app.routers.users.profile import user_addresses_router, user_photos_router
