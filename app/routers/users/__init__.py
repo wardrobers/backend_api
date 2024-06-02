@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from app.models.authentication.security import AuthHandler
+from app.models.authentication.security import AuthService
 from app.routers.users.activity import user_activity_router
 from app.routers.users.core import auth_router, user_router
 from app.routers.users.profile import user_addresses_router, user_photos_router
@@ -17,8 +17,8 @@ users_router = APIRouter(
 )
 auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-# Initialize the AuthHandler
-auth_handler = AuthHandler()
+# Initialize the AuthService
+auth_handler = AuthService()
 
 # Include all auth and user-related sub-routers
 auth_router.include_router(auth_router.router)

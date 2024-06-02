@@ -25,4 +25,7 @@ class Permissions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     crud = Column(SQLAEnum(CRUDOperation), nullable=False)
 
     # Relationships
-    role_permissions = relationship("RolePermissions", backref="permissions")
+    role_permissions = relationship(
+        "app.models.users.roles.role_permissions_model.RolePermissions",
+        backref="permissions",
+    )

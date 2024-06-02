@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from sqlalchemy import Column, DateTime, func, select, update
@@ -23,7 +22,7 @@ class ModelBase:
 Base = declarative_base(cls=ModelBase)
 
 
-class BaseMixin(ABC, metaclass=DeclarativeMeta):
+class BaseMixin:
     """
     Base mixin providing common attributes and methods for all models.
 
@@ -237,8 +236,3 @@ class BaseMixin(ABC, metaclass=DeclarativeMeta):
             limit=page_size,
             offset=offset,
         )
-
-    @abstractmethod
-    def validate(self):  # Method should be created later and updated
-        # Child classes must implement their specific validation logic
-        pass

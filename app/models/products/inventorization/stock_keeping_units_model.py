@@ -14,7 +14,19 @@ class StockKeepingUnits(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsM
     sku_name = Column(String, nullable=False)
 
     # Relationships
-    articles = relationship("Articles", backref="stock_keeping_units")
-    variants = relationship("Variants", backref="stock_keeping_units")
-    user_basket = relationship("UserBasket", backref="stock_keeping_units")
-    pricing_tiers = relationship("PricingTiers", backref="stock_keeping_unit")
+    articles = relationship(
+        "app.models.products.core.articles_model.Articles",
+        backref="stock_keeping_units",
+    )
+    variants = relationship(
+        "app.models.products.core.variants_model.Variants",
+        backref="stock_keeping_units",
+    )
+    user_basket = relationship(
+        "app.models.users.activity.user_basket_model.UserBasket",
+        backref="stock_keeping_units",
+    )
+    pricing_tiers = relationship(
+        "app.models.pricing.pricing_tiers_model.PricingTiers",
+        backref="stock_keeping_unit",
+    )

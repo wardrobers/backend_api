@@ -9,11 +9,19 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
+ENV = os.getenv("ENV", default="development")
+
 # Get Redis credentials
-redis_credentials = json.loads(os.environ["REDISCRED"])
+if ENV == "production":
+    redis_credentials = json.loads(os.environ["REDISCRED"])
+else:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    redis_credentials = json.loads(os.getenv("REDISCRED", "{}"))
 
 
-class CachingMixin(metaclass=DeclarativeMeta):
+class CachingMixin:
     """
     Enhanced mixin for caching data using Redis, featuring:
 
@@ -45,7 +53,7 @@ class CachingMixin(metaclass=DeclarativeMeta):
         """
         Generates a personalized cache key incorporating model name, ID, and optional parameters.
 
-        Example: 'User:e9ab3302-9887-11ec-a439-02488537b83c:{"role": "admin"}'
+        Example: 'Users:e9ab3302-9887-11ec-a439-02488537b83c:{"role": "admin"}'
         """
         base_key = f"{cls.__name__}:{str(_id)}"
         if extra_params:

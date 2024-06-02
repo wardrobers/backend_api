@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta, RelationshipProperty, aliased
 
 
-class SearchMixin(metaclass=DeclarativeMeta):
+class SearchMixin:
     """
     Provides robust and efficient search functionality, leveraging PostgreSQL's
     tsvector and tsquery for full-text searching and the Levenshtein library

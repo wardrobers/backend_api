@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.models.users.core.user_model import User
+from app.models.users.core.users_model import Users
 from app.routers.users import auth_handler
 
 router = APIRouter()
@@ -12,7 +12,7 @@ router = APIRouter()
 async def create_user_subscription(
     # subscription_data: SubscriptionCreate = Body(...),  # Define this Pydantic model
     db: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Creates a new subscription for the current user.
@@ -39,7 +39,7 @@ async def create_user_subscription(
 async def update_user_subscription(
     # subscription_data: SubscriptionUpdate = Body(...),  # Define this Pydantic model
     db: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Updates the current user's subscription.
@@ -60,7 +60,7 @@ async def update_user_subscription(
 @router.delete("/subscriptions", status_code=status.HTTP_204_NO_CONTENT)
 async def cancel_user_subscription(
     db: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Cancels the current user's subscription.

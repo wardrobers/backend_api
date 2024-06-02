@@ -394,7 +394,7 @@ async def test_create_user_info(test_user: UserRead):
     """Test creating user info for a user through API."""
     user_info_data = UserInfoCreate(
         name="Test",
-        surname="User",
+        surname="Users",
         email="test@example.com",
     )
     response = client.post(f"/users/{test_user.uuid}/info", json=user_info_data.dict())
@@ -406,7 +406,7 @@ async def test_create_user_info_invalid_data(test_user: UserRead):
     """Test creating user info with invalid data through API."""
     user_info_data = UserInfoCreate(
         name="",
-        surname="User",
+        surname="Users",
         email="test@example.com",
     )
     response = client.post(f"/users/{test_user.uuid}/info", json=user_info_data.dict())
@@ -418,7 +418,7 @@ async def test_update_user_info(test_user: UserRead):
     """Test updating user info for a user through API."""
     user_info_update = UserInfoBase(
         name="Updated Test",
-        surname="Updated User",
+        surname="Updated Users",
     )
     response = client.put(f"/users/{test_user.uuid}/info", json=user_info_update.dict())
     assert response.status_code == 200
@@ -430,7 +430,7 @@ async def test_update_user_info_invalid_data(test_user: UserRead):
     """Test updating user info with invalid data through API."""
     user_info_update = UserInfoBase(
         name="",
-        surname="User",
+        surname="Users",
     )
     response = client.put(f"/users/{test_user.uuid}/info", json=user_info_update.dict())
     assert response.status_code == 400

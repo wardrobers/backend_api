@@ -23,5 +23,10 @@ class RolePermissions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMix
     )
 
     # Relationships
-    roles = relationship("Roles", back_populates="role_permissions")
-    permissions = relationship("Permissions", back_populates="role_permissions")
+    roles = relationship(
+        "app.models.users.roles.roles_model.Roles", back_populates="role_permissions"
+    )
+    permissions = relationship(
+        "app.models.users.roles.permissions_model.Permissions",
+        back_populates="role_permissions",
+    )

@@ -3,21 +3,19 @@ from enum import Enum
 
 from fastapi import HTTPException
 from firebase_admin import auth as firebase_auth
-from sqlalchemy import Boolean, Column, DateTime, String, delete, insert, select, update
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import UUID
 
-from app.models.authentication import AuthHandler
+from app.models.subscriptions.subscriptions_model import Subscriptions
+from app.models.users.core.user_info_model import UserInfo
+from app.models.users.core.users_model import Users
+from app.models.users.profile.user_addresses_model import UserAddresses
+from app.models.users.roles.user_roles_model import UserRoles
+from app.repositories.users_repository import UsersRepository
 
-# Import models that are directly related and need explicit import for relationships
-from app.models.common.base_model import Base, BaseMixin
-from app.models.common.bulk_actions_model import BulkActionsMixin
-from app.models.common.cache_model import CachingMixin
-from app.models.common.search_model import SearchMixin
-from app.models.subscriptions import Subscriptions
-from app.models.users.core import UserInfo
-from app.models.users.roles import UserRoles
+from .auth_service import AuthService
 
 
 class UpdateContext(Enum):
@@ -37,56 +35,14 @@ class SubscriptionAction(Enum):
     CANCEL = "cancel"
 
 
-class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
-    __tablename__ = "users"
+class UsersService:
+    """
+    Service layer for business logic related to Users operations.
+    """
 
-    login = Column(String, nullable=False)
-    password = Column(String, nullable=False)
-    is_notificated = Column(Boolean, default=False)
-    last_login_at = Column(DateTime)
-
-    # Relationships
-    info = relationship("UserInfo", uselist=False, backref="users")
-    activity = relationship("UserActivity", uselist=False, backref="users")
-    basket = relationship("UserBasket", uselist=False, backref="users")
-    photos = relationship("UserPhotos", backref="users")
-    role = relationship("Roles", secondary="user_roles", backref="users")
-    order = relationship("Order", backref="users")
-    subscriptions = relationship("Subscriptions", backref="users")
-    reviews_and_ratings = relationship("UserReviewsAndRatings", backref="users")
-    saved_items = relationship("UserSavedItems", backref="users")
-    promotions = relationship("UserPromotions", backref="users")
-    addresses = relationship("UserAddresses", backref="users")
-    categories_for_user = relationship("CategoriesForUser", backref="users")
-    data_privacy_consents = relationship("DataPrivacyConsents", backref="users")
-    transactions = relationship("Transactions", backref="users")
-
-    @classmethod
-    async def get_user_by_login(cls, db_session: AsyncSession, login: str):
-        """
-        Retrieves a user from the database by their login.
-
-        Args:
-            login (str): The login of the user to retrieve.
-
-        Returns:
-            Optional[User]: The User object if found, otherwise None.
-        """
-        async with db_session as session:
-            result = await session.execute(
-                select(cls).where(cls.login == login, cls.deleted_at.is_(None))
-            )
-            return result.scalars().first()
-
-    async def activate_account(self, db_session: AsyncSession):
-        try:
-            await db_session.execute(
-                update(User).where(User.id == self.id).values(is_active=True)
-            )
-            await db_session.commit()
-        except SQLAlchemyError as e:
-            await db_session.rollback()
-            raise HTTPException(status_code=500, detail=str(e))
+    def __init__(self, user_repository: UsersRepository):
+        self.user_repository = user_repository
+        self.auth_handler = AuthService()
 
     async def create_user(self, db_session: AsyncSession, user_data: dict):
         """
@@ -101,12 +57,12 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         """
         try:
             # Hash the user's password before storing it in the database
-            hashed_password = AuthHandler.get_password_hash(user_data["password"])
+            hashed_password = AuthService.get_password_hash(user_data["password"])
             user_data["password"] = hashed_password
-            user_data["is_active"] = False  # User is inactive until email verification
+            user_data["is_active"] = False  # Users is inactive until email verification
 
             # Create the user in the database
-            new_user = User(**user_data)
+            new_user = Users(**user_data)
             db_session.add(new_user)
             await db_session.commit()
 
@@ -116,11 +72,15 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
                 status_code=500, detail=f"Failed to create user: {str(e)}"
             )
 
-    async def reset_password_basic(self, db_session: AsyncSession, new_password: str):
-        hashed_password = AuthHandler.get_password_hash(new_password)
+    async def reset_password_basic(
+        self, db_session: AsyncSession, user_id: UUID, new_password: str
+    ):
+        hashed_password = AuthService.get_password_hash(new_password)
         try:
             await db_session.execute(
-                update(User).where(User.id == self.id).values(password=hashed_password)
+                update(Users)
+                .where(Users.id == user_id)
+                .values(password=hashed_password)
             )
             await db_session.commit()
         except SQLAlchemyError as e:
@@ -137,7 +97,9 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
             hashed_password = self.get_password_hash(new_password)
             # Update the user's password in the database
             await db_session.execute(
-                update(User).where(User.email == email).values(password=hashed_password)
+                update(Users)
+                .where(Users.email == email)
+                .values(password=hashed_password)
             )
             await db_session.commit()
         except firebase_auth.FirebaseError as e:
@@ -146,7 +108,9 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
                 status_code=500, detail="Invalid or expired reset token."
             )
 
-    async def update_user_info(self, db_session: AsyncSession, updates: dict, context):
+    async def update_user_info(
+        self, db_session: AsyncSession, user_id: UUID, updates: dict, context
+    ):
         """Updates user information based on the given context."""
         # Optional: Add context-specific validation or transformation
         if context == UpdateContext.CONTACT_DETAILS:
@@ -158,7 +122,7 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
 
         try:
             await db_session.execute(
-                update(UserInfo).where(UserInfo.user_id == self.id).values(**updates)
+                update(UserInfo).where(UserInfo.user_id == user_id).values(**updates)
             )
             await db_session.commit()
         except SQLAlchemyError as e:
@@ -166,6 +130,28 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
             raise HTTPException(
                 status_code=500, detail=f"Failed to update user info: {str(e)}"
             )
+
+    async def add_or_update_address(
+        self,
+        db_session: AsyncSession,
+        user_id: UUID,
+        address_details: dict,
+        address_id: UUID = None,
+    ):
+        """Adds a new address or updates an existing one for a user."""
+        if address_id:
+            # Update existing address
+            await db_session.execute(
+                update(UserAddresses)
+                .where(UserAddresses.id == address_id)
+                .values(**address_details)
+            )
+        else:
+            # Add new address
+            new_address = UserAddresses(**address_details, user_id=user_id)
+            db_session.add(new_address)
+
+        await db_session.commit()
 
     async def manage_roles(
         self, db_session: AsyncSession, role_id: int, action: RoleAction
@@ -191,10 +177,10 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
                 status_code=500, detail=f"Failed to update roles: {str(e)}"
             )
 
-    async def _add_role(self, db_session: AsyncSession, role_id: int):
+    async def _add_role(self, db_session: AsyncSession, user_id: UUID, role_id: UUID):
         existing_role = await db_session.execute(
             select(UserRoles).where(
-                UserRoles.user_id == self.id, UserRoles.role_id == role_id
+                UserRoles.user_id == user_id, UserRoles.role_id == role_id
             )
         )
         if existing_role.scalars().first() is not None:
@@ -202,13 +188,15 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
                 status_code=400, detail="Role already assigned to user."
             )
         await db_session.execute(
-            insert(UserRoles).values(user_id=self.id, role_id=role_id)
+            insert(UserRoles).values(user_id=user_id, role_id=role_id)
         )
 
-    async def _remove_role(self, db_session: AsyncSession, role_id: int):
+    async def _remove_role(
+        self, db_session: AsyncSession, user_id: UUID, role_id: UUID
+    ):
         await db_session.execute(
             delete(UserRoles).where(
-                UserRoles.user_id == self.id, UserRoles.role_id == role_id
+                UserRoles.user_id == user_id, UserRoles.role_id == role_id
             )
         )
 
@@ -255,29 +243,29 @@ class User(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         await db_session.execute(insert(Subscriptions).values(**subscription_data))
 
     async def _update_subscription(
-        self, db_session: AsyncSession, subscription_data: dict
+        self, db_session: AsyncSession, user_id: UUID, subscription_data: dict
     ):
         await db_session.execute(
             update(Subscriptions)
-            .where(Subscriptions.user_id == self.id, Subscriptions.is_active == True)
+            .where(Subscriptions.user_id == user_id, Subscriptions.is_active == True)
             .values(**subscription_data)
         )
 
-    async def _cancel_subscription(self, db_session: AsyncSession, _):
+    async def _cancel_subscription(self, db_session: AsyncSession, user_id: UUID):
         await db_session.execute(
             update(Subscriptions)
-            .where(Subscriptions.user_id == self.id, Subscriptions.is_active == True)
+            .where(Subscriptions.user_id == user_id, Subscriptions.is_active == True)
             .values(is_active=False)
         )
 
     async def toggle_notifications(
-        self, db_session: AsyncSession, enable_notifications: bool
+        self, db_session: AsyncSession, user_id: UUID, enable_notifications: bool
     ):
         """Enables or disables user notifications."""
         try:
             await db_session.execute(
-                update(User)
-                .where(User.id == self.id)
+                update(Users)
+                .where(Users.id == user_id)
                 .values(is_notificated=enable_notifications)
             )
             await db_session.commit()

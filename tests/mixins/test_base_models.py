@@ -9,7 +9,7 @@ from app.database.session import get_async_session
 from app.models.common import Base, BaseMixin
 from app.models.orders.core import Order, OrderItems
 from app.models.products.core import Articles, Products, StockKeepingUnits
-from app.models.users.core import User, UserInfo
+from app.models.users.core import UserInfo, Users
 
 
 # Mocking for testing purposes
@@ -180,13 +180,13 @@ async def test_base_mixin_delete_already_deleted():
 # Test cases for filtering, pagination, and other base mixin methods can be added here.
 
 
-# Specific model tests for User, UserInfo, Products, StockKeepingUnits, Articles, Order, etc.
+# Specific model tests for Users, UserInfo, Products, StockKeepingUnits, Articles, Order, etc.
 @pytest.mark.asyncio
 async def test_user_creation_with_info(session: AsyncSession):
-    """Test creating a new User with associated UserInfo."""
-    user = User(login="testuser", password="securepassword")
+    """Test creating a new Users with associated UserInfo."""
+    user = Users(login="testuser", password="securepassword")
     user_info = UserInfo(
-        first_name="Test", last_name="User", email="test@wardrobers.com"
+        first_name="Test", last_name="Users", email="test@wardrobers.com"
     )
     user.info = user_info  # Set relationship
     session.add(user)
@@ -198,14 +198,14 @@ async def test_user_creation_with_info(session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_user_creation_with_duplicate_email(session: AsyncSession):
-    """Test preventing duplicate email for User creation."""
-    user1 = User(login="user1", password="securepassword")
+    """Test preventing duplicate email for Users creation."""
+    user1 = Users(login="user1", password="securepassword")
     user1.info = UserInfo(
-        first_name="User 1", last_name="Test", email="test@wardrobers.com"
+        first_name="Users 1", last_name="Test", email="test@wardrobers.com"
     )
-    user2 = User(login="user2", password="securepassword")
+    user2 = Users(login="user2", password="securepassword")
     user2.info = UserInfo(
-        first_name="User 2", last_name="Test", email="test@wardrobers.com"
+        first_name="Users 2", last_name="Test", email="test@wardrobers.com"
     )
 
     session.add(user1)
@@ -251,7 +251,7 @@ async def test_order_creation_with_order_items(session: AsyncSession):
     session.add(product)
     await session.commit()
 
-    user = User(login="testuser", password="securepassword")
+    user = Users(login="testuser", password="securepassword")
     session.add(user)
     await session.commit()
 

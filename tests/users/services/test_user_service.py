@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy.orm import UUID
 
-from app.models.users.core.user_model import User, UserInfo
+from app.models.users.core.users_model import UserInfo, Users
 from app.services.user_service import UserService
 
 
@@ -12,36 +12,36 @@ from app.services.user_service import UserService
 def mock_user_repository():
     """Mock user repository for testing."""
     mock_repo = MagicMock()
-    mock_repo.create.return_value = User(
+    mock_repo.create.return_value = Users(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         login="testuser",
         is_active=False,
     )
-    mock_repo.get_by_id.return_value = User(
+    mock_repo.get_by_id.return_value = Users(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         login="testuser",
         is_active=False,
     )
     mock_repo.get_all.return_value = [
-        User(
+        Users(
             id=UUID("00000000-0000-0000-0000-000000000001"),
             login="testuser",
             is_active=False,
         )
     ]
     mock_repo.get_by_ids.return_value = [
-        User(
+        Users(
             id=UUID("00000000-0000-0000-0000-000000000001"),
             login="testuser",
             is_active=False,
         )
     ]
-    mock_repo.update.return_value = User(
+    mock_repo.update.return_value = Users(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         login="testuser",
         is_active=False,
     )
-    mock_repo.soft_delete.return_value = User(
+    mock_repo.soft_delete.return_value = Users(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         login="testuser",
         is_active=False,
@@ -57,13 +57,13 @@ def mock_user_info_repository():
     mock_repo.create.return_value = UserInfo(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         first_name="Test",
-        last_name="User",
+        last_name="Users",
         email="test@wardrobers.com",
     )
     mock_repo.get_by_id.return_value = UserInfo(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         first_name="Test",
-        last_name="User",
+        last_name="Users",
         email="test@wardrobers.com",
     )
     return mock_repo

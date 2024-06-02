@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.models.users.core.user_model import User
+from app.models.users.core.users_model import Users
 from app.models.users.profile.user_addresses_model import UserAddresses
 from app.routers.users import auth_handler
 
@@ -14,7 +14,7 @@ router = APIRouter()
 async def add_user_address(
     address_data,
     db: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Adds a new address to the user's profile.
@@ -40,7 +40,7 @@ async def update_user_address(
     address_id: UUID,
     address_update,
     db: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Updates a specific address belonging to the current user.
@@ -74,7 +74,7 @@ async def update_user_address(
 async def delete_user_address(
     address_id: UUID,
     db: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Deletes a specific address from the current user's profile.

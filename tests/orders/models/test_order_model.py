@@ -6,7 +6,7 @@ from sqlalchemy.orm import UUID
 from app.models.orders import Order, OrderItems, OrderStatus
 from app.models.orders.payments import Transactions
 from app.models.products import Products
-from app.models.users.core.user_model import User
+from app.models.users.core.users_model import Users
 
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def test_product(session: AsyncSession):
 @pytest.fixture
 def test_user(session: AsyncSession):
     """Fixture to create a test user for other tests."""
-    user = User(login="testuser", password="securepassword")
+    user = Users(login="testuser", password="securepassword")
     session.add(user)
     session.commit()
     session.refresh(user)
@@ -31,7 +31,7 @@ def test_user(session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_order_creation(
-    session: AsyncSession, test_product: Products, test_user: User
+    session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test creating a new order."""
     order = Order(
@@ -44,7 +44,7 @@ async def test_order_creation(
 
 @pytest.mark.asyncio
 async def test_order_creation_with_order_items(
-    session: AsyncSession, test_product: Products, test_user: User
+    session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test creating an order with associated order items."""
     order = Order(
@@ -64,7 +64,7 @@ async def test_order_creation_with_order_items(
 
 @pytest.mark.asyncio
 async def test_order_creation_with_transaction(
-    session: AsyncSession, test_product: Products, test_user: User
+    session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test creating an order with associated transaction."""
     order = Order(
@@ -80,7 +80,7 @@ async def test_order_creation_with_transaction(
 
 @pytest.mark.asyncio
 async def test_calculate_total_price(
-    session: AsyncSession, test_product: Products, test_user: User
+    session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test calculating the total price of an order item, including discounts."""
     order = Order(

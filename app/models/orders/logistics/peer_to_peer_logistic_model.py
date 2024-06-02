@@ -27,12 +27,12 @@ class PeerToPeerLogistics(Base, BaseMixin, SearchMixin, CachingMixin, BulkAction
 
     # Relationships
     lender_user = relationship(
-        "User",
+        "Users",
         foreign_keys=[lender_user_id],
         backref=backref("lender_logistics", uselist=True),
     )
     renter_user = relationship(
-        "User",
+        "Users",
         foreign_keys=[renter_user_id],
         backref=backref("renter_logistics", uselist=True),
     )

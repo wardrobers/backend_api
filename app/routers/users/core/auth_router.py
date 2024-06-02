@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.models.authentication.security import AuthHandler
-from app.models.users.core.user_model import User
+from app.models.authentication.security import AuthService
+from app.models.users.core.users_model import Users
 from app.routers.users import auth_handler
 
 router = APIRouter()
@@ -18,7 +18,7 @@ async def register_user(
 
     Request Body:
         - login (str): Unique user login.
-        - password (str): User's password.
+        - password (str): Users's password.
         - password_confirmation (str): Confirmation of the user's password.
 
     Response (Success - 201 Created):
@@ -30,17 +30,17 @@ async def register_user(
     if user_create.password != user_create.password_confirmation:
         raise HTTPException(status_code=400, detail="Passwords don't match")
 
-    existing_user = await User.get_user_by_login(db_session, user_create.login)
+    existing_user = await Users.get_user_by_login(db_session, user_create.login)
     if existing_user:
         raise HTTPException(status_code=400, detail="Login already in use")
 
     try:
-        User.validate_password_strength(user_create.password)
+        Users.validate_password_strength(user_create.password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    hashed_password = AuthHandler.get_password_hash(user_create.password)
-    new_user = User(login=user_create.login, password=hashed_password)
+    hashed_password = AuthService.get_password_hash(user_create.password)
+    new_user = Users(login=user_create.login, password=hashed_password)
     db_session.add(new_user)
     await db_session.commit()
     await db_session.refresh(new_user)
@@ -53,8 +53,8 @@ async def login_user(login_data, db_session: AsyncSession = Depends(get_async_se
     Logs in a user and generates a JWT access token.
 
     Request Body:
-        - login (str): User's login.
-        - password (str): User's password.
+        - login (str): Users's login.
+        - password (str): Users's password.
 
     Response (Success - 200 OK):
         - access_token (str): JWT access token.
@@ -91,9 +91,9 @@ async def initiate_password_reset(
     Error Codes:
         - 404 Not Found: If no user is found with the provided email address.
     """
-    user = await User.get_user_by_login(db_session, email)
+    user = await Users.get_user_by_login(db_session, email)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Users not found")
 
     # TODO: Generate and send a password reset token to the user's email
     # Replace this with your actual token generation and email sending logic
@@ -112,8 +112,8 @@ async def reset_password(
 
     Request Body:
         - token (str, optional): Password reset token.
-        - old_password (str, optional): User's current password.
-        - new_password (str): User's new password.
+        - old_password (str, optional): Users's current password.
+        - new_password (str): Users's new password.
 
     Response (Success - 200 OK):
         - message (str): A confirmation message.
@@ -131,15 +131,15 @@ async def reset_password(
             raise HTTPException(status_code=400, detail="Invalid or expired token")
     elif reset_data.old_password:
         # Basic reset with old password
-        user = await User.get_user_by_login(db, reset_data.login)
+        user = await Users.get_user_by_login(db, reset_data.login)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=404, detail="Users not found")
         if not auth_handler.verify_password(reset_data.old_password, user.password):
             raise HTTPException(status_code=400, detail="Incorrect old password")
     else:
         raise HTTPException(status_code=400, detail="No password reset method provided")
 
-    hashed_password = AuthHandler.get_password_hash(reset_data.new_password)
+    hashed_password = AuthService.get_password_hash(reset_data.new_password)
     user.password = hashed_password
     await db.commit()
     return {"message": "Password reset successfully"}

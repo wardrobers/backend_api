@@ -14,4 +14,8 @@ class Roles(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     name = Column(String)
 
     # Relationships
-    users = relationship("User", secondary="user_roles", backref="roles")
+    users = relationship(
+        "app.models.users.core.users_model.Users",
+        secondary="user_roles",
+        backref="roles",
+    )

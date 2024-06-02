@@ -1,5 +1,5 @@
 __all__ = [
-    "User",
+    "Users",
     "UpdateContext",
     "RoleAction",
     "SubscriptionAction",

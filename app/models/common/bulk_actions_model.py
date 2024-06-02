@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeMeta
 
 
-class BulkActionsMixin(metaclass=DeclarativeMeta):
+class BulkActionsMixin:
     """
     Mixin for performing bulk operations on database models, featuring:
 

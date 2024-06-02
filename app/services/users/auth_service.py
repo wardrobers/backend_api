@@ -11,12 +11,12 @@ from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.users.core.user_model import User
+from app.models.users.core.users_model import Users
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-class AuthHandler:
+class AuthService:
     """
     Handles user authentication and token management.
     """
@@ -28,7 +28,7 @@ class AuthHandler:
     async def authenticate_user(
         self, db_session: AsyncSession, username: str, password: str
     ):
-        user = await db_session.execute(select(User).filter(User.username == username))
+        user = await db_session.execute(select(Users).filter(Users.login == username))
         user = user.scalars().first()
         if not user or not self.verify_password(password, user.hashed_password):
             return None
@@ -62,7 +62,7 @@ class AuthHandler:
             if username is None:
                 raise credentials_exception
             user = await db_session.execute(
-                select(User).filter(User.username == username)
+                select(Users).filter(Users.username == username)
             )
             user = user.scalars().first()
         except JWTError:

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.models.users.core.user_model import UpdateContext, User
+from app.models.users.core.users_model import UpdateContext, Users
 from app.routers.users import auth_handler
 
 router = APIRouter()
@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.get("/me")
 async def get_current_user_profile(
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Retrieves the complete profile of the currently authenticated user.
@@ -18,7 +18,7 @@ async def get_current_user_profile(
     Requires Authentication (JWT).
 
     Response (Success - 200 OK):
-        - User object (including related info, photos, roles, etc.).
+        - Users object (including related info, photos, roles, etc.).
     """
     return current_user
 
@@ -27,7 +27,7 @@ async def get_current_user_profile(
 async def update_current_user_profile(
     user_info_update,
     db_session: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Updates the profile of the currently authenticated user.
@@ -38,7 +38,7 @@ async def update_current_user_profile(
         - user_info_update (UserInfoUpdate): Contains fields to be updated in the 'user_info' table.
 
     Response (Success - 200 OK):
-        - User object (with updated profile information).
+        - Users object (with updated profile information).
 
     Error Codes:
         - 400 Bad Request: If update data is invalid or a conflict occurs (e.g., duplicate email).
@@ -55,7 +55,7 @@ async def update_current_user_profile(
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_current_user_account(
     db_session: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Soft deletes the account of the currently authenticated user.
@@ -71,7 +71,7 @@ async def delete_current_user_account(
 async def update_notification_preferences(
     enabled: bool,
     db_session: AsyncSession = Depends(get_async_session),
-    current_user: User = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
     Enables or disables notifications for the currently authenticated user.
