@@ -1,190 +1,152 @@
-# Wardrobers Backend API Repository Overview
+# Wardrobers Backend API
 
-The Wardrobers Backend API is a FastAPI-based service designed to facilitate fashion item rental transactions. Our repository's architecture is strategically modularized, promoting separation of concerns, scalability, and ease of maintenance.
+This repository houses the backend API for Wardrobers, a fashion rental platform. The API is built using FastAPI and interacts with a PostgreSQL database via SQLAlchemy. 
 
-## Repository Structure and Logic
+## Project Structure and Logic
 
-### `app/`: The Application Core
+The project follows a layered architecture to enhance organization, maintainability, and scalability:
 
-- `__init__.py`: This file orchestrates the inclusion of routers into the main application, effectively assembling our API's endpoint structure.
-- `main.py`: Serving as the application's nerve center, this file initializes the FastAPI instance, database tables, and event handlers for startup and shutdown events.
+### Core Components:
 
-### `database/`: Database Interactions
+- **`app/`:** Contains the heart of the application logic.
+    - **`__init__.py`:** Assembles the application by including routers.
+    - **`main.py`:** Initializes FastAPI, sets up database connections, and handles startup/shutdown events.
+    - **`database/`:** Manages database interactions.
+        - **`session.py`:** Defines database session and connection management using SQLAlchemy, including handling connections to Cloud SQL. 
+    - **`models/`:** Houses SQLAlchemy ORM models that represent database tables. Each model maps to a specific database table, defining its structure, relationships, and data types. 
+        - **`users/`:** Models related to user management, profiles, authentication, etc.
+        - **`products/`:** Models for products, variations, categories, materials, etc.
+        - **`orders/`:** Models for orders, order items, shipping details, payment information, etc.
+        - **`subscriptions/`:** Models related to user subscriptions.
+        - **`promotions/`:** Models for promotions, discounts, and their application logic.
+        - **`pricing/`:**  Models defining pricing tiers, rules, and calculations.
+        - **`common/`:** Base models and mixins with common functionality used across other models, such as the `BaseMixin` for common CRUD operations.
+        - **`authentication/`:** Models and logic for handling user authentication and security. 
+    - **`routers/`:** Defines API endpoints and handles HTTP requests. Routers use services to perform business logic.
+        - **`users/`:**  Routers for user-related actions (registration, authentication, profile management).
+    - **`schemas/`:** Contains Pydantic models for data validation and serialization. These schemas define the structure and data types expected for requests and responses, ensuring data integrity.
+    - **`tests/`:** A comprehensive suite of automated tests covering unit tests for models, services, and integration tests for API routes.
+        - **`basics/`:**  Fundamental tests for code structure, database connection, schema consistency, etc.
+        - **`users/`:**  Tests specifically for the `users/` models and services.
+        - **`products/`:** Tests for the `products/` models and services. 
+        - **`orders/`:** Tests related to orders, order processing, etc.
+        - **`integration/`:** End-to-end tests for API routes and interactions between components.
+- **`requirements.txt`:** Lists the Python project dependencies.
+- **`Dockerfile`:** Defines instructions for building the Docker image. 
 
-- Manages database sessions and connections using SQLAlchemy, allowing for a seamless interface with the backend SQL database.
-- `session.py`: Defines the session maker and connection handler, utilizing Google Cloud SQL for reliable database operations.
+### Introducing Repositories and Services
 
-### `models/`: Data Modeling
+To further improve code organization and maintainability, the project will be updated to include:
 
-- Contains SQLAlchemy ORM models, each representing a table in the database.
-- These models are crucial for mirroring the database schema in Python code, providing a robust groundwork for database interactions.
+- **`repositories/`:** This folder will contain classes responsible for interacting with the database. Each repository class will be dedicated to a specific model (e.g., `product_repository.py`, `user_repository.py`) and will provide methods for common CRUD operations. 
+- **`services/`:** This folder will contain classes that encapsulate the business logic of the application. Services will interact with repositories to perform operations and handle complex workflows. 
 
-### `repositories/`: Business Logic Encapsulation
+This separation allows for cleaner code, better testability, and improved scalability as the project grows. 
 
-- Each repository file corresponds to a model, with classes containing methods for creating, retrieving, updating, and deleting records.
-- The use of repositories abstracts the complexity of direct database manipulation, providing a clean interface for the routers to interact with the database.
+## Request Flow
 
-### `routers/`: API Endpoints Definition
+Here's how a typical request will be handled by the application:
 
-- Comprises multiple modules, each defining a set of related endpoints and their logic.
-- Routers handle incoming HTTP requests, interact with the appropriate repositories, and return the correct HTTP responses.
+1. **Client Request:** The client sends an HTTP request to an API endpoint defined in a router.
+2. **Validation:** The router validates the incoming data using the corresponding Pydantic schema from `schemas/`.
+3. **Service Invocation:** The router invokes the appropriate service from `services/` to process the request.
+4. **Repository Interaction:** The service uses one or more repositories from `repositories/` to interact with the database.
+5. **Database Operations:** Repositories execute queries using SQLAlchemy ORM models defined in `models/`.
+6. **Business Logic:** The service applies the necessary business logic, data transformations, and error handling.
+7. **Response Preparation:** The service returns the result to the router.
+8. **Serialization:** The router serializes the response data using Pydantic schemas.
+9. **Client Response:**  The router sends the serialized response back to the client.
 
-### `schemas/`: Data Validation and Serialization
-
-- Utilizes Pydantic models to enforce type checking and validation of request and response data.
-- Schemas ensure that data transferred between the client and server adheres to the defined structure, fostering data integrity.
-
-### `authentication/`: Security Measures
-
-- Implements JWT-based authentication, providing secure access to the API.
-- The `security.py` file manages password hashing and token generation, safeguarding user credentials and sessions.
-
-## Repository Flow
-
-When the application starts:
-
-1. `main.py` invokes the database connection setup.
-2. Tables are generated based on `models/`.
-3. Routers are imported and included in the API, making the endpoints active.
-4. The API is now ready to handle requests, with `routers/` directing traffic to the correct repository for data handling.
-
-Upon receiving a request:
-
-1. The request is validated against schemas in `schemas/`.
-2. The router processes the request, delegating operations to the corresponding repository.
-3. Repositories perform CRUD operations using models as blueprints for the database.
-4. Responses are serialized as defined in `schemas/` and sent back to the client.
-
-## Visual Repository Scheme
-
-```plaintext
-/backend_api
-├── app/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── database/
-│   │   └── session.py
-│   ├── models/
-│   │   └── *.py
-│   ├── repositories/
-│   │   └── *.py
-│   ├── routers/
-│   │   └── *.py
-│   ├── schemas/
-│   │   └── *.py
-│   └── authentication/
-│       └── security.py
-├── Dockerfile
-└── requirements.txt
-```
-
-## Local Development Guide for Wardrobers Backend API
-
-This guide outlines the steps necessary to set up a local development environment for Wardrobers Backend API. By following these instructions, developers can work in an isolated environment, ensuring consistency across various setups and streamlined integration with the necessary Google Cloud Platform (GCP) services.
+## Local Development Guide
 
 ### Prerequisites
-Before starting, ensure you have the following installed:
-- [Python 3.11](https://www.python.org/downloads/)
-- [Conda](https://docs.conda.io/en/latest/)
-- [Google Cloud SDK](https://cloud.google.com/sdk)
-- Docker (optional, for containerized environments)
+
+- **Python 3.11:** Download from [https://www.python.org/downloads/](https://www.python.org/downloads/)
+- **Conda:** (Recommended) For environment management. Download from [https://docs.conda.io/en/latest/](https://docs.conda.io/en/latest/)
+- **Docker:** (Optional) For containerized development. Download from [https://www.docker.com/get-started](https://www.docker.com/get-started)
+- **Docker Compose:** (Optional) For orchestrating multi-container applications. Download along with Docker.
 
 ### Environment Setup
 
-#### 1. Clone the Repository
-Begin by cloning the Wardrobers backend repository and navigate to the `backend_API` directory.
+1. **Clone the Repository:**
 
-```bash
-git clone https://github.com/wardrobers/backend_api.git
-cd backend_api
-```
+   ```bash
+   git clone https://github.com/wardrobers/backend_api.git
+   cd backend_api
+   ```
 
-#### 2. Create a Conda Environment
-Create an isolated Conda environment specifically for Wardrobers development.
+2. **Create a Conda Environment (Recommended):**
 
-```bash
-conda create --name wardrobers_env python=3.11
-```
+   ```bash
+   conda create --name wardrobers_env python=3.11
+   conda activate wardrobers_env
+   ```
 
-#### 3. Activate the Conda Environment
-Switch to the newly created Conda environment.
+3. **Install Dependencies:**
 
-```bash
-conda activate wardrobers_env
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 4. Install Dependencies
-Install the required Python packages from the `requirements.txt` file.
+4. **Set Up Environment Variables:**
 
-```bash
-pip install -r requirements.txt
-```
-
-#### 5. Google Cloud Authentication
-Authenticate with GCP using the provided service account. For sign in use your Wardrobers email `<your-email>@wdbrs.co`.
-
-```bash
-gcloud auth application-default login --impersonate-service-account=wardrobers-dev@feisty-enigma-409319.iam.gserviceaccount.com
-```
+   Create a `.env` file in the project's root directory and define these variables (replace placeholders with your actual credentials):
+   ```
+   DATABASE_URL=postgresql://user:password@host:port/database
+   REDISCRED={"host":"your_redis_host", "port": your_redis_port, "password": "your_redis_password"}
+   AUTH_SECRET_KEY={"auth_secret_key":"your_secret_key"}
+   ```
+- For local development, you can use a local PostgreSQL instance.
 
 ### Running the Application
 
-#### Option 1: Directly with Uvicorn
-Run the FastAPI application using Uvicorn, specifying the host and port.
+**1. Directly with Uvicorn (without Docker):**
 
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8080
-```
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload 
+   ```
 
-#### Option 2: With Docker
-If you prefer to use Docker, update the Dockerfile to include GCP authentication as demonstrated above.
+**2. With Docker Compose:**
 
-Build the Docker image:
+   - Create a `docker-compose.yml` file in the root of your project: 
+   ```yaml
+   version: '3.8'
 
-```bash
-docker build -t wardrobers-backend .
-```
+   services:
+     db:
+       image: postgres:15
+       volumes:
+         - postgres_data:/var/lib/postgresql/data
+       environment:
+         POSTGRES_DB: wardrobers_test
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: password  # Change this for production and use environment variables
 
-Run the Docker container:
+     app:
+       build: .
+       ports:
+         - "8080:8080"
+       depends_on:
+         - db
+       environment:
+         DATABASE_URL: postgresql://postgres:password@db:5432/wardrobers_test
+         ENV: development  # This can be overridden in production
 
-```bash
-docker run -p 8080:8080 wardrobers-backend
-```
+   volumes:
+     postgres_data:
+   ```
+   - Build and start the services:
+     ```bash
+     docker-compose up -d --build
+     ```
+   - Access your application at `http://localhost:8080`. 
 
-## Continuous Deployment Flow with Cloud Build and Cloud Run
+## Testing
 
-For the app deployment, Wardrobers use Cloud Build and Cloud Run together to automatically build and deploy backend from this GitHub repository:
+Run the test suite with:
 
-## 1. Git Repository Integration:
+    ```bash
+    pytest
+    ```
 
-* Your Wardrobers Backend API code is stored in a Git repository (e.g., GitHub).
-* A Cloud Build trigger is set up to monitor the `main` branch of your `backend_api` repository. This trigger automatically initiates a build whenever code is pushed to the `main` branch.
-
-## 2. Cloud Build Trigger Activation:
-
-* When a developer pushes code to the `main` branch, the Cloud Build trigger is activated, and a new build process starts.
-
-## 3. Build Process:
-
-* Cloud Build uses the Dockerfile in your `backend_api` repository to build a Docker image for your backend API.
-* During the build process, Cloud Build securely accesses and injects secrets from Secret Manager into the container image. This allows your Wardrobers application to access sensitive credentials like database passwords without storing them directly in the code or Dockerfile, enhancing security.
-
-## 4. Deployment to Cloud Run:
-
-* Once the Docker image is built, Cloud Build automatically deploys it to Cloud Run.
-* The Cloud Run service is configured to use the "wardrobers-dev" service account, which has the necessary permissions to access Cloud SQL and other required resources for the Wardrobers platform.
-
-**Diagram:**
-
-```
-[Wardrobers Backend API Git Repository (main branch)]
-|
-v (Push triggers build)
-[Cloud Build Trigger]
-|
-v (Starts build process)
-[Cloud Build (Builds Docker image & injects secrets from Secret Manager)]
-|
-v (Deploys image)
-[Cloud Run (Uses "wardrobers-dev" service account, impersonates for short-lived credentials, accesses Cloud SQL)]
-```
+This command executes all the tests in the `tests/` directory, covering unit and integration tests. 

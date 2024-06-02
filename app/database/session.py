@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 
-ENV = os.getenv("ENV", "development")
+ENV = os.getenv("ENV", default="development")
 
 if ENV == "production":
     echo = False
