@@ -16,7 +16,6 @@ EXPOSE 8080
 
 # Define environment variable
 ENV PORT 8080
-ENV DATABASE_URL postgresql://postgres:password@63.251.122.154/wardrobers_test
 
 # Run app.py when the container launches
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
