@@ -11,7 +11,7 @@ from sqlalchemy.orm import UUID
 from app.models.subscriptions import Subscriptions
 from app.models.users import UserAddresses, UserInfo, UserRoles, Users
 from app.repositories import UsersRepository
-from app.services.users.auth_service import AuthService
+from app.services import AuthService
 
 
 class UpdateContext(Enum):
