@@ -1,20 +1,20 @@
 # tests/products/models/test_product_model.py
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
+from app.models.pricing import PricingTier
 from app.models.products.core import (
+    Articles,
+    ArticleStatus,
     Products,
     StockKeepingUnits,
-    Articles,
     Variants,
-    ArticleStatus,
 )
-from app.models.products.product_details import ProductCategories
 from app.models.products.inventorization import OccasionalCategories
+from app.models.products.product_details import ProductCategories
 from app.models.promotions import PromotionsAndDiscounts, PromotionsVariants
-from app.models.pricing import PricingTier
 
 
 @pytest.fixture

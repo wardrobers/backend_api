@@ -1,5 +1,6 @@
 from enum import Enum
-from sqlalchemy import Column, ForeignKey, Numeric, Integer
+
+from sqlalchemy import Column, ForeignKey, Integer, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.types import Enum as SQLAEnum
@@ -7,9 +8,9 @@ from sqlalchemy.types import Enum as SQLAEnum
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

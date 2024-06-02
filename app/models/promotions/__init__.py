@@ -1,8 +1,8 @@
 from . import (
+    OrderItemsPromotions,
+    OrderPromotions,
+    PromotionsAndDiscounts,
+    PromotionsOccasionalCategories,
     PromotionsVariants,
     UserPromotions,
-    PromotionsAndDiscounts,
-    OrderPromotions,
-    OrderItemsPromotions,
-    PromotionsOccasionalCategories,
 )

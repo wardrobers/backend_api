@@ -1,13 +1,11 @@
 # Use an official Python runtime as a parent image
 FROM python:3.11
 
-# Allow statements and log messages to immediately appear in the logs
-ENV PYTHONUNBUFFERED True
+# Set the working directory in the container to the root of the project
+WORKDIR /backend_api
 
-# Copy local code to the container image.
-ENV APP_HOME /app
-WORKDIR $APP_HOME
-COPY . ./
+# Copy the current directory contents into the container at /backend_api
+COPY . /backend_api
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

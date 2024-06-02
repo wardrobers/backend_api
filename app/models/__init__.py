@@ -1,10 +1,10 @@
 from . import (
-    products,
-    subscriptions,
+    authentication,
     common,
-    promotions,
-    users,
     orders,
     pricing,
-    authentication,
+    products,
+    promotions,
+    subscriptions,
+    users,
 )

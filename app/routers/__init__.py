@@ -1,1 +1,1 @@
-from app.routers.users import users_router, auth_router
+from app.routers.users import auth_router, users_router

@@ -1,11 +1,10 @@
-from fastapi import HTTPException, Depends, status, APIRouter
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.users import User, UserPhotos
 from app.database import get_async_session
+from app.models.users import User, UserPhotos
 from app.routers.users import auth_handler
-
 
 router = APIRouter()
 

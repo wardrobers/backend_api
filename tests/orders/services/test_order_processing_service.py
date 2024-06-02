@@ -1,13 +1,14 @@
 # tests/orders/services/test_order_processing_service.py
+from datetime import timedelta
+from unittest.mock import MagicMock
+
 import pytest
 from sqlalchemy import func
-from unittest.mock import MagicMock
 from sqlalchemy.orm import UUID
-from datetime import timedelta
 
-from app.services.order_processing_service import OrderProcessingService
-from app.models.orders.core import Order, OrderStatus, OrderItems
+from app.models.orders.core import Order, OrderItems, OrderStatus
 from app.models.orders.payments import Transactions
+from app.services.order_processing_service import OrderProcessingService
 
 
 @pytest.fixture

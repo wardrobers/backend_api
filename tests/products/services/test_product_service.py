@@ -1,13 +1,14 @@
 # tests/products/services/test_product_service.py
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from sqlalchemy.orm import UUID
 
-from app.services.product_service import ProductService
-from app.models.products.core import Products, StockKeepingUnits, Articles, Variants
+from app.models.products.core import Articles, Products, StockKeepingUnits, Variants
 from app.models.products.product_details import ProductCategories
-from app.schemas.product.product_schema import ProductCreate, ProductUpdate
 from app.schemas.product.category_schema import CategoryCreate
+from app.schemas.product.product_schema import ProductCreate, ProductUpdate
+from app.services.product_service import ProductService
 
 
 @pytest.fixture

@@ -1,4 +1,5 @@
 from enum import Enum
+
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
@@ -6,9 +7,9 @@ from sqlalchemy.types import Enum as SQLAEnum
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

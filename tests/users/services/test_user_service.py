@@ -1,10 +1,11 @@
 # tests/users/services/test_user_service.py
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from sqlalchemy.orm import UUID
 
-from app.services.user_service import UserService
 from app.models.users.core.user_model import User, UserInfo
+from app.services.user_service import UserService
 
 
 @pytest.fixture

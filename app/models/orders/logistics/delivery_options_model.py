@@ -1,12 +1,12 @@
-from sqlalchemy import Column, Numeric, String, Boolean
+from sqlalchemy import Boolean, Column, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

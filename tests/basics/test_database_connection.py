@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database.session import get_async_session, engine
+
+from app.database.session import engine, get_async_session
 
 
 @pytest.mark.asyncio

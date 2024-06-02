@@ -1,12 +1,12 @@
 # tests/orders/models/test_order_model.py
 import pytest
-from sqlalchemy.orm import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import UUID
 
-from app.models.orders import Order, OrderStatus, OrderItems
+from app.models.orders import Order, OrderItems, OrderStatus
+from app.models.orders.payments import Transactions
 from app.models.products import Products
 from app.models.users import User
-from app.models.orders.payments import Transactions
 
 
 @pytest.fixture

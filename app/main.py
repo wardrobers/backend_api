@@ -1,12 +1,11 @@
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import Depends, FastAPI, HTTPException, Request
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_async_session, app_lifespan
+from app.database import app_lifespan, get_async_session
 from app.models.common import Base
-from app.routers.users import users_router, auth_router
-
+from app.routers.users import auth_router, users_router
 
 app = FastAPI(title="Wardrobers API", version="2.0", lifespan=app_lifespan)
 

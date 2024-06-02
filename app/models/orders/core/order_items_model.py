@@ -1,13 +1,13 @@
-from sqlalchemy import Column, DateTime, Time, ForeignKey, Numeric, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Numeric, Text, Time
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

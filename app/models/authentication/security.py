@@ -1,9 +1,10 @@
-import os
-import json
-import argon2
 import datetime
+import json
+import os
 from datetime import timedelta
 from typing import Optional
+
+import argon2
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
@@ -11,7 +12,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import User
-
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

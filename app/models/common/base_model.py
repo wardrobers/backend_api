@@ -1,16 +1,17 @@
-from typing import Any, Optional
 from abc import ABC, abstractmethod
+from typing import Any, Optional
+
+from sqlalchemy import Column, DateTime, func, select, update
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import (
-    declared_attr,
     DeclarativeMeta,
-    mapped_column,
     RelationshipProperty,
     aliased,
+    declared_attr,
+    mapped_column,
 )
-from sqlalchemy import Column, DateTime, func, select, update
-from sqlalchemy.ext.declarative import declared_attr, declarative_base
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import UUID
 
 
 class ModelBase:

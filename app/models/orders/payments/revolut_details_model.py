@@ -4,9 +4,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

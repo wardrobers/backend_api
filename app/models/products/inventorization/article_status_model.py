@@ -1,16 +1,17 @@
 from enum import Enum
+
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship, mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

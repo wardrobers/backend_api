@@ -1,25 +1,25 @@
 import re
 from enum import Enum
-from sqlalchemy import Column, DateTime, String, Boolean, select, update, insert, delete
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
+
 from fastapi import HTTPException
 from firebase_admin import auth as firebase_auth
-
-from app.models.common import (
-    Base,
-    BaseMixin,
-    SearchMixin,
-    CachingMixin,
-    BulkActionsMixin,
-)
+from sqlalchemy import Boolean, Column, DateTime, String, delete, insert, select, update
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import relationship
 
 # Import models that are directly related and need explicit import for relationships
-from app.models.common import AuthHandler
-from app.models.users import UserInfo, UserRoles
-from app.models.subscriptions import Subscriptions
+from app.models.common import (
+    AuthHandler,
+    Base,
+    BaseMixin,
+    BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
+)
 from app.models.promotions import UserPromotions
+from app.models.subscriptions import Subscriptions
+from app.models.users import UserInfo, UserRoles
 
 
 class UpdateContext(Enum):

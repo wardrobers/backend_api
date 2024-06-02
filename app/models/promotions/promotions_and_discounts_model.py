@@ -1,16 +1,17 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, Integer, Numeric, String, Boolean, Text
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
-from app.models.promotions import PromotionsVariants, PromotionsOccasionalCategories
+from app.models.promotions import PromotionsOccasionalCategories, PromotionsVariants
 
 
 class DiscountType(Enum):

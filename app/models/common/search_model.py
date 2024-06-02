@@ -1,7 +1,8 @@
-from typing import Optional, Any
-from sqlalchemy import func, or_, select, String
+from typing import Any, Optional
+
+from sqlalchemy import String, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased, RelationshipProperty, DeclarativeMeta
+from sqlalchemy.orm import DeclarativeMeta, RelationshipProperty, aliased
 
 
 class SearchMixin(metaclass=DeclarativeMeta):

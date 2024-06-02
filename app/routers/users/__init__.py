@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from app.models.authentication import AuthHandler
-from app.routers.users.core import user_router, auth_router
 from app.routers.users.activity import user_activity_router
+from app.routers.users.core import auth_router, user_router
+from app.routers.users.profile import user_addresses_router, user_photos_router
 from app.routers.users.roles import user_roles_router
 from app.routers.users.subscriptions import user_subscriptions_router
-from app.routers.users.profile import user_photos_router, user_addresses_router
 
 # Initialize OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")

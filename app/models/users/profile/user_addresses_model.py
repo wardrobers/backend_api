@@ -1,16 +1,17 @@
 from enum import Enum
+
 from sqlalchemy import Column, ForeignKey, String, update
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

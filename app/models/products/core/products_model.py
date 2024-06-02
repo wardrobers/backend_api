@@ -1,40 +1,41 @@
 from enum import Enum, auto
-from sqlalchemy import Column, ForeignKey, String, Text, func, and_
+
+from sqlalchemy import Column, ForeignKey, String, Text, and_, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import (
+    Session,
+    joinedload,
     mapped_column,
     relationship,
-    joinedload,
     selectinload,
-    Session,
 )
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
+from app.models.pricing import PriceFactors, PriceMultipliers, PricingTier
 from app.models.products import (
-    ProductCategories,
     AccessoriesSize,
+    ProductCategories,
     ProductOccasionalCategories,
     ProductPhotos,
     ProductTypes,
 )
 from app.models.products.core import (
-    StockKeepingUnits,
     Articles,
     ArticleStatus,
+    StockKeepingUnits,
     Variants,
 )
 from app.models.promotions import (
-    UserPromotions,
     PromotionsAndDiscounts,
     PromotionsVariants,
+    UserPromotions,
 )
-from app.models.pricing import PriceFactors, PricingTier, PriceMultipliers
 
 
 class FilterKeys(Enum):

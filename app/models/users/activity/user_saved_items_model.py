@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, DateTime, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
@@ -6,9 +6,9 @@ from sqlalchemy.sql import func
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

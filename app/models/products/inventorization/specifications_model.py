@@ -1,12 +1,12 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import mapped_column
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

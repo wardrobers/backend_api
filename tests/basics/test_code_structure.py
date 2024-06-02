@@ -1,11 +1,12 @@
-import os
 import importlib
-import pkgutil
 import inspect
-import pytest
+import os
+import pkgutil
 
-from app import models, routers, database, main
+import pytest
 from fastapi import APIRouter
+
+from app import database, main, models, routers
 
 # List of expected modules and their expected submodules or classes
 EXPECTED_STRUCTURE = {

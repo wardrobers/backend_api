@@ -1,8 +1,9 @@
 from typing import Any, Optional
-from sqlalchemy import insert, update, delete, func, select, and_
-from sqlalchemy.orm import DeclarativeMeta
-from sqlalchemy.ext.asyncio import AsyncSession
+
+from sqlalchemy import and_, delete, func, insert, select, update
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import DeclarativeMeta
 
 
 class BulkActionsMixin(metaclass=DeclarativeMeta):

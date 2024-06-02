@@ -1,13 +1,13 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship, backref
+from sqlalchemy.orm import backref, mapped_column, relationship
 
 from app.models.common import (
     Base,
     BaseMixin,
-    SearchMixin,
-    CachingMixin,
     BulkActionsMixin,
+    CachingMixin,
+    SearchMixin,
 )
 
 

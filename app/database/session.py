@@ -1,16 +1,16 @@
 import os
+from contextlib import asynccontextmanager
+
 import asyncpg
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-
-
 
 ENV = os.getenv("ENV", default="development")
 
 if ENV == "production":
     echo = False
+
     async def get_async_conn() -> asyncpg.Connection:
         # Construct connection string for production using environment variables
         connection_name = os.getenv("CLOUD_SQL_CONNECTION_NAME")
@@ -18,10 +18,13 @@ if ENV == "production":
         db_pass = os.getenv("DB_PASS")
         db_name = os.getenv("DB_NAME")
         return f"postgresql+asyncpg://{db_user}:{db_pass}@/{db_name}?host=/cloudsql/{connection_name}"
+
 else:
     echo = True
+
     async def get_async_conn() -> asyncpg.Connection:
         return await asyncpg.connect(dsn=os.environ["DATABASE_URL"])
+
 
 # Create an asynchronous SQLAlchemy engine
 engine = create_async_engine(

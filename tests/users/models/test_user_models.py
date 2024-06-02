@@ -1,17 +1,17 @@
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
+from app.models.authentication import AuthHandler
 from app.models.users.core import (
-    User,
-    UserInfo,
-    UpdateContext,
     RoleAction,
     SubscriptionAction,
+    UpdateContext,
+    User,
+    UserInfo,
 )
 from app.models.users.roles import Roles
-from app.models.authentication import AuthHandler
 
 
 @pytest.fixture

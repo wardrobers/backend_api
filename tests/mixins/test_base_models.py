@@ -1,15 +1,15 @@
 # tests/common/test_base_models.py
 import pytest
-from sqlalchemy import func, Column, String
+from sqlalchemy import Column, String, func
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import UUID
 
-from app.models.common import BaseMixin, Base
-from app.models.users.core import User, UserInfo
-from app.models.products.core import Products, StockKeepingUnits, Articles
-from app.models.orders.core import Order, OrderItems
 from app.database.session import get_async_session
+from app.models.common import Base, BaseMixin
+from app.models.orders.core import Order, OrderItems
+from app.models.products.core import Articles, Products, StockKeepingUnits
+from app.models.users.core import User, UserInfo
 
 
 # Mocking for testing purposes
