@@ -74,7 +74,7 @@ async def test_soft_delete_user(test_user: UserRead):
 async def test_delete_user(test_user: UserRead):
     """Test deleting a user through API."""
     response = client.delete(
-        f"/users/{test_user.uuid}", json=UserDelete(uuid=test_user.uuid).dict()
+        f"/users/{test_user.uuid}", json=UserDelete(id=test_user.uuid).dict()
     )
     assert response.status_code == 204
 

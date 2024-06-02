@@ -13,4 +13,6 @@ class Brand(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     name = Column(String, nullable=False)
 
     # Relationships
-    product = relationship("Products", backref="brands")
+    product = relationship(
+        "app.models.products.core.products_model.Products", backref="brands"
+    )

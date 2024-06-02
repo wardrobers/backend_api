@@ -11,6 +11,9 @@ from app.models.pricing.pricing_tiers_model import PricingTier
 from app.models.products.core.artices_model import Articles
 from app.models.products.core.products_model import Products
 from app.models.products.inventorization import ArticleStatus, Variants
+from app.models.products.inventorization.occasional_categories_model import (
+    ProductOccasionalCategories,
+)
 from app.models.products.inventorization.stock_keeping_units_model import (
     StockKeepingUnits,
 )
@@ -98,6 +101,18 @@ class ProductsRepository:
             .filter(
                 Variants.product_id == self.id,
                 StockKeepingUnits.id == Variants.sku_id,
+            )
+            .count()
+        )
+
+    def get_product_count(self, db_session):
+        """Returns the number of active products associated with this occasional category."""
+        return (
+            db_session.query(Products)
+            .join(ProductOccasionalCategories)
+            .filter(
+                ProductOccasionalCategories.occasional_category_id == self.id,
+                Products.deleted_at.is_(None),
             )
             .count()
         )

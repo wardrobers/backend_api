@@ -19,4 +19,7 @@ class PriceMultipliers(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMi
     )
 
     # Relationships
-    pricing_tiers = relationship("PricingTiers", backref="price_multipliers")
+    pricing_tiers = relationship(
+        "app.models.pricing.pricing_tiers_model.PricingTiers",
+        backref="price_multipliers",
+    )

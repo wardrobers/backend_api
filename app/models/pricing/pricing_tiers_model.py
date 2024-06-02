@@ -31,4 +31,6 @@ class PricingTier(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
     # Relationships
-    price_factors = relationship("PriceFactors", backref="pricing_tiers")
+    price_factors = relationship(
+        "app.models.pricing.pricing_factors_model.PriceFactors", backref="pricing_tiers"
+    )

@@ -20,7 +20,11 @@ class Variants(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     color_id = mapped_column(UUID(as_uuid=True), ForeignKey("colors.id"))
 
     # Relationships
-    sizing = relationship("Sizing", backref="variants")
+    sizing = relationship(
+        "app.models.products.sizing.sizing_model.Sizing", backref="variants"
+    )
     promotions = relationship(
-        "PromotionsAndDiscounts", secondary="promotions_variants", backref="variants"
+        "app.models.promotions.promotions_and_discounts_model.PromotionsAndDiscounts",
+        secondary="promotions_variants",
+        backref="variants",
     )

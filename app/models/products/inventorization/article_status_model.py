@@ -31,4 +31,6 @@ class ArticleStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     name = Column(SQLAEnum(ArticleCurrentStatus))
 
     # Relationships
-    article = relationship("Articles", backref="article_status")
+    article = relationship(
+        "app.model.products.core.articles_model.Articles", backref="article_status"
+    )

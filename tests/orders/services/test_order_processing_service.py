@@ -6,7 +6,7 @@ import pytest
 from sqlalchemy import func
 from sqlalchemy.orm import UUID
 
-from app.models.orders.core import Order, OrderItems, OrderStatus
+from app.models.orders.core import OrderItems, Orders, OrderStatus
 from app.models.orders.payments import Transactions
 from app.services.order_processing_service import OrderProcessingService
 
@@ -15,20 +15,20 @@ from app.services.order_processing_service import OrderProcessingService
 def mock_order_repository():
     """Mock order repository for testing."""
     mock_repo = MagicMock()
-    mock_repo.create.return_value = Order(
+    mock_repo.create.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Placed,
     )
-    mock_repo.get_by_id.return_value = Order(
+    mock_repo.get_by_id.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Placed,
     )
     mock_repo.get_all.return_value = [
-        Order(
+        Orders(
             id=UUID("00000000-0000-0000-0000-000000000001"),
             user_id=UUID("00000000-0000-0000-0000-000000000001"),
             total_price=100.00,
@@ -36,45 +36,45 @@ def mock_order_repository():
         )
     ]
     mock_repo.get_by_ids.return_value = [
-        Order(
+        Orders(
             id=UUID("00000000-0000-0000-0000-000000000001"),
             user_id=UUID("00000000-0000-0000-0000-000000000001"),
             total_price=100.00,
             status_code=OrderStatus.Placed,
         )
     ]
-    mock_repo.update.return_value = Order(
+    mock_repo.update.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Placed,
     )
-    mock_repo.soft_delete.return_value = Order(
+    mock_repo.soft_delete.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Placed,
     )
     mock_repo.delete.return_value = None
-    mock_repo.update_status.return_value = Order(
+    mock_repo.update_status.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Confirmed,
     )
-    mock_repo.mark_as_complete.return_value = Order(
+    mock_repo.mark_as_complete.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Delivered,
     )
-    mock_repo.cancel_order.return_value = Order(
+    mock_repo.cancel_order.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,
         status_code=OrderStatus.Cancelled,
     )
-    mock_repo.return_order.return_value = Order(
+    mock_repo.return_order.return_value = Orders(
         id=UUID("00000000-0000-0000-0000-000000000001"),
         user_id=UUID("00000000-0000-0000-0000-000000000001"),
         total_price=100.00,

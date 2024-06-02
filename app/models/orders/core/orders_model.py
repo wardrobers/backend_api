@@ -8,7 +8,7 @@ from app.models.common.cache_model import CachingMixin
 from app.models.common.search_model import SearchMixin
 
 
-class Order(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Orders(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "orders"
 
     total_price = Column(Numeric, nullable=False)
@@ -28,5 +28,9 @@ class Order(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
     # Relationships
-    transactions = relationship("Transactions", backref="orders")
-    order_items = relationship("OrderItems", backref="orders")
+    transactions = relationship(
+        "app.model.orders.payments.transactions_model.Transactions", backref="orders"
+    )
+    order_items = relationship(
+        "app.model.orders.core.order_items_model.OrderItems", backref="orders"
+    )

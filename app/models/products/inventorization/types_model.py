@@ -17,8 +17,14 @@ class Types(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     category_id = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id"))
 
     # Relationships
-    product = relationship("Products", secondary="product_types", backref="types")
-    product_types = relationship("ProductTypes", backref="types")
+    product = relationship(
+        "app.models.products.core.products_model.Products",
+        secondary="product_types",
+        backref="types",
+    )
+    product_types = relationship(
+        "app.models.products.inventorization.types_model.ProductTypes", backref="types"
+    )
 
 
 class ProductTypes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):

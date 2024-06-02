@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Strings
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.common.base_model import Base, BaseMixin
@@ -18,4 +18,4 @@ class RevolutDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixi
     )
 
     def __repr__(self):
-        return f"<RevolutDetails(uuid={self.id}, transaction_id={self.transaction_id})>"
+        return f"<RevolutDetails(id={self.id}, transaction_id={self.transaction_id})>"

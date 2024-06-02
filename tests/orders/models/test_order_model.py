@@ -3,7 +3,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
-from app.models.orders import Order, OrderItems, OrderStatus
+from app.models.orders import OrderItems, Orders, OrderStatus
 from app.models.orders.payments import Transactions
 from app.models.products import Products
 from app.models.users.core.users_model import Users
@@ -34,7 +34,7 @@ async def test_order_creation(
     session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test creating a new order."""
-    order = Order(
+    order = Orders(
         user_id=test_user.id, total_price=100.00, status_code=OrderStatus.Placed
     )
     session.add(order)
@@ -47,7 +47,7 @@ async def test_order_creation_with_order_items(
     session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test creating an order with associated order items."""
-    order = Order(
+    order = Orders(
         user_id=test_user.id, total_price=100.00, status_code=OrderStatus.Placed
     )
     order_item = OrderItems(
@@ -67,7 +67,7 @@ async def test_order_creation_with_transaction(
     session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test creating an order with associated transaction."""
-    order = Order(
+    order = Orders(
         user_id=test_user.id, total_price=100.00, status_code=OrderStatus.Placed
     )
     transaction = Transactions(order_id=order.id, amount=100.00, currency="USD")
@@ -83,7 +83,7 @@ async def test_calculate_total_price(
     session: AsyncSession, test_product: Products, test_user: Users
 ):
     """Test calculating the total price of an order item, including discounts."""
-    order = Order(
+    order = Orders(
         user_id=test_user.id, total_price=100.00, status_code=OrderStatus.Placed
     )
     order_item = OrderItems(
@@ -105,4 +105,4 @@ async def test_calculate_total_price(
 # - Marking an order as complete
 # - Cancelling an order
 # - Returning an order
-# - Tests for other Order model methods like get_items, get_total_price, etc.
+# - Tests for other Orders model methods like get_items, get_total_price, etc.

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Numeric, String
+from sqlalchemy import Column, DateTime, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
@@ -40,9 +40,18 @@ class Transactions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin)
     )
 
     # Relationships
-    revolut_details = relationship("RevolutDetails", backref="transactions")
-    stripe_details = relationship("StripeDetails", backref="transactions")
-    lender_payment = relationship("LenderPayments", backref="transactions")
+    revolut_details = relationship(
+        "app.models.orders.payments.revolut_details_model.RevolutDetails",
+        backref="transactions",
+    )
+    stripe_details = relationship(
+        "app.models.orders.payments.stripe_details_model.StripeDetails",
+        backref="transactions",
+    )
+    lender_payment = relationship(
+        "app.models.orders.paymentslender_payments_model.LenderPayments",
+        backref="transactions",
+    )
 
     def __repr__(self):
-        return f"<Transaction(uuid={self.id}, amount={self.amount}, currency='{self.currency}', status='{self.status}')>"
+        return f"<Transaction(id={self.id}, amount={self.amount}, currency='{self.currency}', status='{self.status}')>"

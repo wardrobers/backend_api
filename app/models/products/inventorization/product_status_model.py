@@ -25,4 +25,6 @@ class ProductStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     name = Column(SQLAEnum(ProductCurrentStatus), nullable=False)
 
     # Relationships
-    product = relationship("Products", backref="product_status")
+    product = relationship(
+        "app.models.products.core.products_model.Products", backref="product_status"
+    )

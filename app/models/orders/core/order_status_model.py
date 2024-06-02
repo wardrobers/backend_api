@@ -29,4 +29,6 @@ class OrderStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
     # Relationships
-    order = relationship("Order", backref="order_status")
+    order = relationship(
+        "app.model.orders.core.order_model.Orders", backref="order_status"
+    )

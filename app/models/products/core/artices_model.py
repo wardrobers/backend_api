@@ -59,9 +59,25 @@ class Articles(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
     # Relationships
-    specification = relationship("Specificatios", backref="articles")
-    cleaning_logs = relationship("CleaningLogs", backref="articles")
-    repair_logs = relationship("RepairLogs", backref="articles")
-    lender_payments = relationship("LenderPayments", backref="articles")
-    user_saved_items = relationship("UserSavedItems", backref="articles")
-    order_items = relationship("OrderItems", backref="articles")
+    specification = relationship(
+        "app.model.products.maintenance.specifications_model.Specifications",
+        backref="articles",
+    )
+    cleaning_logs = relationship(
+        "app.model.products.maintenance.cleaning_log_model.CleaningLogs",
+        backref="articles",
+    )
+    repair_logs = relationship(
+        "app.model.products.maintenance.repair_log_model.RepairLogs", backref="articles"
+    )
+    lender_payments = relationship(
+        "app.model.orders.payments.lender_payments_model.LenderPayments",
+        backref="articles",
+    )
+    user_saved_items = relationship(
+        "app.model.users.activity.user_saved_items_model.UserSavedItems",
+        backref="articles",
+    )
+    order_items = relationship(
+        "app.model.orders.core.order_items_model.OrderItems", backref="articles"
+    )

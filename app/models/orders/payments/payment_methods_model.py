@@ -41,4 +41,7 @@ class PaymentMethods(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixi
     lender = Column(Boolean, default=False)
 
     # Relationships
-    transactions = relationship("Transactions", backref="payment_methods")
+    transactions = relationship(
+        "app.model.orders.payments.transactions_model.Transactions",
+        backref="payment_methods",
+    )

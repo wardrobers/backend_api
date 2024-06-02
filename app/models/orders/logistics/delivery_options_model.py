@@ -15,4 +15,7 @@ class DeliveryOptions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMix
     active = Column(Boolean, default=True)
 
     # Relationships
-    shipping_details = relationship("ShippingDetails", backref="delivery_options")
+    shipping_details = relationship(
+        "app.model.orders.logistics.shipping_details_model.ShippingDetails",
+        backref="delivery_options",
+    )

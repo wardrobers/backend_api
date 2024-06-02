@@ -27,16 +27,20 @@ class PeerToPeerLogistics(Base, BaseMixin, SearchMixin, CachingMixin, BulkAction
 
     # Relationships
     lender_user = relationship(
-        "Users",
+        "app.model.users.core.users_model.Users",
         foreign_keys=[lender_user_id],
         backref=backref("lender_logistics", uselist=True),
     )
     renter_user = relationship(
-        "Users",
+        "app.model.users.core.users_model.Users",
         foreign_keys=[renter_user_id],
         backref=backref("renter_logistics", uselist=True),
     )
-    order_item = relationship("OrderItem", backref=backref("logistics", uselist=True))
+    order_item = relationship(
+        "app.model.orders.core.order_items_model.OrderItems",
+        backref=backref("logistics", uselist=True),
+    )
     shipping_detail = relationship(
-        "ShippingDetail", backref=backref("logistics", uselist=True)
+        "app.model.orders.logistics.shipping_details_model.ShippingDetail",
+        backref=backref("logistics", uselist=True),
     )

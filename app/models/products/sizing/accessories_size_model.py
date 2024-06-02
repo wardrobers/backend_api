@@ -13,4 +13,6 @@ class AccessoriesSize(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMix
     name = Column(String)
 
     # Relationships
-    product = relationship("Products", backref="accessories_size")
+    product = relationship(
+        "app.models.products.core.products_model.Products", backref="accessories_size"
+    )

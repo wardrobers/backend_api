@@ -14,4 +14,6 @@ class SizeSystems(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     description = Column(Text)
 
     # Relationships
-    sizings = relationship("Sizing", back_populates="size_system")
+    sizings = relationship(
+        "app.models.products.sizing.sizing_model.Sizing", back_populates="size_system"
+    )

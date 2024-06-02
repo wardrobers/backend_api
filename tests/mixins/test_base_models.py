@@ -7,7 +7,7 @@ from sqlalchemy.orm import UUID
 
 from app.database.session import get_async_session
 from app.models.common import Base, BaseMixin
-from app.models.orders.core import Order, OrderItems
+from app.models.orders.core import OrderItems, Orders
 from app.models.products.core import Articles, Products, StockKeepingUnits
 from app.models.users.core import UserInfo, Users
 
@@ -180,7 +180,7 @@ async def test_base_mixin_delete_already_deleted():
 # Test cases for filtering, pagination, and other base mixin methods can be added here.
 
 
-# Specific model tests for Users, UserInfo, Products, StockKeepingUnits, Articles, Order, etc.
+# Specific model tests for Users, UserInfo, Products, StockKeepingUnits, Articles, Orders, etc.
 @pytest.mark.asyncio
 async def test_user_creation_with_info(session: AsyncSession):
     """Test creating a new Users with associated UserInfo."""
@@ -244,7 +244,7 @@ async def test_product_creation_with_stock_and_article(session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_order_creation_with_order_items(session: AsyncSession):
-    """Test creating an Order with associated OrderItems."""
+    """Test creating an Orders with associated OrderItems."""
     product = Products(
         name="Test Product", sku_product="SKU123"
     )  # Add a Product for testing
@@ -255,7 +255,7 @@ async def test_order_creation_with_order_items(session: AsyncSession):
     session.add(user)
     await session.commit()
 
-    order = Order(user_id=user.id, total_price=100.00)
+    order = Orders(user_id=user.id, total_price=100.00)
     order_item = OrderItems(
         order_id=order.id,
         article_id=UUID("00000000-0000-0000-0000-000000000001"),

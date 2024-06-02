@@ -13,4 +13,6 @@ class Colors(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     name = Column(String)
 
     # Relationships
-    variant = relationship("Variants", backref="colors")
+    variant = relationship(
+        "app.models.products.core.variants_model.Variants", backref="colors"
+    )

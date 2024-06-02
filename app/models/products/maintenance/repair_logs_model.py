@@ -11,14 +11,13 @@ from app.models.common.search_model import SearchMixin
 class RepairLogs(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     __tablename__ = "repair_logs"
 
-    description = Column(Text, nullable=True, comment="Описание")
-    cost = Column(Numeric, nullable=True, comment="Цена ремонта")
-    repair_date = Column(DateTime, nullable=False, comment="Дата ремонта")
+    description = Column(Text, nullable=True)
+    cost = Column(Numeric, nullable=True)
+    repair_date = Column(DateTime, nullable=False)
 
     # Foreign Keys
     article_id = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("articles.id"),
         nullable=False,
-        comment="Индетифекатор",
     )

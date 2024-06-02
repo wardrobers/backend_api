@@ -20,7 +20,7 @@ class OrderPromotions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMix
     )
 
     # Relationships
-    order = relationship("Order", backref=backref("order_promotions", uselist=True))
+    order = relationship("Orders", backref=backref("order_promotions", uselist=True))
     promotion = relationship(
         "Promotion", backref=backref("order_promotions", uselist=True)
     )

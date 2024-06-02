@@ -13,4 +13,7 @@ class TypesOfOperations(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsM
     name = Column(String, nullable=True, default=None)
 
     # Relationships
-    articles = relationship("Articles", backref="types_of_operations")
+    articles = relationship(
+        "app.models.products.core.articles_model.Articles",
+        backref="types_of_operations",
+    )

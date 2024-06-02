@@ -16,4 +16,6 @@ class ClothingSizes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     skirt_length = Column(Numeric, nullable=True)
 
     # Relationships
-    product = relationship("Products", backref="clothing_sizes")
+    product = relationship(
+        "app.models.products.core.products_model.Products", backref="clothing_sizes"
+    )

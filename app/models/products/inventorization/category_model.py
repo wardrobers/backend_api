@@ -15,12 +15,24 @@ class Categories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     is_default = Column(Boolean)
 
     # Relationships
-    materials = relationship("Materials", backref="categories")
-    product_categories = relationship("ProductCategories", backref="categories")
-    categories_for_user = relationship("CategoriesForUser", backref="categories")
-    types = relationship("Types", backref="categories")
-    pricing_tiers = relationship("PricingTier", backref="categories")
-    price_multiplier = relationship("PriceMultipliers", backref="categories")
+    materials = relationship(
+        "app.model.products.product_details.materials_model.Materials",
+        backref="categories",
+    )
+    product_categories = relationship(
+        "app.models.products.inventorization.categories_model.ProductCategories",
+        backref="categories",
+    )
+    types = relationship(
+        "app.models.products.inventorization.types_model.Types", backref="categories"
+    )
+    pricing_tiers = relationship(
+        "app.model.pricing.pricing_tier_model.PricingTier", backref="categories"
+    )
+    price_multiplier = relationship(
+        "app.model.pricing.price_multipliers_model.PriceMultipliers",
+        backref="categories",
+    )
 
 
 class ProductCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):

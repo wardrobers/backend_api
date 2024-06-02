@@ -38,7 +38,7 @@ class Users(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
         secondary="user_roles",
         backref="users",
     )
-    order = relationship("app.models.orders.core.order_model.Order", backref="users")
+    order = relationship("app.models.orders.core.order_model.Orders", backref="users")
     subscriptions = relationship(
         "app.models.subscriptions.subscriptions_model.Subscriptions", backref="users"
     )

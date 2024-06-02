@@ -13,4 +13,6 @@ class ClaspType(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     name = Column(String, nullable=True)
 
     # Relationships
-    product = relationship("Products", backref="clasp_types")
+    product = relationship(
+        "app.models.products.core.products_model.Products", backref="clasp_types"
+    )

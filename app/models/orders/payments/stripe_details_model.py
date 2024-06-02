@@ -28,4 +28,4 @@ class StripeDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
     )
 
     def __repr__(self):
-        return f"<StripeDetails(uuid={self.id}, transaction_id={self.transaction_id})>"
+        return f"<StripeDetails(id={self.id}, transaction_id={self.transaction_id})>"

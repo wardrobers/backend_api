@@ -44,4 +44,7 @@ class ShippingDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMix
     )
 
     # Relationships
-    order_items = relationship("OrderItems", back_populates="shipping_details")
+    order_items = relationship(
+        "app.model.orders.core.order_items_model.OrderItems",
+        back_populates="shipping_details",
+    )
