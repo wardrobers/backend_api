@@ -4,14 +4,14 @@ from enum import Enum
 from fastapi import HTTPException
 from firebase_admin import auth as firebase_auth
 from sqlalchemy import delete, insert, select, update
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.subscriptions import Subscriptions
 from app.models.users import UserAddresses, UserInfo, UserRoles, Users
-from app.repositories import UsersRepository
-from app.services import AuthService
+from app.repositories.users import UsersRepository
+from app.services.users import AuthService
 
 
 class UpdateContext(Enum):

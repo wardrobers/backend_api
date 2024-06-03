@@ -1,8 +1,8 @@
 # tests/products/models/test_product_model.py
 import pytest
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.pricing import PricingTier
 from app.models.products.core import (

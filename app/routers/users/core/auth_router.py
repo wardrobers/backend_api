@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_async_session
-from app.services.users.auth_service import AuthService
 from app.models.users import Users
-from app.routers.users import auth_handler
+from app.repositories.users import UsersRepository
+from app.services.users import AuthService, UsersService
 
 router = APIRouter()
 
@@ -27,24 +27,9 @@ async def register_user(
     Error Codes:
         - 400 Bad Request: If the login is already in use or passwords don't match.
     """
-    if user_create.password != user_create.password_confirmation:
-        raise HTTPException(status_code=400, detail="Passwords don't match")
-
-    existing_user = await Users.get_user_by_login(db_session, user_create.login)
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Login already in use")
-
-    try:
-        Users.validate_password_strength(user_create.password)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    hashed_password = AuthService.get_password_hash(user_create.password)
-    new_user = Users(login=user_create.login, password=hashed_password)
-    db_session.add(new_user)
-    await db_session.commit()
-    await db_session.refresh(new_user)
-    return new_user
+    user_repository = UsersRepository(db_session)
+    user_service = UsersService(user_repository)
+    return await user_service.register_user(user_create)
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
@@ -63,13 +48,13 @@ async def login_user(login_data, db_session: AsyncSession = Depends(get_async_se
     Error Codes:
         - 401 Unauthorized: If the provided credentials are incorrect.
     """
-    user = await auth_handler.authenticate_user(
+    user = await AuthService.authenticate_user(
         db_session, login_data.login, login_data.password
     )
     if not user:
         raise HTTPException(status_code=401, detail="Incorrect login or password")
 
-    access_token = auth_handler.create_access_token(data={"sub": user.login})
+    access_token = AuthService.create_access_token(data={"sub": user.login})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -134,7 +119,7 @@ async def reset_password(
         user = await Users.get_user_by_login(db, reset_data.login)
         if not user:
             raise HTTPException(status_code=404, detail="Users not found")
-        if not auth_handler.verify_password(reset_data.old_password, user.password):
+        if not AuthService.verify_password(reset_data.old_password, user.password):
             raise HTTPException(status_code=400, detail="Incorrect old password")
     else:
         raise HTTPException(status_code=400, detail="No password reset method provided")

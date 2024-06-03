@@ -3,9 +3,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.models.users.core.users_model import Users
-from app.models.users.profile.user_addresses_model import UserAddresses
-from app.routers.users import auth_handler
+from app.models.users import Users
+from app.repositories.users import UsersRepository
+from app.schemas.users import UserAddressUpdate
+from app.services.users import AuthService, UsersService
 
 router = APIRouter()
 
@@ -13,8 +14,8 @@ router = APIRouter()
 @router.post("/addresses", status_code=status.HTTP_201_CREATED)
 async def add_user_address(
     address_data,
-    db: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
+    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
 ):
     """
     Adds a new address to the user's profile.
@@ -28,19 +29,19 @@ async def add_user_address(
     Response (Success - 201 Created):
         - UserAddressUpdate (schema): The newly created address object in JSON format.
     """
-    new_address = UserAddresses(user_id=current_user.id, **address_data.dict())
-    db.add(new_address)
-    await db.commit()
-    await db.refresh(new_address)
-    return new_address
+    user_service = UsersService(UsersRepository(db_session))
+    await user_service.add_or_update_address(
+        db_session, current_user.id, address_data.dict()
+    )
+    return address_data
 
 
 @router.put("/addresses")
 async def update_user_address(
     address_id: UUID,
-    address_update,
-    db: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
+    address_update: UserAddressUpdate,
+    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
 ):
     """
     Updates a specific address belonging to the current user.
@@ -57,24 +58,18 @@ async def update_user_address(
     Error Codes:
         - 404 Not Found: If no address with the given address_id is found.
     """
-    address = next((a for a in current_user.addresses if a.id == address_id), None)
-    if not address:
-        raise HTTPException(status_code=404, detail="Address not found")
-
-    update_data = address_update.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(address, key, value)
-
-    await db.commit()
-    await db.refresh(address)
-    return address
+    user_service = UsersService(UsersRepository(db_session))
+    await user_service.add_or_update_address(
+        db_session, current_user.id, address_update.model_dump(), address_id=address_id
+    )
+    return address_update
 
 
 @router.delete("/addresses", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_address(
     address_id: UUID,
-    db: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
+    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
 ):
     """
     Deletes a specific address from the current user's profile.
@@ -90,4 +85,4 @@ async def delete_user_address(
     if not address:
         raise HTTPException(status_code=404, detail="Address not found")
 
-    await address.delete(db)
+    await address.delete(db_session)

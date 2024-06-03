@@ -1,4 +1,3 @@
-from .products_repository import ProductsRepository
-from .users_repository import UsersRepository
+from . import products, users
 
-__all__ = ["UsersRepository"]
+__all__ = ["users", "products"]

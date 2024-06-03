@@ -2,7 +2,7 @@
 from unittest.mock import MagicMock
 
 import pytest
-from sqlalchemy.orm import UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.users.core.users_model import UserInfo, Users
 from app.services.user_service import UserService

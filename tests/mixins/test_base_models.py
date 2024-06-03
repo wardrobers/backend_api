@@ -1,9 +1,9 @@
 # tests/common/test_base_models.py
 import pytest
 from sqlalchemy import Column, String, func
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.database.session import get_async_session
 from app.models.common import Base, BaseMixin

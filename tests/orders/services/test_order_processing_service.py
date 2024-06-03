@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from sqlalchemy import func
-from sqlalchemy.orm import UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.orders.core import OrderItems, Orders, OrderStatus
 from app.models.orders.payments import Transactions

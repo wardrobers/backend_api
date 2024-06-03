@@ -1,7 +1,7 @@
 # tests/orders/models/test_order_model.py
 import pytest
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.orders import OrderItems, Orders, OrderStatus
 from app.models.orders.payments import Transactions

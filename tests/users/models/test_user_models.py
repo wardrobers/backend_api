@@ -1,7 +1,7 @@
 import pytest
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.authentication.security import AuthService
 from app.models.users.core import (

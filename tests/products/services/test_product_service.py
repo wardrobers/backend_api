@@ -2,7 +2,7 @@
 from unittest.mock import MagicMock
 
 import pytest
-from sqlalchemy.orm import UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.products.core import Articles, Products, StockKeepingUnits, Variants
 from app.models.products.product_details import ProductCategories
