@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy import JSON, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
@@ -40,3 +40,14 @@ class ProductTypes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin)
     type_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("types.id"), nullable=False, comment="Тип вещи"
     )
+
+
+class TypesFromUser(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+    __tablename__ = "types_from_user"
+
+    coefficient = Column(String)
+    raw = Column(JSON)
+
+    # Foreign keys
+    user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    type_id = mapped_column(UUID(as_uuid=True), ForeignKey("types.id"))

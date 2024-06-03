@@ -10,7 +10,7 @@ from .inventorization.occasional_categories_model import (
 from .inventorization.product_status_model import ProductCurrentStatus, ProductStatus
 from .inventorization.specifications_model import Specifications
 from .inventorization.stock_keeping_units_model import StockKeepingUnits
-from .inventorization.types_model import ProductTypes, Types
+from .inventorization.types_model import ProductTypes, Types, TypesFromUser
 from .maintenance.cleaning_logs_model import CleaningLogs
 from .maintenance.repair_logs_model import RepairLogs
 from .product_details.brand_model import Brand
@@ -26,6 +26,7 @@ from .sizing.sizing_model import Sizing
 
 __all__ = [
     "AccessoriesSize",
+    "TypesFromUser",
     "Articles",
     "Condition",
     "OwnerType",

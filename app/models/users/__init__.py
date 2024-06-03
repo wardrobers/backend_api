@@ -1,4 +1,3 @@
-from .activity.types_from_user_model import TypesFromUser
 from .activity.user_activity_model import UserActivity
 from .activity.user_basket_model import UserBasket
 from .activity.user_reviews_and_ratings_model import UserReviewsAndRatings
@@ -21,7 +20,6 @@ __all__ = [
     "DataPrivacyConsents",
     "UserInfo",
     "UserActivity",
-    "TypesFromUser",
     "UserSavedItems",
     "UserReviewsAndRatings",
     "AddressType",
