@@ -33,7 +33,7 @@ class SubscriptionAction(Enum):
 
 class UsersService:
     """
-    Service layer for business logic related to Users operations.
+    Service layer for business logic related to Users core managment operations.
     """
 
     def __init__(self, user_repository: UsersRepository):

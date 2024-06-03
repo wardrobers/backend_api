@@ -5,9 +5,9 @@ from pydantic import UUID4, BaseModel
 
 
 class AddressType(str, Enum):
-    Shipping = "Shipping"
-    Billing = "Billing"
-    Both = "Both"
+    SHIPPING = "Shipping"
+    BILLING = "Billing"
+    BOTH = "Both"
 
 
 class UserAddressBase(BaseModel):

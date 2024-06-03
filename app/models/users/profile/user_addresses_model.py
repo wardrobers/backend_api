@@ -12,12 +12,7 @@ from app.models.common import (
     CachingMixin,
     SearchMixin,
 )
-
-
-class AddressType(Enum):
-    Shipping = "Shipping"
-    Billing = "Billing"
-    Both = "Both"
+from app.schemas.users import AddressType
 
 
 class UserAddresses(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
