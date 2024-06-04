@@ -37,7 +37,9 @@ class UserAddressesService:
         """Updates an existing user address."""
         address = await self.user_address_repository.get_address_by_id(address_id)
         if not address or address.user_id != user_id:
-            raise HTTPException(status_code=404, detail="Address not found for this user")
+            raise HTTPException(
+                status_code=404, detail="Address not found for this user"
+            )
         return await self.user_address_repository.update_user_address(
             address_id, address_data
         )
@@ -46,5 +48,7 @@ class UserAddressesService:
         """Deletes a user address."""
         address = await self.user_address_repository.get_address_by_id(address_id)
         if not address or address.user_id != user_id:
-            raise HTTPException(status_code=404, detail="Address not found for this user")
+            raise HTTPException(
+                status_code=404, detail="Address not found for this user"
+            )
         await self.user_address_repository.delete_user_address(address_id)

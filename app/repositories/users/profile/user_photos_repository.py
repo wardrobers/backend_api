@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from fastapi import HTTPException, UploadFile
 from google.cloud import storage
@@ -34,43 +35,54 @@ class UserPhotosRepository:
             for photo in photos.scalars().all()
         ]
 
-    async def add_user_photo(self, user_id: UUID, photo_data: UploadFile) -> UserPhotos:
-        """Adds a new photo for the user, uploading it to GCS or simulating for local/testing."""
-
+    async def add_user_photo(
+        self, user_id: UUID, photo_data: UploadFile, image: bytes
+    ) -> UserPhotos:
+        """Adds a new photo, uploading to GCS or saving locally."""
         filename = f"user_{user_id}/{photo_data.filename}"
+        image_url = await self._upload_image(filename, image)
 
-        if self.environment == "production":
-            # Upload to GCS in production
-            await self._upload_to_gcs(filename, photo_data)
-            image_url = (
-                f"https://storage.googleapis.com/{self.gcp_bucket_name}/{filename}"
-            )
-        else:
-            # Simulate upload for local/testing
-            image_url = f"/images/{filename}"  # Or any other placeholder URL
-
-        # Create the photo object in the database
         new_photo = UserPhotos(user_id=user_id, image_url=image_url)
         self.db_session.add(new_photo)
         await self.db_session.commit()
         await self.db_session.refresh(new_photo)
-
         return new_photo
 
-    async def _upload_to_gcs(self, filename: str, photo_data: UploadFile):
-        """Uploads the photo data to GCS."""
+    async def _upload_image(self, filename: str, image: bytes) -> str:
+        """Handles image upload based on environment (GCS or local)."""
+        if self.environment == "production":
+            return await self._upload_to_gcs(filename, image)
+        else:
+            return self._save_locally(filename, image)
+
+    async def _upload_to_gcs(self, filename: str, image: bytes) -> str:
+        """Uploads the image to Google Cloud Storage."""
         bucket = self.storage_client.bucket(self.gcp_bucket_name)
         blob = bucket.blob(filename)
-        await blob.upload_from_file(
-            photo_data.file, content_type=photo_data.content_type
-        )
-        blob.make_public()  # Make the photo publicly accessible
+
+        # Upload from bytes
+        await blob.upload_from_string(
+            image, content_type="image/jpeg"
+        )  # Assuming JPEG after processing
+        blob.make_public()
+        return f"https://storage.googleapis.com/{self.gcp_bucket_name}/{filename}"
+
+    def _save_locally(self, filename: str, image: bytes) -> str:
+        """Saves the image to the local filesystem."""
+        image_dir = os.path.join(
+            "media", "images"
+        )  # Create 'media/images' if it doesn't exist
+        os.makedirs(image_dir, exist_ok=True)
+        filepath = os.path.join(image_dir, filename)
+
+        # Save image from bytes
+        with open(filepath, "wb") as f:
+            f.write(image)
+        return filepath
 
     async def delete_user_photo(self, user_id: UUID, photo_id: UUID) -> None:
-        """
-        Deletes a user's photo from the database and GCS (or simulates for local/testing).
-        """
-        photo = await self.db_session.execute(
+        """Deletes a user's photo from the database and storage."""
+        photo: Optional[UserPhotos] = await self.db_session.execute(
             select(UserPhotos).where(
                 UserPhotos.id == photo_id, UserPhotos.user_id == user_id
             )
@@ -80,14 +92,20 @@ class UserPhotosRepository:
             raise HTTPException(status_code=404, detail="Photo not found")
 
         if self.environment == "production":
-            # Delete from GCS in production
-            bucket = self.storage_client.bucket(self.gcp_bucket_name)
-            blob = bucket.blob(photo.image_url.split("/")[-1])
-            blob.delete()
+            await self._delete_from_gcs(photo.image_url)
         else:
-            # Simulate deletion for local/testing
-            pass  # No actual deletion needed in this environment
+            self._delete_locally(photo.image_url)
 
-        # Delete the photo record from the database
         await self.db_session.delete(photo)
         await self.db_session.commit()
+
+    async def _delete_from_gcs(self, image_url: str) -> None:
+        """Deletes the image from Google Cloud Storage."""
+        bucket = self.storage_client.bucket(self.gcp_bucket_name)
+        blob = bucket.blob(image_url.split("/")[-1])
+        blob.delete()
+
+    def _delete_locally(self, filepath: str) -> None:
+        """Deletes the image from the local filesystem."""
+        if os.path.exists(filepath):
+            os.remove(filepath)

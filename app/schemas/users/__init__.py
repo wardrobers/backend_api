@@ -45,10 +45,19 @@ from .profile.user_addresses_schema import (
     UserAddressUpdate,
 )
 from .profile.user_photos_schema import UserPhotoBase, UserPhotoCreate, UserPhotoRead
-from .roles.roles_schema import RoleAction, RoleAssign, RoleBase, RoleRead
+from .roles.roles_schema import (
+    RoleAction,
+    RoleAssign,
+    RoleBase,
+    RoleCreate,
+    RoleRead,
+    RoleUpdate,
+)
 
 __all__ = [
     "RoleAction",
+    "RoleCreate",
+    "RoleUpdate",
     "UpdateContext",
     "PasswordChange",
     "PasswordResetConfirm",
