@@ -23,10 +23,25 @@ class UserPhotosService:
         """Retrieves all photos for a user."""
         return await self.user_photo_repository.get_user_photos(user_id)
 
-    async def add_user_photo(self, user_id: UUID, photo_data: UploadFile) -> UserPhotos:
-        """Adds a new photo for the user."""
+    async def add_user_photo(
+        self, user_id: UUID, photo_data: UploadFile
+    ) -> UserPhotos:
+        """Adds a new photo for the user, performing checks and logic."""
+
+        # Example of complex logic:
+        # - Check if the user has reached the maximum allowed number of photos.
+        # - Resize/compress the image before uploading.
+        # - Generate thumbnails.
+        # ...
+
         return await self.user_photo_repository.add_user_photo(user_id, photo_data)
 
     async def delete_user_photo(self, user_id: UUID, photo_id: UUID) -> None:
-        """Deletes a photo for the user."""
+        """Deletes a user photo, handling authorization and additional logic."""
+
+        # Example of complex logic:
+        # - Check if the user is authorized to delete the photo (ownership, permissions).
+        # - Perform any necessary cleanup (e.g., deleting thumbnails).
+        # ...
+
         await self.user_photo_repository.delete_user_photo(user_id, photo_id)

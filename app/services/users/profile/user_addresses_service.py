@@ -1,4 +1,5 @@
 # app/services/users/user_service.py
+from fastapi import HTTPException
 from sqlalchemy.orm import UUID
 
 from app.models.users import UserAddresses
@@ -31,13 +32,19 @@ class UserAddressesService:
         )
 
     async def update_user_address(
-        self, address_id: UUID, address_data: UserAddressUpdate
+        self, user_id: UUID, address_id: UUID, address_data: UserAddressUpdate
     ) -> UserAddresses:
         """Updates an existing user address."""
+        address = await self.user_address_repository.get_address_by_id(address_id)
+        if not address or address.user_id != user_id:
+            raise HTTPException(status_code=404, detail="Address not found for this user")
         return await self.user_address_repository.update_user_address(
             address_id, address_data
         )
 
-    async def delete_user_address(self, address_id: UUID) -> None:
+    async def delete_user_address(self, user_id: UUID, address_id: UUID) -> None:
         """Deletes a user address."""
+        address = await self.user_address_repository.get_address_by_id(address_id)
+        if not address or address.user_id != user_id:
+            raise HTTPException(status_code=404, detail="Address not found for this user")
         await self.user_address_repository.delete_user_address(address_id)
