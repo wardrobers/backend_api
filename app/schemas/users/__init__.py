@@ -1,4 +1,9 @@
 from .activity.user_activity_schema import UserActivityBase, UserActivityRead
+from .activity.user_basket_schema import (
+    UserBasketBase,
+    UserBasketCreate,
+    UserBasketRead,
+)
 from .activity.user_reviews_and_ratings_schema import (
     UserReviewRatingBase,
     UserReviewRatingCreate,
@@ -14,8 +19,17 @@ from .core.data_privacy_consents_schema import (
     DataPrivacyConsentCreate,
     DataPrivacyConsentRead,
 )
-from .core.user_info_schema import UserInfoBase, UserInfoCreate, UserInfoUpdate
+from .core.user_info_schema import (
+    UserInfoBase,
+    UserInfoCreate,
+    UserInfoRead,
+    UserInfoUpdate,
+)
 from .core.users_schema import (
+    PasswordChange,
+    PasswordResetConfirm,
+    PasswordResetRequest,
+    UserLogin,
     UsersBase,
     UsersCreate,
     UsersDelete,
@@ -26,12 +40,22 @@ from .profile.user_addresses_schema import (
     AddressType,
     UserAddressBase,
     UserAddressCreate,
+    UserAddressRead,
     UserAddressUpdate,
 )
 from .profile.user_photos_schema import UserPhotoBase, UserPhotoCreate, UserPhotoRead
 from .roles.roles_schema import RoleAssign, RoleBase, RoleRead
 
 __all__ = [
+    "PasswordChange",
+    "PasswordResetConfirm",
+    "PasswordResetRequest",
+    "UserLogin",
+    "UserBasketRead",
+    "UserBasketCreate",
+    "UserBasketBase",
+    "UserAddressRead",
+    "UserInfoRead",
     "UserActivityBase",
     "UserActivityRead",
     "UserReviewRatingBase",

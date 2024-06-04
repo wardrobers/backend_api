@@ -4,13 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models.users import UserInfo, Users
 from app.repositories.users import UsersRepository
-from app.schemas.users import UserInfoUpdate, UsersUpdate
+from app.schemas.users import UserInfoRead, UserInfoUpdate, UsersRead, UsersUpdate
 from app.services.users import AuthService, UpdateContext, UsersService
 
 router = APIRouter()
 
 
-@router.get("/me")
+@router.get("/me", response_model=UsersRead)
 async def get_current_user_profile(
     current_user: Users = Depends(AuthService.get_current_user),
     db_session: AsyncSession = Depends(get_async_session),
@@ -27,7 +27,7 @@ async def get_current_user_profile(
     return await user_repository.get_user_by_login(current_user.login)
 
 
-@router.put("/me")
+@router.put("/me", response_model=UsersRead)
 async def update_current_user_profile(
     user_update: UsersUpdate,
     db_session: AsyncSession = Depends(get_async_session),
@@ -54,7 +54,7 @@ async def update_current_user_profile(
     return updated_user
 
 
-@router.put("/me/info", response_model=UserInfo)  # Updated response model
+@router.put("/me/info", response_model=UserInfoRead)
 async def update_current_user_info(
     user_info_update: UserInfoUpdate,
     db_session: AsyncSession = Depends(get_async_session),
@@ -67,7 +67,7 @@ async def update_current_user_info(
     user_service = UsersService(user_repository)
     await user_service.update_user_info(
         current_user.id,
-        user_info_update.dict(exclude_unset=True),
+        user_info_update.model_dump(exclude_unset=True),
         UpdateContext.FULL_PROFILE,
     )
     await db_session.refresh(current_user)
