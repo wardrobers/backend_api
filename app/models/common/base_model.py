@@ -4,13 +4,7 @@ from sqlalchemy import Column, DateTime, func, select, update
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
-from sqlalchemy.orm import (
-    DeclarativeMeta,
-    RelationshipProperty,
-    aliased,
-    declared_attr,
-    mapped_column,
-)
+from sqlalchemy.orm import RelationshipProperty, aliased, declared_attr, mapped_column
 
 
 class ModelBase:

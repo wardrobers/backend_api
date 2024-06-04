@@ -2,7 +2,7 @@
 from typing import Optional
 
 from fastapi import HTTPException
-from sqlalchemy.orm import UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.users import Users
 from app.repositories.users import UsersRepository

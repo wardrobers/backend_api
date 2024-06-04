@@ -2,8 +2,8 @@ from typing import Optional
 
 from fastapi import HTTPException
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.users import UserInfo
 from app.schemas.users import UserInfoCreate, UserInfoUpdate

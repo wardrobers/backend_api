@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserInfoRepository, UsersRepository
+from app.schemas.common import Message
 from app.schemas.users import (
     UpdateContext,
     UserInfoRead,
@@ -92,7 +93,7 @@ async def update_current_user_info(
     )
 
 
-@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=Message)
 async def delete_current_user_account(
     current_user: Users = Depends(AuthService.get_current_user),
     user_service: UsersService = Depends(get_user_service),
@@ -112,7 +113,7 @@ async def delete_current_user_account(
     await user_service.delete_user(current_user.id, current_user)
 
 
-@router.put("/notifications", status_code=status.HTTP_200_OK)
+@router.put("/notifications", status_code=status.HTTP_200_OK, response_model=Message)
 async def update_notification_preferences(
     enabled: bool,
     current_user: Users = Depends(AuthService.get_current_user),

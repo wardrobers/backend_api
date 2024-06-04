@@ -2,7 +2,7 @@
 import cv2
 import numpy as np
 from fastapi import HTTPException, UploadFile, status
-from sqlalchemy.orm import UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.repositories.users import UserPhotosRepository
 from app.schemas.users import UserPhotoRead

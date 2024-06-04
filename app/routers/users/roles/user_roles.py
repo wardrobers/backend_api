@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
 from app.repositories.users import UserRoleRepository
+from app.schemas.common import Message
 from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
 from app.services.users import UserRolesService
 
@@ -96,7 +97,9 @@ async def update_role(
     return await user_roles_service.update_role(role_id, role_data)
 
 
-@router.delete("/{role_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{role_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=Message
+)
 async def delete_role(
     role_id: UUID,
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
@@ -116,7 +119,11 @@ async def delete_role(
     await user_roles_service.delete_role(role_id)
 
 
-@router.post("/{role_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post(
+    "/{role_id}/users/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=Message,
+)
 async def assign_role_to_user(
     role_id: UUID,
     user_id: UUID,
@@ -139,7 +146,11 @@ async def assign_role_to_user(
     await user_roles_service.assign_role_to_user(db_session, user_id, role_id)
 
 
-@router.delete("/{role_id}/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{role_id}/users/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=Message,
+)
 async def remove_role_from_user(
     role_id: UUID,
     user_id: UUID,

@@ -4,8 +4,8 @@ from typing import Optional
 from fastapi import HTTPException, UploadFile
 from google.cloud import storage
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.users import UserPhotos
 from app.schemas.users import UserPhotoRead

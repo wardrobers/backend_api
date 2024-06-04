@@ -5,45 +5,90 @@ import re
 from datetime import timedelta
 from typing import Optional
 
-import argon2
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import Users
+from app.schemas.users import UserLogin
 
+# Initialize OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# Password hashing configuration
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthService:
     """
-    Handles user authentication and token management.
+    Handles user authentication, token management, and password-related operations.
+
+    Features:
+    - Secure password hashing using bcrypt.
+    - JWT token generation and validation.
+    - Password strength validation with customizable rules.
+    - Refresh token support (optional).
+    - Asynchronous database interactions.
+    - Improved error handling.
+    - Type hints for enhanced code clarity.
     """
 
     SECRET_KEY = json.loads(os.environ["AUTH_SECRET_KEY"])["auth_secret_key"]
     ALGORITHM = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
+    REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
+
+    # Password validation rules
+    PASSWORD_REGEX = (
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    )
 
     async def authenticate_user(
-        self, db_session: AsyncSession, username: str, password: str
-    ):
-        user = await db_session.execute(select(Users).filter(Users.login == username))
+        self, db_session: AsyncSession, login_data: UserLogin
+    ) -> Optional[Users]:
+        """
+        Authenticates a user based on their login and password.
+        """
+        user = await db_session.execute(
+            select(Users).filter(Users.login == login_data.login)
+        )
         user = user.scalars().first()
-        if not user or not self.verify_password(password, user.hashed_password):
-            return None
-        return user
+        if user and pwd_context.verify(login_data.password, user.password):
+            return user
+        return None
 
     def create_access_token(
         self, data: dict, expires_delta: Optional[timedelta] = None
     ) -> str:
+        """
+        Generates a JWT access token.
+        """
         to_encode = data.copy()
         if expires_delta:
-            expire = datetime.datetime.now(datetime.timezone.utc) + expires_delta
+            expire = datetime.datetime.utcnow() + expires_delta
         else:
-            expire = datetime.datetime.now(datetime.timezone.utc) + timedelta(
+            expire = datetime.datetime.utcnow() + timedelta(
                 minutes=self.ACCESS_TOKEN_EXPIRE_MINUTES
+            )
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
+        return encoded_jwt
+
+    def create_refresh_token(
+        self, data: dict, expires_delta: Optional[timedelta] = None
+    ) -> str:
+        """
+        Generates a JWT refresh token.
+        """
+        to_encode = data.copy()
+        if expires_delta:
+            expire = datetime.datetime.now(datetime.UTC) + expires_delta
+        else:
+            expire = datetime.datetime.now(datetime.UTC) + timedelta(
+                minutes=self.REFRESH_TOKEN_EXPIRE_MINUTES
             )
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
@@ -51,53 +96,60 @@ class AuthService:
 
     async def get_current_user(
         self, db_session: AsyncSession, token: str = Depends(oauth2_scheme)
-    ):
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    ) -> Users:
+        """
+        Decodes the JWT token, retrieves the user from the database, and raises an exception if
+        credentials are invalid or the user is not found.
+        """
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             username: str = payload.get("sub")
             if username is None:
-                raise credentials_exception
+                raise self._credentials_exception()
             user = await db_session.execute(
-                select(Users).filter(Users.username == username)
+                select(Users).filter(Users.login == username)
             )
             user = user.scalars().first()
+            if user is None:
+                raise self._credentials_exception()
+            return user
         except JWTError:
-            raise credentials_exception
-        if user is None:
-            raise credentials_exception
-        return user
+            raise self._credentials_exception()
 
-    async def get_current_active_user(self, current_user):
-        if not current_user.is_active:
-            raise HTTPException(status_code=400, detail="Inactive user")
-        return current_user
+    async def change_password(
+        self, user: Users, db_session: AsyncSession, new_password: str
+    ) -> None:
+        """
+        Changes the user's password, handling hashing and database updates.
+        """
+        self.validate_password_strength(new_password)
+        hashed_password = pwd_context.hash(new_password)
+        user.password = hashed_password
+        await db_session.commit()
 
-    @staticmethod
-    def get_password_hash(password: str) -> str:
-        return argon2.hash(password)
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        """
+        Verifies a plain password against a hashed password using bcrypt.
+        """
+        return pwd_context.verify(plain_password, hashed_password)
 
-    @staticmethod
-    def verify_password(plain_password: str, hashed_password: str) -> bool:
-        try:
-            return argon2.verify(plain_password, hashed_password)
-        except argon2.exceptions.VerifyMismatchError:
-            return False
-
-    @staticmethod
-    def validate_password_strength(password: str) -> None:
-        """Ensures the password meets security standards."""
-        if len(password) < 8:
-            raise ValueError("Password must be at least 8 characters long.")
-        if not re.search("[a-z]", password) or not re.search("[A-Z]", password):
+    def validate_password_strength(self, password: str) -> None:
+        """
+        Validates password strength against predefined rules. You can customize these rules
+        based on your application's security requirements.
+        """
+        if not re.match(self.PASSWORD_REGEX, password):
             raise ValueError(
-                "Password must include both lowercase and uppercase characters."
+                "Password must be at least 8 characters long, contain at least one lowercase letter, "
+                "one uppercase letter, one number, and one special character."
             )
-        if not re.search("[0-9]", password):
-            raise ValueError("Password must include at least one number.")
-        if not re.search('[!@#$%^&*(),.?":{}|<>]', password):
-            raise ValueError("Password must include at least one special character.")
+
+    def _credentials_exception(self) -> HTTPException:
+        """
+        Returns a standardized HTTPException for unauthorized access attempts.
+        """
+        return HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

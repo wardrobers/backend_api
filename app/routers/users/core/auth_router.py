@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserInfoRepository, UsersRepository
+from app.schemas.common import Message
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
@@ -51,7 +52,7 @@ async def register_user(
 
 
 # --- Login ---
-@router.post("/login", status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=Message)
 async def login_user(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -89,7 +90,7 @@ async def login_user(
 
 
 # --- Password Reset Confirmation ---
-@router.post("/password/reset", status_code=status.HTTP_200_OK)
+@router.post("/password/reset", status_code=status.HTTP_200_OK, response_model=Message)
 async def reset_password(
     reset_data: PasswordResetConfirm,
 ):
@@ -127,10 +128,9 @@ async def reset_password(
 
 
 # --- Password Change Route ---
-@router.put("/password/change", status_code=status.HTTP_200_OK)
+@router.put("/password/change", status_code=status.HTTP_200_OK, response_model=Message)
 async def change_password(
-    password_change: PasswordChange,  # Pydantic schema for password change
-    db: AsyncSession = Depends(get_async_session),
+    password_change: PasswordChange,
     current_user: Users = Depends(AuthService.get_current_user),
 ):
     """
@@ -150,9 +150,6 @@ async def change_password(
             - If the new password doesn't meet strength requirements.
         - 401 Unauthorized: If the user is not authenticated.
     """
-    user_repository = UsersRepository(db)
-    user_service = UsersService(user_repository)
-
     # Verify the current password
     if not AuthService.verify_password(
         password_change.current_password, current_user.password
@@ -161,13 +158,11 @@ async def change_password(
 
     # Validate the new password
     try:
-        user_service.validate_password_strength(password_change.new_password)
+        AuthService.validate_password_strength(password_change.new_password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the password
-    hashed_password = AuthService.get_password_hash(password_change.new_password)
-    current_user.password = hashed_password
-    await db.commit()
+    await AuthService.change_password(current_user, password_change.new_password)
 
     return {"message": "Password changed successfully"}

@@ -1,6 +1,6 @@
 # app/services/users/user_service.py
 from fastapi import HTTPException
-from sqlalchemy.orm import UUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.users import UserInfo
 from app.repositories.users import UserInfoRepository

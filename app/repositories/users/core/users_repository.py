@@ -2,9 +2,9 @@ from typing import Optional
 
 from fastapi import HTTPException
 from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.models.users import Users
 from app.schemas.users import UsersCreate, UsersUpdate

@@ -1,7 +1,7 @@
 # app/services/users/user_service.py
 from fastapi import HTTPException, status
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.repositories.users import UserRoleRepository
 from app.schemas.users import RoleAction, RoleCreate, RoleRead, RoleUpdate

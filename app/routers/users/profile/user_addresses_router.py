@@ -1,11 +1,12 @@
 # backend_API/app/routers/users/profile/user_addresses_router.py
 from fastapi import APIRouter, Depends, status
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import UUID
 
 from app.database.session import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserAddressRepository
+from app.schemas.common import Message
 from app.schemas.users import UserAddressCreate, UserAddressRead, UserAddressUpdate
 from app.services.users import AuthService
 from app.services.users.profile.user_addresses_service import UserAddressesService
@@ -96,7 +97,9 @@ async def update_user_address(
 
 
 # --- Delete User Address ---
-@router.delete("/{address_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{address_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=Message
+)
 async def delete_user_address(
     address_id: UUID,
     current_user: Users = Depends(AuthService.get_current_user),
