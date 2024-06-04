@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_async_session
 from app.models.users import Users
-from app.repositories.users import UsersRepository
+from app.repositories.users import UserInfoRepository, UsersRepository
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
-    PasswordResetRequest,
     UserLogin,
     UsersCreate,
     UsersRead,
@@ -17,56 +17,62 @@ from app.services.users import AuthService, UsersService
 router = APIRouter()
 
 
+# Dependency to get user service
+async def get_user_service(
+    db_session: AsyncSession = Depends(get_async_session),
+):
+    users_repository = UsersRepository(db_session)
+    user_info_repository = UserInfoRepository(db_session)
+    return UsersService(users_repository, user_info_repository)
+
+
 # --- Registration ---
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UsersRead)
 async def register_user(
-    user_create: UsersCreate, db_session: AsyncSession = Depends(get_async_session)
+    user_create: UsersCreate,
+    user_service: UsersService = Depends(get_user_service),
 ):
     """
     Registers a new user.
 
-    Request Body:
-        - login (str): Unique user login.
-        - password (str): User's password (at least 8 characters).
-        - password_confirmation (str): Confirmation of the password.
+    **Request Body:**
+        - `UsersCreate` (schema): The new user data.
 
-    Response (Success - 201 Created):
-        - UsersRead: The newly created user object.
+    **Response (Success - 201 Created):**
+        - `UsersRead` (schema): The newly created user object.
 
-    Error Codes:
+    **Error Codes:**
         - 400 Bad Request:
             - If the login is already in use.
             - If the passwords don't match.
             - If the password doesn't meet strength requirements.
     """
-    user_repository = UsersRepository(db_session)
-    user_service = UsersService(user_repository)
-
-    return await user_service.register_user(user_create)
+    return await user_service.create_user(user_create)
 
 
 # --- Login ---
 @router.post("/login", status_code=status.HTTP_200_OK)
 async def login_user(
-    login_data: UserLogin, db_session: AsyncSession = Depends(get_async_session)
+    response: Response,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db_session: AsyncSession = Depends(get_async_session),
+    user_service: UsersService = Depends(get_user_service),
 ):
     """
-    Logs in a user and generates a JWT access token.
+    Logs in a user using the OAuth2 password flow and generates a JWT access token.
 
-    Request Body:
-        - login (str): User's login.
-        - password (str): User's password.
+    **Request Body:**
+        - `OAuth2PasswordRequestForm` (from FastAPI): Contains 'username' (login) and 'password' fields.
 
-    Response (Success - 200 OK):
-        - access_token (str): JWT access token.
-        - token_type (str): Token type (bearer).
+    **Response (Success - 200 OK):**
+        - `access_token` (str): JWT access token.
+        - `token_type` (str): Token type (bearer).
 
-    Error Codes:
+    **Error Codes:**
         - 401 Unauthorized: If the provided credentials are incorrect.
     """
-    user_service = UsersService(UsersRepository(db_session))
     user = await user_service.authenticate_user(
-        db_session, login_data.login, login_data.password
+        db_session, UserLogin(**form_data.dict())
     )
 
     if not user:
@@ -76,80 +82,46 @@ async def login_user(
         )
 
     access_token = AuthService.create_access_token(data={"sub": user.login})
+    response.set_cookie(
+        key="access_token", value=f"Bearer {access_token}", httponly=True
+    )
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-# --- Password Reset Request ---
-@router.post("/password/forgot", status_code=status.HTTP_200_OK)
-async def initiate_password_reset(
-    reset_request: PasswordResetRequest,  # Use a Pydantic schema
-    db_session: AsyncSession = Depends(get_async_session),
-):
-    """
-    Initiates the password reset process.
-    In a real application, you'd integrate with an email service to send a reset link.
-
-    Request Body:
-        - email (EmailStr): The user's registered email address.
-
-    Response (Success - 200 OK):
-        - message (str): A confirmation message.
-
-    Error Codes:
-        - 404 Not Found: If no user is found with the provided email.
-    """
-    user_repository = UsersRepository(db_session)
-    user = await user_repository.get_user_by_login(reset_request.email)
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # TODO: Generate a password reset token and send an email to the user
-    # Replace the following with your token generation and email sending logic:
-    # reset_token = generate_password_reset_token(user)
-    # send_password_reset_email(user, reset_token)
-
-    return {"message": "Password reset instructions sent to your email"}
 
 
 # --- Password Reset Confirmation ---
 @router.post("/password/reset", status_code=status.HTTP_200_OK)
 async def reset_password(
-    reset_data: PasswordResetConfirm, db: AsyncSession = Depends(get_async_session)
+    reset_data: PasswordResetConfirm,
 ):
     """
-    Resets a user's password.
+    Resets a user's password using a token.
 
-    Request Body:
-        - token (str): The password reset token.
-        - new_password (str): The new password (at least 8 characters).
+    **Request Body:**
+        - `PasswordResetConfirm` (schema): Contains 'token' and 'new_password' fields.
 
-    Response (Success - 200 OK):
-        - message (str): A confirmation message.
+    **Response (Success - 200 OK):**
+        - `message` (str): A confirmation message.
 
-    Error Codes:
+    **Error Codes:**
         - 400 Bad Request:
             - If the token is invalid or expired.
-            - If the password doesn't meet strength requirements.
+            - If the new password doesn't meet strength requirements.
+        - 404 Not Found: If no user is associated with the token.
     """
-    # TODO: Verify the token, likely from the database or a secure store.
-    # If the token is valid, retrieve the corresponding user.
+    # TODO: Retrieve the user associated with the reset token.
+    # user = await get_user_by_reset_token(db_session, reset_data.token)
 
-    # Replace the following with your token verification logic:
-    # user = verify_password_reset_token(reset_data.token, db)
     # if not user:
-    #     raise HTTPException(status_code=400, detail="Invalid or expired token")
+    #     raise HTTPException(status_code=404, detail="Invalid or expired token")
 
-    user_service = UsersService(UsersRepository(db))
     try:
-        user_service.validate_password_strength(reset_data.new_password)
+        AuthService.validate_password_strength(reset_data.new_password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the user's password
-    hashed_password = AuthService.get_password_hash(reset_data.new_password)
-    user.password = hashed_password
-    await db.commit()
+    # user.password = AuthService.get_password_hash(reset_data.new_password)
+    # await db_session.commit()
 
     return {"message": "Password reset successfully"}
 
@@ -164,14 +136,15 @@ async def change_password(
     """
     Allows authenticated users to change their password.
 
-    Request Body:
-        - current_password (str): The user's current password.
-        - new_password (str): The desired new password (at least 8 characters).
+    **Requires Authentication (JWT).**
 
-    Response (Success - 200 OK):
-        - message (str): A confirmation message.
+    **Request Body:**
+        - `PasswordChange` (schema): Contains 'current_password' and 'new_password' fields.
 
-    Error Codes:
+    **Response (Success - 200 OK):**
+        - `message` (str): A confirmation message.
+
+    **Error Codes:**
         - 400 Bad Request:
             - If the current password is incorrect.
             - If the new password doesn't meet strength requirements.

@@ -67,7 +67,9 @@ class UserPhotosService:
         h, w = image.shape[:2]
         if h > max_size[1] or w > max_size[0]:
             interpolation = (
-                cv2.INTER_AREA if h > max_size[1] and w > max_size[0] else cv2.INTER_CUBIC
+                cv2.INTER_AREA
+                if h > max_size[1] and w > max_size[0]
+                else cv2.INTER_CUBIC
             )
             image = cv2.resize(image, max_size, interpolation=interpolation)
 

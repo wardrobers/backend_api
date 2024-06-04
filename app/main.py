@@ -4,7 +4,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import app_lifespan, get_async_session
-from app.models.common import Base
 from app.routers.users import auth_router, users_router
 
 app = FastAPI(title="Wardrobers API", version="2.0", lifespan=app_lifespan)

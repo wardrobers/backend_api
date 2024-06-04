@@ -1,22 +1,32 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer
 
-from app.routers.users.core import auth_router, user_router
-from app.routers.users.profile import user_addresses_router, user_photos_router
-from app.routers.users.subscriptions import user_subscriptions_router
+from app.services.users import AuthService
 
-# Initialize OAuth2 scheme
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+from .core.auth_router import router as auth_router
+from .core.user_router import router as user_router
+from .profile.user_addresses_router import router as user_addresses_router
+from .profile.user_photos_router import router as user_photos_router
+from .roles.user_roles import router as user_roles_router
 
-# Create the main routers
-users_router = APIRouter(
-    prefix="/users", tags=["Users"], dependencies=[Depends(oauth2_scheme)]
+# Include all user-related sub-routers
+users_router = APIRouter(prefix="/users", tags=["Users"])
+users_router.include_router(
+    user_router, dependencies=[Depends(AuthService.get_current_user)]
 )
-auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
+users_router.include_router(
+    user_roles_router, dependencies=[Depends(AuthService.get_current_user)]
+)
+users_router.include_router(
+    user_photos_router, dependencies=[Depends(AuthService.get_current_user)]
+)
+users_router.include_router(
+    user_addresses_router, dependencies=[Depends(AuthService.get_current_user)]
+)
 
-# Include all auth and user-related sub-routers
-auth_router.include_router(auth_router.router)
-users_router.include_router(user_router.router)
-users_router.include_router(user_subscriptions_router.router)
-users_router.include_router(user_photos_router.router)
-users_router.include_router(user_addresses_router.router)
+__all__ = [
+    "auth_router",
+    "user_router",
+    "user_addresses_router",
+    "user_photos_router",
+    "user_roles_router",
+]

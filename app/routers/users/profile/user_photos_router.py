@@ -1,110 +1,80 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.dialects.postgresql import UUID
+# app/routers/users/profile/user_photos_router.py
+from fastapi import APIRouter, Depends, File, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import UUID
 
 from app.database.session import get_async_session
-from app.models.users.core.users_model import Users
-from app.models.users.profile.user_photos_model import UserPhotos
-from app.routers.users import auth_handler
+from app.models.users import Users
+from app.repositories.users import UserPhotosRepository
+from app.schemas.users import UserPhotoRead
+from app.services.users import AuthService, UserPhotosService
 
 router = APIRouter()
 
 
-@router.post("/photos", status_code=status.HTTP_201_CREATED)
-async def upload_user_photo(
-    photo_data,
+# Dependency to get user photos service
+async def get_user_photos_service(
     db_session: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
 ):
-    """
-    Uploads a new photo and associates it with the current user's profile.
-
-    Requires Authentication (JWT).
-
-    Request Body:
-        - storage_url (str): URL where the uploaded photo is stored.
-
-    Response (Success - 201 Created):
-        - UserPhotoRead (schema): A JSON representation of the newly added photo object.
-
-    Error Codes:
-        - 400 Bad Request: If the provided photo data is invalid.
-    """
-    new_photo = UserPhotos(user_id=current_user.id, storage_url=photo_data.storage_url)
-    db_session.add(new_photo)
-    await db_session.commit()
-    await db_session.refresh(new_photo)
-    return new_photo
+    user_photo_repository = UserPhotosRepository(db_session)
+    return UserPhotosService(user_photo_repository)
 
 
-@router.get("/photos")
+@router.get("/", response_model=list[UserPhotoRead])
 async def get_user_photos(
-    db_session: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
+    user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
     """
     Retrieves all photos associated with the currently authenticated user.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Response (Success - 200 OK):
-        - list[UserPhotoRead]: A JSON array of user photo objects.
+    **Response (Success - 200 OK):**
+        - `List[UserPhotoRead]` (schema): A list of user photos.
     """
-    return current_user.photos
+    return await user_photos_service.get_user_photos(current_user.id)
 
 
-@router.put("/photos")
-async def update_user_photo(
-    photo_id: UUID,
-    photo_update,
-    db_session: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserPhotoRead)
+async def upload_user_photo(
+    photo: UploadFile = File(...),
+    current_user: Users = Depends(AuthService.get_current_user),
+    user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
     """
-    Updates a specific photo belonging to the currently authenticated user.
+    Uploads a new photo for the currently authenticated user.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Request Body:
-        - storage_url (str): The updated URL for the photo.
+    **Request Body:**
+        - `photo` (UploadFile): The image file to upload (JPEG or PNG).
 
-    Response (Success - 200 OK):
-        - UserPhotoRead (schema): A JSON representation of the updated photo object.
+    **Response (Success - 201 Created):**
+        - `UserPhotoRead` (schema): The newly added user photo object.
 
-    Error Codes:
-        - 404 Not Found: If no photo with the provided photo_id is found for the user.
+    **Error Codes:**
+        - 400 Bad Request: If the provided photo data is invalid (e.g., wrong file type).
     """
-    photo = next((p for p in current_user.photos if p.id == photo_id), None)
-    if not photo:
-        raise HTTPException(status_code=404, detail="Photo not found")
-
-    update_data = photo_update.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(photo, key, value)
-
-    await db_session.commit()
-    await db_session.refresh(photo)
-    return photo
+    return await user_photos_service.add_user_photo(current_user.id, photo)
 
 
-@router.delete("/photos", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{photo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_photo(
     photo_id: UUID,
-    db_session: AsyncSession = Depends(get_async_session),
-    current_user: Users = Depends(auth_handler.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
+    user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
     """
-    Soft deletes a photo associated with the current user.
+    Deletes a photo associated with the current user.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Response (Success - 204 No Content): Indicates successful deletion.
+    **Response (Success - 204 No Content):**
+        - Indicates successful deletion.
 
-    Error Codes:
-        - 404 Not Found: If no photo with the provided photo_id is found for the user.
+    **Error Codes:**
+        - 403 Forbidden: If the user is not authorized to delete the photo.
+        - 404 Not Found: If the photo with the provided ID is not found for the user.
     """
-    photo = next((p for p in current_user.photos if p.id == photo_id), None)
-    if not photo:
-        raise HTTPException(status_code=404, detail="Photo not found")
-
-    await photo.soft_delete(db_session)
+    await user_photos_service.delete_user_photo(current_user.id, photo_id)

@@ -17,5 +17,5 @@ python-Levenshtein==0.25.1
 asyncpg==0.29.0
 contextlib2==21.6.0
 python-dotenv==1.0.1
-opencv-python==4.10
+opencv-python==4.10.0.82
 numpy==1.26.4

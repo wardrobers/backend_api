@@ -79,9 +79,7 @@ class UsersService:
 
         return UsersRead.model_validate(new_user)
 
-    async def update_user(
-        self, user_id: UUID, user_data: UsersUpdate, current_user: Users
-    ) -> UsersRead:
+    async def update_user(self, user_id: UUID, user_data: UsersUpdate) -> UsersRead:
         """
         Updates a user's core information, potentially handling authorization.
         """

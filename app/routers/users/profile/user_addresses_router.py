@@ -1,123 +1,118 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+# backend_API/app/routers/users/profile/user_addresses_router.py
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import UUID
 
-from app.database import get_async_session
-from app.models.users import UserAddresses, Users
-from app.repositories import UsersRepository
+from app.database.session import get_async_session
+from app.models.users import Users
+from app.repositories.users import UserAddressRepository
 from app.schemas.users import UserAddressCreate, UserAddressRead, UserAddressUpdate
-from app.services.users import AuthService, UserAddressService
+from app.services.users import AuthService
+from app.services.users.profile.user_addresses_service import UserAddressesService
 
 router = APIRouter()
 
 
+# Dependency to get user addresses service
+async def get_user_address_service(
+    db_session: AsyncSession = Depends(get_async_session),
+):
+    user_address_repository = UserAddressRepository(db_session)
+    return UserAddressesService(user_address_repository)
+
+
 # --- Add User Address ---
-@router.post(
-    "/addresses", status_code=status.HTTP_201_CREATED, response_model=UserAddressRead
-)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserAddressRead)
 async def add_user_address(
     address_data: UserAddressCreate,
-    db_session: AsyncSession = Depends(get_async_session),
     current_user: Users = Depends(AuthService.get_current_user),
+    user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
     Adds a new address to the user's profile.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Request Body:
-        - address_data (UserAddressCreate): The address details.
+    **Request Body:**
+        - `address_data` (UserAddressCreate): The address details.
 
-    Response (Success - 201 Created):
-        - UserAddressRead: The newly created address object.
+    **Response (Success - 201 Created):**
+        - `UserAddressRead` (schema): The newly created address object.
 
-    Error Codes:
-        - 400 Bad Request: If there is an error adding the address.
+    **Error Codes:**
+        - 400 Bad Request: If there is an error adding the address (e.g., address already exists).
         - 401 Unauthorized: If the user is not authenticated.
     """
-    user_repository = UsersRepository(db_session)
-    user_address_service = UserAddressService(user_repository)
-    new_address = await user_address_service.add_user_address(
-        current_user.id, address_data
-    )
-    return new_address
+    return await user_address_service.add_user_address(current_user.id, address_data)
 
 
 # --- Get User Addresses ---
-@router.get("/addresses", response_model=list[UserAddressRead])
+@router.get("/", response_model=list[UserAddressRead])
 async def get_user_addresses(
-    db_session: AsyncSession = Depends(get_async_session),
     current_user: Users = Depends(AuthService.get_current_user),
+    user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
     Retrieves all addresses associated with the authenticated user.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Response (Success - 200 OK):
-        - List[UserAddressRead]: A list of the user's addresses.
-
-    Error Codes:
-        - 401 Unauthorized: If the user is not authenticated.
+    **Response (Success - 200 OK):**
+        - `List[UserAddressRead]` (schema): A list of the user's addresses.
     """
-    user_repository = UsersRepository(db_session)
-    # Assuming your Users model has a relationship 'addresses'
-    addresses = current_user.addresses
-    return addresses
+    return await user_address_service.get_user_addresses(current_user.id)
 
 
 # --- Update User Address ---
 @router.put(
-    "/addresses/{address_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=UserAddressRead,
+    "/{address_id}", status_code=status.HTTP_200_OK, response_model=UserAddressRead
 )
 async def update_user_address(
     address_id: UUID,
     address_update: UserAddressUpdate,
-    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
+    user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
     Updates a specific address belonging to the current user.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Request Body:
-        - address_update (UserAddressUpdate): The updated address details.
+    **Request Body:**
+        - `address_update` (UserAddressUpdate): The updated address details.
 
-    Response (Success - 200 OK):
-        - UserAddressRead: The updated address object.
+    **Response (Success - 200 OK):**
+        - `UserAddressRead` (schema): The updated address object.
 
-    Error Codes:
-        - 400 Bad Request: If there is an error updating the address.
+    **Error Codes:**
+        - 400 Bad Request: If there's an error updating the address.
         - 401 Unauthorized: If the user is not authenticated.
-        - 404 Not Found: If no address with the given address_id is found.
+        - 403 Forbidden: If the user is not authorized to update the address.
+        - 404 Not Found: If the address with the given `address_id` is not found for the user.
     """
-    user_repository = UsersRepository(db_session)
-    user_address_service = UserAddressService(user_repository)
-    updated_address = await user_address_service.update_user_address(
-        address_id, address_update
+    return await user_address_service.update_user_address(
+        current_user.id, address_id, address_update
     )
-    return updated_address
 
 
 # --- Delete User Address ---
-@router.delete("/addresses/{address_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{address_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_address(
     address_id: UUID,
-    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
+    user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
     Deletes a specific address from the current user's profile.
 
-    Requires Authentication (JWT).
+    **Requires Authentication (JWT).**
 
-    Response (Success - 204 No Content): Indicates successful address deletion.
+    **Response (Success - 204 No Content):**
+        - Indicates successful address deletion.
 
-    Error Codes:
+    **Error Codes:**
         - 401 Unauthorized: If the user is not authenticated.
-        - 404 Not Found: If no address with the given address_id is found.
+        - 403 Forbidden: If the user is not authorized to delete the address.
+        - 404 Not Found: If the address with the given `address_id` is not found for the user.
     """
-    user_repository = UsersRepository(db_session)
-    user_address_service = UserAddressService(user_repository)
-    await user_address_service.delete_user_address(address_id)
+    await user_address_service.delete_user_address(current_user.id, address_id)
