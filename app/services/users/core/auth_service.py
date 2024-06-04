@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import re
 from datetime import timedelta
 from typing import Optional
 
@@ -86,3 +87,17 @@ class AuthService:
             return argon2.verify(plain_password, hashed_password)
         except argon2.exceptions.VerifyMismatchError:
             return False
+
+    @staticmethod
+    def validate_password_strength(password: str) -> None:
+        """Ensures the password meets security standards."""
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters long.")
+        if not re.search("[a-z]", password) or not re.search("[A-Z]", password):
+            raise ValueError(
+                "Password must include both lowercase and uppercase characters."
+            )
+        if not re.search("[0-9]", password):
+            raise ValueError("Password must include at least one number.")
+        if not re.search('[!@#$%^&*(),.?":{}|<>]', password):
+            raise ValueError("Password must include at least one special character.")

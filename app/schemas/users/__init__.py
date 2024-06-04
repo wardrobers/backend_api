@@ -20,6 +20,7 @@ from .core.data_privacy_consents_schema import (
     DataPrivacyConsentRead,
 )
 from .core.user_info_schema import (
+    UpdateContext,
     UserInfoBase,
     UserInfoCreate,
     UserInfoRead,
@@ -44,9 +45,11 @@ from .profile.user_addresses_schema import (
     UserAddressUpdate,
 )
 from .profile.user_photos_schema import UserPhotoBase, UserPhotoCreate, UserPhotoRead
-from .roles.roles_schema import RoleAssign, RoleBase, RoleRead
+from .roles.roles_schema import RoleAction, RoleAssign, RoleBase, RoleRead
 
 __all__ = [
+    "RoleAction",
+    "UpdateContext",
     "PasswordChange",
     "PasswordResetConfirm",
     "PasswordResetRequest",

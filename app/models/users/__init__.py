@@ -14,9 +14,6 @@ from .roles.user_roles_model import UserRoles
 
 __all__ = [
     "Users",
-    "UpdateContext",
-    "RoleAction",
-    "SubscriptionAction",
     "DataPrivacyConsents",
     "UserInfo",
     "UserActivity",

@@ -1,4 +1,11 @@
+from enum import Enum
+
 from pydantic import UUID4, BaseModel
+
+
+class RoleAction(str, Enum):
+    ADD = "add"
+    REMOVE = "remove"
 
 
 class RoleBase(BaseModel):

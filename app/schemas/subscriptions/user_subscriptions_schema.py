@@ -1,7 +1,14 @@
 # app/schemas/user/user_schema.py
 from datetime import datetime
+from enum import Enum
 
 from pydantic import UUID4, BaseModel
+
+
+class SubscriptionAction(Enum):
+    ADD = "add"
+    UPDATE = "update"
+    CANCEL = "cancel"
 
 
 # Basic User Schemas
