@@ -19,3 +19,4 @@ contextlib2==21.6.0
 python-dotenv==1.0.1
 opencv-python==4.10.0.82
 numpy==1.26.4
+httpx==0.27.0

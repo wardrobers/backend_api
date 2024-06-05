@@ -79,5 +79,5 @@ async def liveness_check(db_session: AsyncSession = Depends(get_async_session)):
         raise HTTPException(status_code=503, detail=f"Service Unavailable: {str(e)}")
 
 
-app.include_router(auth_router.router, prefix="/auth", tags=["Authentication"])
-app.include_router(users_router.router, prefix="/users", tags=["Users"])
+app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+app.include_router(users_router, prefix="/users", tags=["Users"])

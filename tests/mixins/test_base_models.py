@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
 from app.models.common import Base, BaseMixin
-from app.models.orders.core import OrderItems, Orders
-from app.models.products.core import Articles, Products, StockKeepingUnits
-from app.models.users.core import UserInfo, Users
+from app.models.orders import OrderItems, Orders
+from app.models.products import Articles, Products, StockKeepingUnits
+from app.models.users import UserInfo, Users
 
 
 # Mocking for testing purposes

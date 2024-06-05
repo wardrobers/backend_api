@@ -5,32 +5,38 @@ import asyncpg
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from app.models.common import Base
 
 ENV = os.getenv("ENV", default="development")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-if ENV == "production":
-    echo = False
+def create_connection_string():
+    if ENV == "production":
+        return (
+            f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASS')}"
+            f"@/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}/{os.getenv('DB_NAME')}"
+        )
+    else:
+        return f"postgresql+asyncpg://{DATABASE_URL}"
 
-    async def get_async_conn() -> asyncpg.Connection:
-        # Construct connection string for production using environment variables
-        connection_name = os.getenv("CLOUD_SQL_CONNECTION_NAME")
-        db_user = os.getenv("DB_USER")
-        db_pass = os.getenv("DB_PASS")
-        db_name = os.getenv("DB_NAME")
-        return f"postgresql+asyncpg://{db_user}:{db_pass}@/{db_name}?host=/cloudsql/{connection_name}"
-
-else:
-    echo = True
-
-    async def get_async_conn() -> asyncpg.Connection:
-        return await asyncpg.connect(dsn=os.environ["DATABASE_URL"])
+async def get_async_conn():
+    if ENV == "production":
+        conn = await asyncpg.connect(
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASS"),
+            database=os.getenv("DB_NAME"),
+            host=f"/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}"
+        )
+    else:
+        conn = await asyncpg.connect(dsn=DATABASE_URL)
+    return conn
 
 
 # Create an asynchronous SQLAlchemy engine
 engine = create_async_engine(
-    "postgresql+asyncpg://",
+    create_connection_string(),
     creator=get_async_conn,
-    echo=echo,  # Set to False in production
+    echo=ENV != "production",
 )
 
 # Session Factory
@@ -39,7 +45,7 @@ async_session_factory = sessionmaker(
 )
 
 
-async def get_async_session() -> AsyncSession:
+async def get_async_session():
     async with async_session_factory() as session:
         yield session
 
@@ -48,8 +54,9 @@ async def get_async_session() -> AsyncSession:
 async def app_lifespan(app: FastAPI):
     # Startup logic here
     async with engine.begin() as conn:
-        # Optional: Create database tables
-        # await conn.run_sync(Base.metadata.create_all)
+        if ENV in ["development", "local"]:
+            # Optional: Create database tables in non-production environments
+            await conn.run_sync(Base.metadata.create_all)
         pass
     yield  # The application is now ready to handle requests.
     # Shutdown logic here

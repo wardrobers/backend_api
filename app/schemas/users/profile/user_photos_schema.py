@@ -10,5 +10,5 @@ class UserPhotoCreate(UserPhotoBase):
 
 
 class UserPhotoRead(UserPhotoBase):
-    iid: UUID4
+    id: UUID4
     user_id: UUID4

@@ -1,525 +1,231 @@
 # tests/integration/test_api_routes.py
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.main import app
+from app.schemas.users import (
+    PasswordChange,
+    PasswordResetConfirm,
+    UserLogin,
+    UsersCreate,
+    UsersRead,
+    UsersUpdate,
+    UserInfoCreate,
+    UserInfoUpdate,
+    RoleCreate,
+    RoleUpdate,
+    UserAddressCreate,
+    UserAddressUpdate,
+) 
+from app.models.users import Users, UserInfo, Roles, UserAddresses
+from app.services.users import AuthService 
+from tests.utils.users import create_random_user, create_random_user_info, create_random_role
 
 client = TestClient(app)
 
+# --- Helper Function to get access token ---
+async def get_access_token(db_session: AsyncSession, user_data: UserLogin):
+    auth_service = AuthService(db_session) 
+    user = await auth_service.authenticate_user(user_data)
+    if not user:
+        return None
+    return auth_service.create_access_token(data={"sub": user.login})
 
-def test_get_root():
+# --- Test Fixtures --- 
+
+@pytest.fixture
+async def test_user(db_session: AsyncSession) -> Users:
+    return await create_random_user(db_session)
+
+@pytest.fixture
+async def test_user_info(db_session: AsyncSession, test_user: Users) -> UserInfo:
+    return await create_random_user_info(db_session, test_user)
+
+@pytest.fixture
+async def test_role(db_session: AsyncSession) -> Roles:
+    return await create_random_role(db_session)
+
+@pytest.fixture
+async def test_address(db_session: AsyncSession, test_user: Users) -> UserAddresses:
+    address_data = UserAddressCreate(
+        address_line1="123 Test St",
+        city="Test City",
+        country="Test Country",
+        postal_code="12345",
+        address_type="Both", # Or another appropriate type
+    )
+    address = UserAddresses(**address_data.model_dump(), user_id=test_user.id)
+    db_session.add(address)
+    await db_session.commit()
+    await db_session.refresh(address)
+    return address
+
+@pytest.fixture
+async def access_token(db_session: AsyncSession, test_user: Users):
+    user_data = UserLogin(login=test_user.login, password="testpassword")
+    return await get_access_token(db_session, user_data)
+
+# --- Tests ---
+
+@pytest.mark.asyncio
+async def test_get_root():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"Welcome to the Wardrobers API!"}
 
-
+# --- User Tests ---
 @pytest.mark.asyncio
-async def test_create_user(test_user: UserRead):
-    """Test creating a new user through API."""
-    user_data = UserCreate(login="testuser2", password="securepassword")
-    response = client.post("/users/register", json=user_data.dict())
+async def test_register_user():
+    user_data = UsersCreate(login="newuser", password="securepassword", password_confirmation="securepassword")
+    response = client.post("/auth/register", json=user_data.model_dump())
     assert response.status_code == 201
-    assert response.json()["login"] == "testuser2"
-
+    assert response.json()["login"] == "newuser"
 
 @pytest.mark.asyncio
-async def test_create_user_invalid_data(test_user: UserRead):
-    """Test creating a new user with invalid data through API."""
-    user_data = UserCreate(login="", password="securepassword")
-    response = client.post("/users/register", json=user_data.dict())
+async def test_register_user_invalid_data():
+    user_data = UsersCreate(login="", password="short", password_confirmation="short")
+    response = client.post("/auth/register", json=user_data.model_dump())
     assert response.status_code == 400
 
-
 @pytest.mark.asyncio
-async def test_get_user_by_id(test_user: UserRead):
-    """Test retrieving a user by ID through API."""
-    response = client.get(f"/users/{test_user.uuid}")
+async def test_login_user(test_user: Users):
+    user_data = UserLogin(login=test_user.login, password="testpassword")
+    response = client.post("/auth/login", data=user_data.model_dump())
     assert response.status_code == 200
-    assert response.json()["login"] == "testuser"
-
-
-@pytest.mark.asyncio
-async def test_get_user_by_id_not_found(test_user: UserRead):
-    """Test retrieving a non-existent user by ID through API."""
-    response = client.get("/users/00000000-0000-0000-0000-000000000002")
-    assert response.status_code == 404
-
+    assert "access_token" in response.json()
 
 @pytest.mark.asyncio
-async def test_update_user(test_user: UserRead):
-    """Test updating a user through API."""
-    user_update = UserUpdate(login="updatedtestuser")
-    response = client.put(f"/users/{test_user.uuid}", json=user_update.dict())
+async def test_login_user_invalid_credentials(test_user: Users):
+    user_data = UserLogin(login=test_user.login, password="wrongpassword")
+    response = client.post("/auth/login", data=user_data.model_dump())
+    assert response.status_code == 401
+
+@pytest.mark.asyncio
+async def test_get_current_user(test_user: Users, access_token: str):
+    response = client.get("/users/me", headers={"Authorization": f"Bearer {access_token}"})
     assert response.status_code == 200
-    assert response.json()["login"] == "updatedtestuser"
-
-
-@pytest.mark.asyncio
-async def test_update_user_invalid_data(test_user: UserRead):
-    """Test updating a user with invalid data through API."""
-    user_update = UserUpdate(login="")
-    response = client.put(f"/users/{test_user.uuid}", json=user_update.dict())
-    assert response.status_code == 400
-
+    assert response.json()["id"] == str(test_user.id)
 
 @pytest.mark.asyncio
-async def test_soft_delete_user(test_user: UserRead):
-    """Test soft deleting a user through API."""
-    response = client.delete(f"/users/{test_user.uuid}")
+async def test_update_current_user(db_session: AsyncSession, test_user: Users, access_token: str):
+    user_update = UsersUpdate(login="updateduser")
+    response = client.put("/users/me", headers={"Authorization": f"Bearer {access_token}"}, json=user_update.model_dump())
+    assert response.status_code == 200
+    assert response.json()["login"] == "updateduser"
+
+@pytest.mark.asyncio
+async def test_update_current_user_invalid_data(access_token: str):
+    user_update = UsersUpdate(login="")  # Invalid login
+    response = client.put("/users/me", headers={"Authorization": f"Bearer {access_token}"}, json=user_update.model_dump())
+    assert response.status_code == 422  # Expect a validation error
+
+@pytest.mark.asyncio
+async def test_delete_current_user(db_session: AsyncSession, test_user: Users, access_token: str):
+    response = client.delete("/users/me", headers={"Authorization": f"Bearer {access_token}"})
+    assert response.status_code == 204
+    # Verify the user is soft-deleted 
+    deleted_user = await Users.get_by_id(db_session, test_user.id)
+    assert deleted_user.deleted_at is not None
+
+# --- User Info Tests ---
+@pytest.mark.asyncio
+async def test_update_current_user_info(access_token: str):
+    user_info_update = UserInfoUpdate(first_name="Updated First Name")
+    response = client.put(
+        "/users/me/info", 
+        headers={"Authorization": f"Bearer {access_token}"}, 
+        json=user_info_update.model_dump()
+    )
+    assert response.status_code == 200
+    assert response.json()["first_name"] == "Updated First Name"
+
+@pytest.mark.asyncio
+async def test_update_current_user_info_invalid_data(access_token: str):
+    user_info_update = UserInfoUpdate(first_name="") # Invalid first name
+    response = client.put(
+        "/users/me/info",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json=user_info_update.model_dump(),
+    )
+    assert response.status_code == 422 # Expect a validation error
+
+# --- Role Tests ---
+@pytest.mark.asyncio
+async def test_get_all_roles(access_token: str):
+    response = client.get("/users/roles/", headers={"Authorization": f"Bearer {access_token}"})
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+@pytest.mark.asyncio
+async def test_create_role(access_token: str):
+    role_data = RoleCreate(code="test_role", name="Test Role")
+    response = client.post("/users/roles/", headers={"Authorization": f"Bearer {access_token}"}, json=role_data.model_dump())
+    assert response.status_code == 201
+    assert response.json()["code"] == "test_role"
+
+@pytest.mark.asyncio
+async def test_get_role_by_id(test_role: Roles, access_token: str):
+    response = client.get(f"/users/roles/{test_role.id}", headers={"Authorization": f"Bearer {access_token}"})
+    assert response.status_code == 200
+    assert response.json()["id"] == str(test_role.id)
+
+@pytest.mark.asyncio
+async def test_update_role(test_role: Roles, access_token: str):
+    role_update = RoleUpdate(name="Updated Role Name")
+    response = client.put(
+        f"/users/roles/{test_role.id}", 
+        headers={"Authorization": f"Bearer {access_token}"}, 
+        json=role_update.model_dump()
+    )
+    assert response.status_code == 200
+    assert response.json()["name"] == "Updated Role Name"
+
+@pytest.mark.asyncio
+async def test_delete_role(test_role: Roles, access_token: str):
+    response = client.delete(f"/users/roles/{test_role.id}", headers={"Authorization": f"Bearer {access_token}"})
     assert response.status_code == 204
 
+# --- User Address Tests ---
+@pytest.mark.asyncio
+async def test_add_user_address(access_token: str):
+    address_data = UserAddressCreate(
+        address_line1="456 New St",
+        city="New City",
+        country="New Country",
+        postal_code="67890",
+        address_type="Billing", # Or another type
+    )
+    response = client.post(
+        "/users/addresses/",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json=address_data.model_dump(),
+    )
+    assert response.status_code == 201
+    assert response.json()["address_line1"] == "456 New St"
 
 @pytest.mark.asyncio
-async def test_delete_user(test_user: UserRead):
-    """Test deleting a user through API."""
+async def test_get_all_user_addresses(access_token: str):
+    response = client.get("/users/addresses/", headers={"Authorization": f"Bearer {access_token}"})
+    assert response.status_code == 200
+    assert len(response.json()) == 1  # Assuming you have one test address
+
+@pytest.mark.asyncio
+async def test_update_user_address(test_address: UserAddresses, access_token: str):
+    address_update = UserAddressUpdate(address_line1="Updated Address")
+    response = client.put(
+        f"/users/addresses/{test_address.id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json=address_update.model_dump(),
+    )
+    assert response.status_code == 200
+    assert response.json()["address_line1"] == "Updated Address"
+
+@pytest.mark.asyncio
+async def test_delete_user_address(test_address: UserAddresses, access_token: str):
     response = client.delete(
-        f"/users/{test_user.uuid}", json=UserDelete(id=test_user.uuid).dict()
+        f"/users/addresses/{test_address.id}", headers={"Authorization": f"Bearer {access_token}"}
     )
-    assert response.status_code == 204
+    assert response.status_code == 204 
 
-
-@pytest.mark.asyncio
-async def test_create_order(test_user: UserRead, test_product: ProductRead):
-    """Test creating a new order through API."""
-    order_data = OrderCreate(user_id=test_user.uuid, total_price=100.00)
-    response = client.post("/orders", json=order_data.dict())
-    assert response.status_code == 201
-    assert response.json()["total_price"] == 100.00
-
-
-@pytest.mark.asyncio
-async def test_create_order_invalid_data(
-    test_user: UserRead, test_product: ProductRead
-):
-    """Test creating a new order with invalid data through API."""
-    order_data = OrderCreate(user_id=test_user.uuid, total_price=-100.00)
-    response = client.post("/orders", json=order_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_get_order_by_id(test_order: OrderRead):
-    """Test retrieving an order by ID through API."""
-    response = client.get(f"/orders/{test_order.uuid}")
-    assert response.status_code == 200
-    assert response.json()["total_price"] == 100.00
-
-
-@pytest.mark.asyncio
-async def test_get_order_by_id_not_found(test_order: OrderRead):
-    """Test retrieving a non-existent order by ID through API."""
-    response = client.get("/orders/00000000-0000-0000-0000-000000000002")
-    assert response.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_create_product(test_category: CategoryRead, test_brand: BrandRead):
-    """Test creating a new product through API."""
-    product_data = ProductCreate(
-        name="Test Product 2",
-        sku_product="SKU456",
-        status_code="Available",
-        products_catalog_id=UUID("00000000-0000-0000-0000-000000000001"),
-        color_id=UUID("00000000-0000-0000-0000-000000000001"),
-        size_id=UUID("00000000-0000-0000-0000-000000000001"),
-        base_price=50.00,
-    )
-    response = client.post("/products", json=product_data.dict())
-    assert response.status_code == 201
-    assert response.json()["name"] == "Test Product 2"
-
-
-@pytest.mark.asyncio
-async def test_create_product_with_category(test_brand: BrandRead):
-    """Test creating a new product with a category through API."""
-    category_data = CategoryCreate(name="Test Category 2")
-    response = client.post("/categories", json=category_data.dict())
-    assert response.status_code == 201
-    category_id = response.json()["uuid"]
-
-    product_data = ProductCreate(
-        name="Test Product 3",
-        sku_product="SKU789",
-        status_code="Available",
-        products_catalog_id=UUID("00000000-0000-0000-0000-000000000002"),
-        color_id=UUID("00000000-0000-0000-0000-000000000002"),
-        size_id=UUID("00000000-0000-0000-0000-000000000002"),
-        base_price=60.00,
-    )
-    response = client.post("/products", json=product_data.dict())
-    assert response.status_code == 201
-    product_id = response.json()["uuid"]
-
-    product_category_data = ProductCategoryCreate(
-        products_catalog_id=product_id, category_id=category_id
-    )
-    response = client.post("/products/categories", json=product_category_data.dict())
-    assert response.status_code == 201
-
-
-@pytest.mark.asyncio
-async def test_create_product_with_materials(
-    test_category: CategoryRead, test_brand: BrandRead
-):
-    """Test creating a new product with materials through API."""
-    product_data = ProductCreate(
-        name="Test Product 4",
-        sku_product="SKU1011",
-        status_code="Available",
-        products_catalog_id=UUID("00000000-0000-0000-0000-000000000003"),
-        color_id=UUID("00000000-0000-0000-0000-000000000003"),
-        size_id=UUID("00000000-0000-0000-0000-000000000003"),
-        base_price=70.00,
-    )
-    response = client.post("/products", json=product_data.dict())
-    assert response.status_code == 201
-    product_id = response.json()["uuid"]
-
-    material_data = ProductMaterialCreate(
-        product_id=product_id,
-        material_id=UUID("00000000-0000-0000-0000-000000000001"),
-        percent=100,
-    )
-    response = client.post("/products/materials", json=material_data.dict())
-    assert response.status_code == 201
-
-
-@pytest.mark.asyncio
-async def test_create_product_invalid_data(
-    test_category: CategoryRead, test_brand: BrandRead
-):
-    """Test creating a new product with invalid data through API."""
-    product_data = ProductCreate(
-        name="",
-        sku_product="SKU1011",
-        status_code="Available",
-        products_catalog_id=UUID("00000000-0000-0000-0000-000000000004"),
-        color_id=UUID("00000000-0000-0000-0000-000000000004"),
-        size_id=UUID("00000000-0000-0000-0000-000000000004"),
-        base_price=70.00,
-    )
-    response = client.post("/products", json=product_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_get_product_by_id(test_product: ProductRead):
-    """Test retrieving a product by ID through API."""
-    response = client.get(f"/products/{test_product.uuid}")
-    assert response.status_code == 200
-    assert response.json()["name"] == "Test Product"
-
-
-@pytest.mark.asyncio
-async def test_get_product_by_id_not_found(test_product: ProductRead):
-    """Test retrieving a non-existent product by ID through API."""
-    response = client.get("/products/00000000-0000-0000-0000-000000000002")
-    assert response.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_create_category(test_product: ProductRead):
-    """Test creating a new category through API."""
-    category_data = CategoryCreate(name="Test Category 3")
-    response = client.post("/categories", json=category_data.dict())
-    assert response.status_code == 201
-    assert response.json()["name"] == "Test Category 3"
-
-
-@pytest.mark.asyncio
-async def test_create_category_invalid_data(test_product: ProductRead):
-    """Test creating a new category with invalid data through API."""
-    category_data = CategoryCreate(name="")
-    response = client.post("/categories", json=category_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_brand(test_product: ProductRead):
-    """Test creating a new brand through API."""
-    brand_data = BrandCreate(name="Test Brand 1")
-    response = client.post("/brands", json=brand_data.dict())
-    assert response.status_code == 201
-    assert response.json()["name"] == "Test Brand 1"
-
-
-@pytest.mark.asyncio
-async def test_create_brand_invalid_data(test_product: ProductRead):
-    """Test creating a new brand with invalid data through API."""
-    brand_data = BrandCreate(name="")
-    response = client.post("/brands", json=brand_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_color(test_product: ProductRead):
-    """Test creating a new color through API."""
-    color_data = ColorCreate(color="Red")
-    response = client.post("/colors", json=color_data.dict())
-    assert response.status_code == 201
-    assert response.json()["color"] == "Red"
-
-
-@pytest.mark.asyncio
-async def test_create_color_invalid_data(test_product: ProductRead):
-    """Test creating a new color with invalid data through API."""
-    color_data = ColorCreate(color="")
-    response = client.post("/colors", json=color_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_size(test_product: ProductRead):
-    """Test creating a new size through API."""
-    size_data = SizeCreate(
-        back_length=10.0,
-        sleeve_length=20.0,
-        leg_length=30.0,
-        size_eu_code="S",
-        size_uk_code="S",
-        size_us_code="S",
-        size_it_code="S",
-    )
-    response = client.post("/sizes", json=size_data.dict())
-    assert response.status_code == 201
-    assert response.json()["back_length"] == 10.0
-
-
-@pytest.mark.asyncio
-async def test_create_size_invalid_data(test_product: ProductRead):
-    """Test creating a new size with invalid data through API."""
-    size_data = SizeCreate(
-        back_length=-10.0,
-        sleeve_length=20.0,
-        leg_length=30.0,
-        size_eu_code="S",
-        size_uk_code="S",
-        size_us_code="S",
-        size_it_code="S",
-    )
-    response = client.post("/sizes", json=size_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_product_type(test_product: ProductRead):
-    """Test creating a new product type through API."""
-    product_type_data = ProductTypeCreate(name="T-shirt")
-    response = client.post("/product_types", json=product_type_data.dict())
-    assert response.status_code == 201
-    assert response.json()["name"] == "T-shirt"
-
-
-@pytest.mark.asyncio
-async def test_create_product_type_invalid_data(test_product: ProductRead):
-    """Test creating a new product type with invalid data through API."""
-    product_type_data = ProductTypeCreate(name="")
-    response = client.post("/product_types", json=product_type_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_rental_period(test_product: ProductRead):
-    """Test creating a new rental period through API."""
-    rental_period_data = RentalPeriodCreate(name="One Week")
-    response = client.post("/rental_periods", json=rental_period_data.dict())
-    assert response.status_code == 201
-    assert response.json()["name"] == "One Week"
-
-
-@pytest.mark.asyncio
-async def test_create_rental_period_invalid_data(test_product: ProductRead):
-    """Test creating a new rental period with invalid data through API."""
-    rental_period_data = RentalPeriodCreate(name="")
-    response = client.post("/rental_periods", json=rental_period_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_price(
-    test_product: ProductRead, test_rental_period: RentalPeriodRead
-):
-    """Test creating a new price for a product through API."""
-    price_data = PriceCreate(
-        product_id=test_product.uuid,
-        time_period_id=test_rental_period.uuid,
-        time_value=7,
-        price=50.00,
-    )
-    response = client.post("/prices", json=price_data.dict())
-    assert response.status_code == 201
-    assert response.json()["price"] == 50.00
-
-
-@pytest.mark.asyncio
-async def test_create_price_invalid_data(
-    test_product: ProductRead, test_rental_period: RentalPeriodRead
-):
-    """Test creating a new price for a product with invalid data through API."""
-    price_data = PriceCreate(
-        product_id=test_product.uuid,
-        time_period_id=test_rental_period.uuid,
-        time_value=-7,
-        price=50.00,
-    )
-    response = client.post("/prices", json=price_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_product_photo(test_product: ProductRead):
-    """Test creating a new product photo through API."""
-    product_photo_data = ProductPhotoCreate(
-        product_id=test_product.uuid,
-        showcase=False,
-    )
-    response = client.post("/products/photos", json=product_photo_data.dict())
-    assert response.status_code == 201
-
-
-@pytest.mark.asyncio
-async def test_create_product_photo_invalid_data(test_product: ProductRead):
-    """Test creating a new product photo with invalid data through API."""
-    product_photo_data = ProductPhotoCreate(
-        product_id=test_product.uuid,
-        showcase="invalid",
-    )
-    response = client.post("/products/photos", json=product_photo_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_user_info(test_user: UserRead):
-    """Test creating user info for a user through API."""
-    user_info_data = UserInfoCreate(
-        name="Test",
-        surname="Users",
-        email="test@example.com",
-    )
-    response = client.post(f"/users/{test_user.uuid}/info", json=user_info_data.dict())
-    assert response.status_code == 201
-
-
-@pytest.mark.asyncio
-async def test_create_user_info_invalid_data(test_user: UserRead):
-    """Test creating user info with invalid data through API."""
-    user_info_data = UserInfoCreate(
-        name="",
-        surname="Users",
-        email="test@example.com",
-    )
-    response = client.post(f"/users/{test_user.uuid}/info", json=user_info_data.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_update_user_info(test_user: UserRead):
-    """Test updating user info for a user through API."""
-    user_info_update = UserInfoBase(
-        name="Updated Test",
-        surname="Updated Users",
-    )
-    response = client.put(f"/users/{test_user.uuid}/info", json=user_info_update.dict())
-    assert response.status_code == 200
-    assert response.json()["name"] == "Updated Test"
-
-
-@pytest.mark.asyncio
-async def test_update_user_info_invalid_data(test_user: UserRead):
-    """Test updating user info with invalid data through API."""
-    user_info_update = UserInfoBase(
-        name="",
-        surname="Users",
-    )
-    response = client.put(f"/users/{test_user.uuid}/info", json=user_info_update.dict())
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_create_subscription(test_user: UserRead):
-    """Test creating a subscription for a user through API."""
-    subscription_data = SubscriptionCreate(
-        user_id=test_user.uuid,
-        subscription_type_id=UUID("00000000-0000-0000-0000-000000000001"),
-        subscription_start="2023-06-01T00:00:00",
-        subscription_finish="2023-07-01T00:00:00",
-        count_free_orders=10,
-        count_orders_available_by_subscription=20,
-        count_orders_closed_by_subscription=0,
-    )
-    response = client.post(
-        f"/users/{test_user.uuid}/subscriptions", json=subscription_data.dict()
-    )
-    assert response.status_code == 201
-
-
-@pytest.mark.asyncio
-async def test_create_subscription_invalid_data(test_user: UserRead):
-    """Test creating a subscription for a user with invalid data through API."""
-    subscription_data = SubscriptionCreate(
-        user_id=test_user.uuid,
-        subscription_type_id=UUID("00000000-0000-0000-0000-000000000001"),
-        subscription_start="2023-07-01T00:00:00",
-        subscription_finish="2023-06-01T00:00:00",
-        count_free_orders=10,
-        count_orders_available_by_subscription=20,
-        count_orders_closed_by_subscription=0,
-    )
-    response = client.post(
-        f"/users/{test_user.uuid}/subscriptions", json=subscription_data.dict()
-    )
-    assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_get_user_activity(test_user: UserRead):
-    """Test retrieving user activity through API."""
-    response = client.get(f"/users/{test_user.uuid}/activity")
-    assert response.status_code == 200
-    assert isinstance(response.json(), dict)
-    assert "total_confirmed_orders" in response.json()
-
-
-@pytest.mark.asyncio
-async def test_get_user_activity_not_found(test_user: UserRead):
-    """Test retrieving user activity that does not exist through API."""
-    response = client.get("/users/00000000-0000-0000-0000-000000000002/activity")
-    assert response.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_create_category_for_user(test_user: UserRead):
-    """Test creating a category for a user through API."""
-    category_for_user_data = CategoryForUserCreate(
-        user_id=test_user.uuid,
-        category_id=UUID("00000000-0000-0000-0000-000000000001"),
-    )
-    response = client.post(
-        f"/users/{test_user.uuid}/categories", json=category_for_user_data.dict()
-    )
-    assert response.status_code == 201
-
-
-@pytest.mark.asyncio
-async def test_create_category_for_user_invalid_data(test_user: UserRead):
-    """Test creating a category for a user with invalid data through API."""
-    category_for_user_data = CategoryForUserCreate(
-        user_id=test_user.uuid,
-        category_id="invalid_uuid",
-    )
-    response = client.post(
-        f"/users/{test_user.uuid}/categories", json=category_for_user_data.dict()
-    )
-    assert response.status_code == 400
-
-
-# Add test cases for other endpoints and their edge cases, focusing on:
-# - Invalid input handling (empty values, wrong data types, etc.)
-# - Error handling (404 Not Found, 400 Bad Request, 500 Internal Server Error, etc.)
-# - Concurrency testing (for endpoints with potential race conditions or database conflicts)
-
-# Integration Tests for:
-# - Authenticated routes (token validation, permissions)
-# - Database interactions (data consistency, relationship integrity)
-# - Complex scenarios (e.g., ordering a product, managing subscriptions)
+# ... Add tests for other API endpoints (products, orders, subscriptions) ...

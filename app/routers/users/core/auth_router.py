@@ -27,6 +27,11 @@ async def get_user_service(
     return UsersService(users_repository, user_info_repository)
 
 
+# Dependency for AuthService
+async def get_auth_service(db_session: AsyncSession = Depends(get_async_session)):
+    return AuthService(db_session)
+
+
 # --- Registration ---
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UsersRead)
 async def register_user(
@@ -52,7 +57,7 @@ async def register_user(
 
 
 # --- Login ---
-@router.post("/login", status_code=status.HTTP_200_OK, response_model=Message)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=None)
 async def login_user(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -90,7 +95,7 @@ async def login_user(
 
 
 # --- Password Reset Confirmation ---
-@router.post("/password/reset", status_code=status.HTTP_200_OK, response_model=Message)
+@router.post("/password/reset", status_code=status.HTTP_200_OK, response_model=None)
 async def reset_password(
     reset_data: PasswordResetConfirm,
 ):
@@ -128,10 +133,11 @@ async def reset_password(
 
 
 # --- Password Change Route ---
-@router.put("/password/change", status_code=status.HTTP_200_OK, response_model=Message)
+@router.put("/password/change", status_code=status.HTTP_200_OK, response_model=None)
 async def change_password(
     password_change: PasswordChange,
     current_user: Users = Depends(AuthService.get_current_user),
+    auth_service: AuthService = Depends(get_auth_service),
 ):
     """
     Allows authenticated users to change their password.
@@ -151,18 +157,18 @@ async def change_password(
         - 401 Unauthorized: If the user is not authenticated.
     """
     # Verify the current password
-    if not AuthService.verify_password(
+    if not auth_service.verify_password(
         password_change.current_password, current_user.password
     ):
         raise HTTPException(status_code=400, detail="Incorrect current password")
 
     # Validate the new password
     try:
-        AuthService.validate_password_strength(password_change.new_password)
+        auth_service.validate_password_strength(password_change.new_password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the password
-    await AuthService.change_password(current_user, password_change.new_password)
+    await auth_service.change_password(current_user, password_change.new_password)
 
     return {"message": "Password changed successfully"}

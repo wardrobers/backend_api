@@ -39,7 +39,8 @@ async def get_current_user_profile(
     **Response (Success - 200 OK):**
         - `UsersRead` (schema): The complete user profile including related info.
     """
-    return await user_service.get_user_by_id(current_user.id)
+    user = await user_service.get_user_by_id(current_user.id)
+    return UsersRead.model_validate(user)
 
 
 @router.put("/me", response_model=UsersRead)
@@ -63,7 +64,8 @@ async def update_current_user_profile(
         - 400 Bad Request: If update data is invalid or a conflict occurs (e.g., duplicate email).
         - 403 Forbidden: If the user is not authorized to update the profile.
     """
-    return await user_service.update_user(current_user.id, user_update, current_user)
+    new_profile = await user_service.update_user(current_user.id, user_update, current_user)
+    return UsersRead.model_validate(new_profile)
 
 
 @router.put("/me/info", response_model=UserInfoRead)
@@ -88,12 +90,13 @@ async def update_current_user_info(
         - 403 Forbidden: If the user is not authorized to update the info.
         - 404 Not Found: If the user info for the current user is not found.
     """
-    return await user_service.update_user_info(
+    new_user_info = await user_service.update_user_info(
         current_user.id, user_info_update, UpdateContext.FULL_PROFILE
     )
+    return UserInfoRead.model_validate(new_user_info)
 
 
-@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=Message)
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_current_user_account(
     current_user: Users = Depends(AuthService.get_current_user),
     user_service: UsersService = Depends(get_user_service),
@@ -113,7 +116,7 @@ async def delete_current_user_account(
     await user_service.delete_user(current_user.id, current_user)
 
 
-@router.put("/notifications", status_code=status.HTTP_200_OK, response_model=Message)
+@router.put("/notifications", status_code=status.HTTP_200_OK, response_model=None)
 async def update_notification_preferences(
     enabled: bool,
     current_user: Users = Depends(AuthService.get_current_user),

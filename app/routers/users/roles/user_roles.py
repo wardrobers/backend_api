@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.dialects.postgresql import UUID
+from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
@@ -57,7 +57,7 @@ async def create_role(
 
 @router.get("/{role_id}", response_model=RoleRead)
 async def get_role_by_id(
-    role_id: UUID,
+    role_id: UUID4,
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
     """
@@ -74,7 +74,7 @@ async def get_role_by_id(
 
 @router.put("/{role_id}", response_model=RoleRead)
 async def update_role(
-    role_id: UUID,
+    role_id: UUID4,
     role_data: RoleUpdate,
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
@@ -98,10 +98,10 @@ async def update_role(
 
 
 @router.delete(
-    "/{role_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=Message
+    "/{role_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None
 )
 async def delete_role(
-    role_id: UUID,
+    role_id: UUID4,
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
     """
@@ -122,11 +122,11 @@ async def delete_role(
 @router.post(
     "/{role_id}/users/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_model=Message,
+    response_model=None,
 )
 async def assign_role_to_user(
-    role_id: UUID,
-    user_id: UUID,
+    role_id: UUID4,
+    user_id: UUID4,
     db_session: AsyncSession = Depends(get_async_session),
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
@@ -149,11 +149,11 @@ async def assign_role_to_user(
 @router.delete(
     "/{role_id}/users/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_model=Message,
+    response_model=None,
 )
 async def remove_role_from_user(
-    role_id: UUID,
-    user_id: UUID,
+    role_id: UUID4,
+    user_id: UUID4,
     db_session: AsyncSession = Depends(get_async_session),
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):

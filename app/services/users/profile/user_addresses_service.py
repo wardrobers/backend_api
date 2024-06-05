@@ -19,7 +19,11 @@ class UserAddressesService:
         self.user_address_repository = user_address_repository
 
     # --- User Address Operations ---
-    async def get_user_addresses(self, user_id: UUID) -> list[UserAddresses]:
+    async def get_address(self, address_id: UUID) -> UserAddresses:
+        """Retrieves all addresses for a given user."""
+        return await self.user_address_repository.get_address_by_id(address_id)
+
+    async def get_all_user_addresses(self, user_id: UUID) -> list[UserAddresses]:
         """Retrieves all addresses for a given user."""
         return await self.user_address_repository.get_addresses_by_user_id(user_id)
 

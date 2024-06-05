@@ -22,8 +22,8 @@ class UsersBase(BaseModel):
 
 
 class UsersCreate(UsersBase):
-    password: str = Field(..., min_length=8, example="StrongP@$$w0rd")
-    password_confirmation: str = Field(..., example="StrongP@$$w0rd")
+    password: str = Field(..., min_length=8, json_schema_extra="StrongP@$$w0rd")
+    password_confirmation: str = Field(..., json_schema_extra="StrongP@$$w0rd")
 
 
 class UsersRead(UsersBase):
@@ -69,10 +69,10 @@ class PasswordResetRequest(BaseModel):
 # --- Password Reset Confirmation Schema ---
 class PasswordResetConfirm(BaseModel):
     token: str
-    new_password: str = Field(..., min_length=8, example="StrongNewP@$$w0rd")
+    new_password: str = Field(..., min_length=8, json_schema_extra="StrongNewP@$$w0rd")
 
 
 # --- Password Change Schema ---
 class PasswordChange(BaseModel):
     current_password: str
-    new_password: str = Field(..., min_length=8, example="StrongNewP@$$w0rd")
+    new_password: str = Field(..., min_length=8, json_schema_extra="StrongNewP@$$w0rd")

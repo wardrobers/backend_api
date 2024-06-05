@@ -1,12 +1,11 @@
 # app/routers/users/profile/user_photos_router.py
 from fastapi import APIRouter, Depends, File, UploadFile, status
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import UUID4
 
 from app.database.session import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserPhotosRepository
-from app.schemas.common import Message
 from app.schemas.users import UserPhotoRead
 from app.services.users import AuthService, UserPhotosService
 
@@ -21,7 +20,7 @@ async def get_user_photos_service(
     return UserPhotosService(user_photo_repository)
 
 
-@router.get("/", response_model=list[UserPhotoRead], response_model=Message)
+@router.get("/", response_model=list[UserPhotoRead])
 async def get_user_photos(
     current_user: Users = Depends(AuthService.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
@@ -61,10 +60,10 @@ async def upload_user_photo(
 
 
 @router.delete(
-    "/{photo_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=Message
+    "/{photo_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None
 )
 async def delete_user_photo(
-    photo_id: UUID,
+    photo_id: UUID4,
     current_user: Users = Depends(AuthService.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):

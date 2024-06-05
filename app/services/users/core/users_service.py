@@ -29,26 +29,25 @@ class UsersService:
         self.users_repository = users_repository
 
     # --- Core User Operations ---
-    async def get_user_by_id(self, user_id: UUID) -> UsersRead:
+    async def get_user_by_id(self, user_id: UUID) -> Users:
         """Retrieves a user by their ID."""
         user = await self.users_repository.get_user_by_id(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return UsersRead.model_validate(user)
+        return user
 
-    async def get_user_by_login(self, login: str) -> UsersRead:
+    async def get_user_by_login(self, login: str) -> Users:
         """Retrieves a user by their login."""
         user = await self.users_repository.get_user_by_login(login)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return UsersRead.model_validate(user)
+        return user
 
-    async def get_all_users(self) -> list[UsersRead]:
+    async def get_all_users(self) -> list[Users]:
         """Retrieves all users."""
-        users = await self.users_repository.get_all_users()
-        return [UsersRead.model_validate(user) for user in users]
+        return await self.users_repository.get_all_users()
 
-    async def create_user(self, user_data: UsersCreate) -> UsersRead:
+    async def create_user(self, user_data: UsersCreate) -> Users:
         """
         Registers a new user, handling password validation, uniqueness,
         and optional welcome email sending.
@@ -77,9 +76,9 @@ class UsersService:
         # TODO: Send a welcome email in the background (optional)
         # background_tasks.add_task(self.send_welcome_email, new_user)
 
-        return UsersRead.model_validate(new_user)
+        return new_user
 
-    async def update_user(self, user_id: UUID, user_data: UsersUpdate) -> UsersRead:
+    async def update_user(self, user_id: UUID, user_data: UsersUpdate) -> Users:
         """
         Updates a user's core information, potentially handling authorization.
         """
@@ -90,17 +89,16 @@ class UsersService:
         #         detail="Not authorized to update this user",
         #     )
 
-        updated_user = await self.users_repository.update_user(user_id, user_data)
-        return UsersRead.model_validate(updated_user)
+        return await self.users_repository.update_user(user_id, user_data)
 
-    async def authenticate_user(self, login_data: UserLogin) -> Optional[UsersRead]:
+    async def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
         """Authenticates a user based on login and password."""
         user = await self.users_repository.get_user_by_login(login_data.login)
         if not user or not AuthService.verify_password(
             login_data.password, user.password
         ):
             return None
-        return UsersRead.model_validate(user)
+        return user
 
     async def delete_user(self, user_id: UUID) -> None:
         """
@@ -131,7 +129,7 @@ class UsersService:
         user_id: UUID,
         user_update: UsersUpdate,
         user_info_update: Optional[UserInfoUpdate] = None,
-    ) -> UsersRead:
+    ) -> Users:
         """
         Updates a user's profile, including both core user data and user info.
         """
@@ -139,7 +137,7 @@ class UsersService:
 
         if user_info_update:
             await self.user_info_repository.update_user_info(user_id, user_info_update)
-        return UsersRead.model_validate(updated_user)
+        return updated_user
 
     async def get_user_profile(self, user_id: UUID) -> UsersRead:
         """

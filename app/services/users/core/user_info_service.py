@@ -4,7 +4,12 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from app.models.users import UserInfo
 from app.repositories.users import UserInfoRepository
-from app.schemas.users import UpdateContext, UserInfoCreate, UserInfoUpdate
+from app.schemas.users import (
+    UpdateContext,
+    UserInfoCreate,
+    UserInfoRead,
+    UserInfoUpdate,
+)
 
 
 class UserInfoService:
@@ -30,11 +35,13 @@ class UserInfoService:
         self, user_id: UUID, user_info_data: UserInfoCreate
     ) -> UserInfo:
         """Creates new user info."""
-        return await self.user_info_repository.create_user_info(user_id, user_info_data)
+        return await self.user_info_repository.create_user_info(
+            user_id, user_info_data
+        )
 
     async def update_user_info(
         self, user_id: UUID, user_info_update: UserInfoUpdate, context: UpdateContext
-    ) -> UserInfoUpdate:
+    ) -> UserInfo:
         """
         Updates user info based on the provided context.
         """
@@ -69,11 +76,10 @@ class UserInfoService:
                     detail=f"Field '{field}' cannot be updated in this context.",
                 )
 
-        updated_user_info = await self.user_info_repository.update_user_info(
+        return await self.user_info_repository.update_user_info(
             user_id, UserInfoUpdate(**update_data)
         )
-        return UserInfoUpdate.model_validate(updated_user_info)
-
+    
     async def delete_user_info(self, user_id: UUID) -> None:
         """Deletes user info."""
         await self.user_info_repository.delete_user_info(user_id)

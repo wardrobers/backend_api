@@ -1,4 +1,5 @@
 from .user_subscriptions_schema import (
+    SubscriptionAction,
     SubscriptionBase,
     SubscriptionCancel,
     SubscriptionCreate,
@@ -7,6 +8,7 @@ from .user_subscriptions_schema import (
 )
 
 __all__ = [
+    "SubscriptionAction",
     "SubscriptionUpdate",
     "SubscriptionBase",
     "SubscriptionCancel",
