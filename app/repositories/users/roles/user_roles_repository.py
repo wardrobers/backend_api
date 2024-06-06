@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.users import UserRoles
 from app.models.users.roles.roles_model import Roles
 from app.repositories.common import (
-    BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
@@ -16,7 +15,7 @@ from app.repositories.common import (
 from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
 
 
-class UserRoleRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
+class UserRoleRepository(CachingMixin, BulkActionsMixin, SearchMixin):
     """Repository for managing user roles."""
 
     def __init__(self, db_session: AsyncSession):

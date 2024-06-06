@@ -1,3 +1,4 @@
+import logging
 from fastapi import Depends, FastAPI, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,7 +8,8 @@ from app.database.session import app_lifespan, get_async_session
 from app.routers.users import auth_router, users_router
 
 app = FastAPI(title="Wardrobers API", version="2.0", lifespan=app_lifespan)
-
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):

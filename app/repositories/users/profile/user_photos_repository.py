@@ -9,7 +9,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import UserPhotos
 from app.repositories.common import (
-    BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
@@ -17,7 +16,7 @@ from app.repositories.common import (
 from app.schemas.users import UserPhotoCreate, UserPhotoRead, UserPhotoUpdate
 
 
-class UserPhotosRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
+class UserPhotosRepository(CachingMixin, BulkActionsMixin, SearchMixin):
     """
     Repository for managing user photos stored in Google Cloud Storage (GCS).
     Handles different environments (local, testing, production).

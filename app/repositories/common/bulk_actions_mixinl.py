@@ -16,7 +16,8 @@ class BulkActionsMixin:
     - Type hints for improved clarity.
     """
 
-    @classmethod
+    model = None
+    
     async def bulk_create(self, db_session: AsyncSession, items: list[dict[str, Any]]):
         """
         Perform a bulk insert operation asynchronously.
@@ -26,10 +27,9 @@ class BulkActionsMixin:
             items (List[Dict[str, Any]]): A list of dictionaries representing the data to insert.
         """
         async with db_session as session:
-            await session.execute(insert(self), items)
+            await session.execute(insert(self.model), items)
             await session.commit()
 
-    @classmethod
     async def bulk_update(self, db_session: AsyncSession, items: list[dict[str, Any]]):
         """
         Perform a bulk update operation asynchronously.
@@ -42,13 +42,12 @@ class BulkActionsMixin:
         async with db_session as session:
             for item in items:
                 await session.execute(
-                    update(self)
-                    .where(self.id == item["id"])
+                    update(self.model)
+                    .where(self.model.id == item["id"])
                     .values(**{k: v for k, v in item.items() if k != "id"})
                 )
             await session.commit()
 
-    @classmethod
     async def bulk_delete(self, db_session: AsyncSession, ids: list[UUID]):
         """
         Perform a bulk hard delete operation asynchronously.
@@ -58,10 +57,9 @@ class BulkActionsMixin:
             ids (List[UUID]): A list of IDs to delete.
         """
         async with db_session as session:
-            await session.execute(delete(self).where(self.id.in_(ids)))
+            await session.execute(delete(self.model).where(self.model.id.in_(ids)))
             await session.commit()
 
-    @classmethod
     async def bulk_soft_delete(self, db_session: AsyncSession, ids: list[UUID]):
         """
         Perform a bulk soft delete operation asynchronously.
@@ -72,11 +70,10 @@ class BulkActionsMixin:
         """
         async with db_session as session:
             await session.execute(
-                update(self).where(self.id.in_(ids)).values(deleted_at=func.now())
+                update(self.model).where(self.model.id.in_(ids)).values(deleted_at=func.now())
             )
             await session.commit()
 
-    @classmethod
     async def bulk_upsert(
         self,
         db_session: AsyncSession,
@@ -97,14 +94,14 @@ class BulkActionsMixin:
                 if unique_constraint:
                     # Use unique constraint for checking existing records
                     filter_condition = and_(
-                        *[getattr(self, col) == item[col] for col in unique_constraint]
+                        *[getattr(self.model, col) == item[col] for col in unique_constraint]
                     )
                 else:
                     # Use primary key for checking existing records
-                    filter_condition = self.id == item.get("id")
+                    filter_condition = self.model.id == item.get("id")
 
                 existing_record = await session.execute(
-                    select(self).where(filter_condition)
+                    select(self.model).where(filter_condition)
                 )
                 existing_record = existing_record.scalars().first()
 
@@ -112,7 +109,7 @@ class BulkActionsMixin:
                     # Update the existing record
                     if unique_constraint:
                         await session.execute(
-                            update(self)
+                            update(self.model)
                             .where(filter_condition)
                             .values(
                                 **{
@@ -124,11 +121,11 @@ class BulkActionsMixin:
                         )
                     else:
                         await session.execute(
-                            update(self)
-                            .where(self.id == item["id"])
+                            update(self.model)
+                            .where(self.model.id == item["id"])
                             .values(**{k: v for k, v in item.items() if k != "id"})
                         )
                 else:
                     # Insert a new record
-                    await session.execute(insert(self).values(**item))
+                    await session.execute(insert(self.model).values(**item))
             await session.commit()

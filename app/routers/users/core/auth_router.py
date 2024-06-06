@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+import logging
 
 from app.database import get_async_session
 from app.models.users import Users
@@ -15,6 +16,7 @@ from app.schemas.users import (
 from app.services.users import AuthService, UsersService
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 # Dependency to get user service
@@ -51,7 +53,14 @@ async def register_user(
             - If the passwords don't match.
             - If the password doesn't meet strength requirements.
     """
-    return await user_service.create_user(user_create)
+    # logger.debug("Register attempt for user: %s", user_create)
+    # try:
+    user = await user_service.create_user(user_create)
+    # logger.debug("User registered successfully: %s", user_create)
+    return user
+    # except Exception as e:
+    #     logger.error("Registration failed for user %s: %s", user_create, str(e))
+    #     raise HTTPException(status_code=400, detail=str(e))
 
 
 # --- Login ---

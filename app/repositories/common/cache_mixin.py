@@ -7,6 +7,8 @@ from typing import Any, Optional
 from redis.asyncio import Redis
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.repositories.common import BaseMixin
+
 
 ENV = os.getenv("ENV", default="development")
 
@@ -20,7 +22,7 @@ else:
     redis_credentials = json.loads(os.getenv("REDISCRED", "{}"))
 
 
-class CachingMixin:
+class CachingMixin(BaseMixin):
     """
     Enhanced mixin for caching data using Redis, featuring:
 
@@ -30,10 +32,9 @@ class CachingMixin:
     - Configurable cache expiry (TTL).
     - Cache invalidation methods.
     """
-
+    
     _redis = None
 
-    @classmethod
     async def get_redis(self):
         """Get or create a Redis client."""
         if self._redis is None:
@@ -45,7 +46,6 @@ class CachingMixin:
             )
         return self._redis
 
-    @classmethod
     def _generate_cache_key(
         self, _id: UUID, extra_params: Optional[dict[str, Any]] = None
     ) -> str:
@@ -54,15 +54,14 @@ class CachingMixin:
 
         Example: 'Users:e9ab3302-9887-11ec-a439-02488537b83c:{"role": "admin"}'
         """
-        base_key = f"{self.__name__}:{str(_id)}"
+        base_key = f"{self.model.__name__}:{str(_id)}" 
         if extra_params:
             extra_str = json.dumps(extra_params, sort_keys=True)
             base_key += f":{extra_str}"
         return hashlib.sha256(
             base_key.encode()
-        ).hexdigest()  # Use SHA256 for robust hashing
+        ).hexdigest() 
 
-    @classmethod
     async def cached_get_by_id(
         self,
         db_session: AsyncSession,
@@ -84,14 +83,14 @@ class CachingMixin:
         data = await redis.get(cache_key)
 
         if data:
-            return pickle.loads(data)  # Deserialize using pickle
+            return pickle.loads(data)
 
-        instance = await self.get_by_id(db_session, _id)
-        if instance:
-            await redis.set(cache_key, pickle.dumps(instance), expire=ttl)
-        return instance
+        async with db_session.begin():
+            instance = await self.get_by_id(db_session, _id)
+            if instance:
+                await redis.set(cache_key, pickle.dumps(instance), expire=ttl)
+            return instance
 
-    @classmethod
     async def invalidate_cache_by_id(
         self, _id: UUID, extra_params: Optional[dict[str, Any]] = None
     ):
@@ -100,7 +99,6 @@ class CachingMixin:
         cache_key = self._generate_cache_key(_id, extra_params)
         await redis.delete(cache_key)
 
-    @classmethod
     async def invalidate_all_cache(self):
         """Invalidate all cache entries for this model."""
         redis = await self.get_redis()

@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import Users
 from app.repositories.common import (
-    BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
@@ -16,14 +15,14 @@ from app.repositories.common import (
 from app.schemas.users import UsersCreate, UsersUpdate
 
 
-class UsersRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
+class UsersRepository(CachingMixin, BulkActionsMixin, SearchMixin):
     """
     Repository for core user operations, utilizing mixins for common functionality.
     """
 
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
-        self.model = Users  # Define the model for this repository
+        self.model = Users
 
     async def get_user_by_login(self, login: str) -> Optional[Users]:
         """Retrieves a user by their login, incorporating caching."""

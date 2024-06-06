@@ -19,7 +19,8 @@ class SearchMixin:
         - Ranking of search results
     """
 
-    @classmethod
+    model = None
+
     async def search(
         self,
         db_session: AsyncSession,
@@ -55,17 +56,17 @@ class SearchMixin:
         if not fields:
             fields = [
                 column.name
-                for column in self.__table__.columns
+                for column in self.model.__table__.columns
                 if isinstance(column.type, String)
             ]
 
-        search_query = select(self)
+        search_query = select(self.model)
 
         # Full-text search and fuzzy search logic
         search_conditions = []
         for term, weight in (weights or {"": 1.0}).items():
             vector = func.to_tsvector(
-                "english", func.concat(*[getattr(self, field) for field in fields])
+                "english", func.concat(*[getattr(self.model, field) for field in fields])
             )
             query = func.plainto_tsquery("english", term)
             search_conditions.append(
@@ -78,7 +79,7 @@ class SearchMixin:
                     search_conditions.append(
                         func.funcfilter(
                             func.levenshtein(
-                                func.lower(getattr(self, field)), func.lower(term)
+                                func.lower(getattr(self.model, field)), func.lower(term)
                             ),
                             lambda dist: dist <= fuzzy_threshold,
                         )
@@ -89,7 +90,7 @@ class SearchMixin:
         # Relationship search logic
         if relationships:
             for rel_attr, (rel_field, rel_filter) in relationships.items():
-                relationship: RelationshipProperty = getattr(self, rel_attr)
+                relationship: RelationshipProperty = getattr(self.model, rel_attr)
                 related_self = relationship.mapper.class_
                 rel_alias = aliased(related_self)
                 search_query = search_query.join(rel_alias, relationship).filter(
@@ -107,7 +108,7 @@ class SearchMixin:
                     search_conditions.append(
                         func.funcfilter(
                             func.levenshtein(
-                                func.lower(getattr(self, field)), func.lower(term)
+                                func.lower(getattr(self.model, field)), func.lower(term)
                             ),
                             lambda dist: dist <= fuzzy_threshold,
                         )
@@ -119,10 +120,10 @@ class SearchMixin:
         if ranking:
             rank = func.ts_rank_cd(
                 func.setweight(
-                    func.to_tsvector("english", func.coalesce(self.name, "")), "A"
+                    func.to_tsvector("english", func.coalesce(self.model.name, "")), "A"
                 )
                 | func.setweight(
-                    func.to_tsvector("english", func.coalesce(self.description, "")),
+                    func.to_tsvector("english", func.coalesce(self.model.description, "")),
                     "B",
                 ),
                 func.plainto_tsquery("english", search_term),
@@ -134,6 +135,6 @@ class SearchMixin:
         if offset:
             search_query = search_query.offset(offset)
 
-        async with db_session as session:
-            result = await session.execute(search_query)
+        async with db_session.begin():
+            result = await db_session.execute(search_query)
             return result.scalars().all()

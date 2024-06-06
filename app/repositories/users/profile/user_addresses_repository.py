@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import UserAddresses
 from app.repositories.common import (
-    BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
@@ -20,7 +19,7 @@ from app.schemas.users import (
 )
 
 
-class UserAddressRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
+class UserAddressRepository(CachingMixin, BulkActionsMixin, SearchMixin):
     """Repository for managing user addresses."""
 
     def __init__(self, db_session: AsyncSession):

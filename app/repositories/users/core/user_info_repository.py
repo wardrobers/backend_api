@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import UserInfo
 from app.repositories.common import (
-    BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
@@ -15,7 +14,7 @@ from app.repositories.common import (
 from app.schemas.users import UserInfoCreate, UserInfoRead, UserInfoUpdate
 
 
-class UserInfoRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
+class UserInfoRepository(CachingMixin, BulkActionsMixin, SearchMixin):
     """Repository for managing user information."""
 
     def __init__(self, db_session: AsyncSession):
