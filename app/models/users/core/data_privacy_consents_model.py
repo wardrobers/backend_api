@@ -2,16 +2,10 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class DataPrivacyConsents(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class DataPrivacyConsents(Base, BaseMixin):
     __tablename__ = "data_privacy_consents"
 
     data_usage_consent = Column(Boolean, nullable=False, default=False)

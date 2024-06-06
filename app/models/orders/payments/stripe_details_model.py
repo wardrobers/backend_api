@@ -2,16 +2,10 @@ from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import BYTEA, UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class StripeDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class StripeDetails(Base, BaseMixin):
     __tablename__ = "stripe_details"
 
     stripe_charge_id = Column(BYTEA, nullable=True, default=None)

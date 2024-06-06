@@ -1,16 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class ClaspType(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class ClaspType(Base, BaseMixin):
     __tablename__ = "clasp_types"
 
     name = Column(String, nullable=True)

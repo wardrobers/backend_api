@@ -2,16 +2,10 @@ from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class Orders(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Orders(Base, BaseMixin):
     __tablename__ = "orders"
 
     total_price = Column(Numeric, nullable=False)

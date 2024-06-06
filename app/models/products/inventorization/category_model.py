@@ -2,16 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class Categories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Categories(Base, BaseMixin):
     __tablename__ = "categories"
 
     name = Column(String)
@@ -38,7 +32,7 @@ class Categories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
 
-class ProductCategories(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class ProductCategories(Base, BaseMixin):
     __tablename__ = "product_categories"
 
     # Foreign Keys

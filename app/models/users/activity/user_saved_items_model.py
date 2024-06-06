@@ -3,16 +3,10 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class UserSavedItems(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class UserSavedItems(Base, BaseMixin):
     __tablename__ = "user_saved_items"
 
     saved_at = Column(DateTime, default=func.now())

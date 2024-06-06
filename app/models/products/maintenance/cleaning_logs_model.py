@@ -2,16 +2,10 @@ from sqlalchemy import Column, DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class CleaningLogs(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class CleaningLogs(Base, BaseMixin):
     __tablename__ = "cleaning_logs"
 
     article = Column(String, nullable=False)

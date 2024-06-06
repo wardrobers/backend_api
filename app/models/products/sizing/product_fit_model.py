@@ -1,16 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class ProductFit(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class ProductFit(Base, BaseMixin):
     __tablename__ = "product_fit"
 
     type = Column(String, nullable=False)

@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
 from app.repositories.users import UserRoleRepository
-from app.schemas.common import Message
+
 from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
-from app.services.users import UserRolesService
+from app.services.users import UserRolesService, AuthService
+from app.models.users import Users
 
 router = APIRouter()
 
@@ -127,7 +128,7 @@ async def delete_role(
 async def assign_role_to_user(
     role_id: UUID4,
     user_id: UUID4,
-    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
     """
@@ -143,7 +144,7 @@ async def assign_role_to_user(
         - 403 Forbidden: If the user doesn't have permission to assign roles.
         - 404 Not Found: If the user or role is not found.
     """
-    await user_roles_service.assign_role_to_user(db_session, user_id, role_id)
+    await user_roles_service.assign_role_to_user(user_id, role_id, current_user)
 
 
 @router.delete(
@@ -154,7 +155,7 @@ async def assign_role_to_user(
 async def remove_role_from_user(
     role_id: UUID4,
     user_id: UUID4,
-    db_session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
     """
@@ -169,4 +170,4 @@ async def remove_role_from_user(
         - 403 Forbidden: If the user doesn't have permission to remove roles.
         - 404 Not Found: If the user doesn't have the specified role.
     """
-    await user_roles_service.remove_role_from_user(db_session, user_id, role_id)
+    await user_roles_service.remove_role_from_user(user_id, role_id, current_user)

@@ -9,24 +9,6 @@ from app.routers.users import auth_router, users_router
 app = FastAPI(title="Wardrobers API", version="2.0", lifespan=app_lifespan)
 
 
-# Middleware for DB session management
-@app.middleware("http")
-async def db_session_middleware(request: Request, call_next):
-    response = None
-    request.state.db = await get_async_session()
-    try:
-        # Attach a new session to the request state
-        response = await call_next(request)
-    except Exception as e:
-        # Handle exceptions and potentially roll back transactions here
-        request.state.db.rollback()
-        raise e
-    finally:
-        # Always close the session after the request is done
-        request.state.db.close()
-    return response
-
-
 @app.middleware("http")
 async def security_headers_middleware(request: Request, call_next):
     response = await call_next(request)

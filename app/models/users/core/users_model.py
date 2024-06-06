@@ -1,16 +1,10 @@
 from sqlalchemy import Boolean, Column, DateTime, String
 from sqlalchemy.orm import relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class Users(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Users(Base, BaseMixin):
     __tablename__ = "users"
 
     login = Column(String, nullable=False)

@@ -6,7 +6,7 @@ from pydantic import UUID4
 from app.database.session import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserAddressRepository
-from app.schemas.common import Message
+
 from app.schemas.users import UserAddressCreate, UserAddressRead, UserAddressUpdate
 from app.services.users import AuthService
 from app.services.users.profile.user_addresses_service import UserAddressesService
@@ -44,8 +44,7 @@ async def add_user_address(
         - 400 Bad Request: If there is an error adding the address (e.g., address already exists).
         - 401 Unauthorized: If the user is not authenticated.
     """
-    address = await user_address_service.add_user_address(current_user.id, address_data)
-    return UserAddressRead.model_validate(address)
+    return await user_address_service.create_user_address(current_user.id, address_data) 
 
 
 # --- Get User Addresses ---
@@ -62,8 +61,7 @@ async def get_address(
     **Response (Success - 200 OK):**
         - `UserAddressRead` (schema): User's address.
     """
-    address = await user_address_service.get_address(address_id)
-    return UserAddressRead.model_validate(address)
+    return await user_address_service.get_address(address_id)
 
 
 @router.get("/", response_model=list[UserAddressRead])
@@ -79,8 +77,7 @@ async def get_all_user_addresses(
     **Response (Success - 200 OK):**
         - `List[UserAddressRead]` (schema): A list of the user's addresses.
     """
-    addresses = await user_address_service.get_all_user_addresses(current_user.id)
-    return [UserAddressRead.model_validate(address) for address in addresses]
+    return await user_address_service.get_all_user_addresses(current_user.id)
 
 
 # --- Update User Address ---
@@ -110,10 +107,9 @@ async def update_user_address(
         - 403 Forbidden: If the user is not authorized to update the address.
         - 404 Not Found: If the address with the given `address_id` is not found for the user.
     """
-    address = await user_address_service.update_user_address(
+    return await user_address_service.update_user_address(
         current_user.id, address_id, address_update
     )
-    return UserAddressRead.model_validate(address)
 
 
 # --- Delete User Address ---

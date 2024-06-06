@@ -2,16 +2,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import backref, mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class PeerToPeerLogistics(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class PeerToPeerLogistics(Base, BaseMixin):
     __tablename__ = "peer_to_peer_logistics"
 
     # Foreign Keys

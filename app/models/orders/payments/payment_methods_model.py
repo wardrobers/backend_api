@@ -5,13 +5,7 @@ from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
 class PaymentMethodType(Enum):
@@ -32,7 +26,7 @@ class PaymentProvider(Enum):
     Klarna = "Klarna"
 
 
-class PaymentMethods(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class PaymentMethods(Base, BaseMixin):
     __tablename__ = "payment_methods"
 
     type = Column(SQLAEnum(PaymentMethodType))

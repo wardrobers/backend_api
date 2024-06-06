@@ -1,86 +1,101 @@
-# app/services/users/user_service.py
-from fastapi import HTTPException, status
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
-from app.repositories.users import UserRoleRepository
-from app.schemas.users import RoleAction, RoleCreate, RoleRead, RoleUpdate
-from app.services.users import AuthService
+from fastapi import HTTPException, status
+from pydantic import UUID4
+
+from app.repositories.users import UserRoleRepository, UsersRepository
+from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
+from app.models.users import Users
 
 
 class UserRolesService:
     """
-    Service layer for core user management operations.
+    Service layer for managing user roles, providing a clear interface
+    for role-related operations and leveraging the repository for data access.
     """
 
     def __init__(
         self,
         user_role_repository: UserRoleRepository,
+        users_repository: UsersRepository, # Inject dependency
     ):
         self.user_role_repository = user_role_repository
+        self.users_repository = users_repository
 
-    # --- User Role Operations ---
     async def get_all_roles(self) -> list[RoleRead]:
         """Retrieves all roles."""
-        roles = await self.user_role_repository.get_all_roles()
-        return [RoleRead.from_orm(role) for role in roles]
+        return await self.user_role_repository.get_all_roles() 
 
     async def create_role(self, role_data: RoleCreate) -> RoleRead:
         """Creates a new role."""
-        role = await self.user_role_repository.create_role(role_data)
-        return RoleRead.from_orm(role)
+        # Add any validation or business logic here before creating the role.
+        return await self.user_role_repository.create_role(role_data)
 
-    async def get_role_by_id(self, role_id: UUID) -> RoleRead:
+    async def get_role_by_id(self, role_id: UUID4) -> RoleRead:
         """Retrieves a role by its ID."""
         role = await self.user_role_repository.get_role_by_id(role_id)
         if not role:
             raise HTTPException(status_code=404, detail="Role not found")
-        return RoleRead.from_orm(role)
+        return role
 
-    async def update_role(self, role_id: UUID, role_data: RoleUpdate) -> RoleRead:
+    async def update_role(self, role_id: UUID4, role_data: RoleUpdate) -> RoleRead:
         """Updates a role."""
-        role = await self.user_role_repository.update_role(role_id, role_data)
-        return RoleRead.from_orm(role)
+        # Add any authorization or validation logic here.
+        return await self.user_role_repository.update_role(role_id, role_data)
 
-    async def delete_role(self, role_id: UUID) -> None:
+    async def delete_role(self, role_id: UUID4) -> None:
         """Deletes a role."""
+        # Add authorization or validation logic here, e.g., 
+        # prevent deleting roles that are currently assigned to users. 
         await self.user_role_repository.delete_role(role_id)
 
-    async def assign_role_to_user(self, user_id: UUID, role_id: UUID) -> None:
+    async def assign_role_to_user(
+        self, user_id: UUID4, role_id: UUID4, current_user: Optional[Users] = None
+    ) -> None:
         """
-        Assigns a role to a user, ensuring both exist and handling specific logic.
+        Assigns a role to a user, with authorization checks.
         """
-        user = await self.users_repository.get_user_by_id(user_id)
-        if not user:
+        # Authorization Check (Example):
+        if current_user and not self._is_authorized_to_manage_roles(current_user):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to assign roles.",
+            )
+
+        # Check if the user exists:
+        if not await self.users_repository.get_by_id(self.users_repository.db_session, user_id):
             raise HTTPException(status_code=404, detail="User not found")
 
-        role = await self.user_role_repository.get_role_by_id(role_id)
-        if not role:
+        # Check if the role exists:
+        if not await self.user_role_repository.get_role_by_id(role_id):
             raise HTTPException(status_code=404, detail="Role not found")
 
         await self.user_role_repository.assign_role_to_user(user_id, role_id)
 
-    async def remove_role_from_user(self, user_id: UUID, role_id: UUID) -> None:
-        """Removes a role from a user."""
-        await self.user_role_repository.remove_role_from_user(user_id, role_id)
-
-    async def manage_roles(
-        self, db_session: AsyncSession, role_id: UUID, action: RoleAction
-    ):
-        """Manages roles for the current user."""
-        current_user = await AuthService.get_current_user(db_session)
-        if not current_user:
+    async def remove_role_from_user(
+        self, user_id: UUID4, role_id: UUID4, current_user: Optional[Users] = None
+    ) -> None:
+        """
+        Removes a role from a user, with authorization checks.
+        """
+        # Authorization Check (Example):
+        if current_user and not self._is_authorized_to_manage_roles(current_user):
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to remove roles.",
             )
 
-        role = await self.user_role_repository.get_role_by_id(role_id)
-        if not role:
-            raise HTTPException(status_code=404, detail="Role not found")
+        await self.user_role_repository.remove_role_from_user(user_id, role_id)
 
-        if action == RoleAction.ADD:
-            await self.assign_role_to_user(db_session, current_user.id, role_id)
-        elif action == RoleAction.REMOVE:
-            await self.remove_role_from_user(db_session, current_user.id, role_id)
-        else:
-            raise ValueError("Invalid Role Action")
+    def _is_authorized_to_manage_roles(self, current_user: Optional[Users] = None) -> bool:
+        """
+        Checks if the current user has permissions to manage roles.
+        You'll likely want to implement more sophisticated role-based 
+        authorization logic here.
+        """
+        # Placeholder - replace with your actual authorization logic
+        return current_user.is_admin  
+
+    async def get_user_roles(self, user_id: UUID4) -> list[RoleRead]:
+        """Retrieves the roles assigned to a user."""
+        return await self.user_role_repository.get_user_roles(user_id) 

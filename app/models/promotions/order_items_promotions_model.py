@@ -2,18 +2,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class OrderItemsPromotions(
-    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
-):
+class OrderItemsPromotions(Base, BaseMixin):
     __tablename__ = "order_items_promotions"
 
     # Foreign Keys

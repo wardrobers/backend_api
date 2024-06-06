@@ -5,17 +5,11 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 from app.schemas.users import AddressType
 
 
-class UserAddresses(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class UserAddresses(Base, BaseMixin):
     __tablename__ = "user_addresses"
 
     address_line1 = Column(String)

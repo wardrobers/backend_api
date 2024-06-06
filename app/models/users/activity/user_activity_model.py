@@ -2,16 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class UserActivity(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class UserActivity(Base, BaseMixin):
     __tablename__ = "user_activity"
 
     total_confirmed_orders = Column(Integer, nullable=False, default=0)

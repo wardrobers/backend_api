@@ -2,16 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class RolePermissions(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class RolePermissions(Base, BaseMixin):
     __tablename__ = "role_permissions"
 
     to_create = Column(Boolean, default=False, name="create")

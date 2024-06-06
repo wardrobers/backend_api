@@ -4,13 +4,7 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
 class ProductCurrentStatus(Enum):
@@ -21,7 +15,7 @@ class ProductCurrentStatus(Enum):
     Discontinued = "Discontinued"
 
 
-class ProductStatus(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class ProductStatus(Base, BaseMixin):
     __tablename__ = "product_status"
 
     code = Column(String, nullable=False)

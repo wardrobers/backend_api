@@ -5,13 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
 class OwnerType(Enum):
@@ -29,7 +23,7 @@ class Condition(Enum):
     Poor = "Poor"
 
 
-class Articles(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Articles(Base, BaseMixin):
     __tablename__ = "articles"
 
     article = Column(String, nullable=False)

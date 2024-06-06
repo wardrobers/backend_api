@@ -2,18 +2,10 @@ from sqlalchemy import Column, ForeignKey, Integer, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class UserReviewsAndRatings(
-    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
-):
+class UserReviewsAndRatings(Base, BaseMixin):
     __tablename__ = "user_reviews_and_ratings"
 
     rating = Column(Integer)

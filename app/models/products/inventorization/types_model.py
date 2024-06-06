@@ -2,16 +2,10 @@ from sqlalchemy import JSON, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class Types(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Types(Base, BaseMixin):
     __tablename__ = "types"
 
     name = Column(String, nullable=False)
@@ -30,7 +24,7 @@ class Types(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
     )
 
 
-class ProductTypes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class ProductTypes(Base, BaseMixin):
     __tablename__ = "product_types"
 
     # Foreign Keys
@@ -42,7 +36,7 @@ class ProductTypes(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin)
     )
 
 
-class TypesFromUser(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class TypesFromUser(Base, BaseMixin):
     __tablename__ = "types_from_user"
 
     coefficient = Column(String)

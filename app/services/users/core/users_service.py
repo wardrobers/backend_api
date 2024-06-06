@@ -1,11 +1,17 @@
-# app/services/users/user_service.py
 from typing import Optional
 
-from fastapi import HTTPException
-from sqlalchemy.dialects.postgresql import UUID
+from fastapi import HTTPException, status
+from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import Users
-from app.repositories.users import UsersRepository
+from app.repositories.users import (
+    UserInfoRepository,
+    UserAddressRepository,
+    UserRoleRepository,
+    UserPhotosRepository,
+    UsersRepository,
+)
 from app.schemas.users import (
     UserInfoCreate,
     UserInfoUpdate,
@@ -13,44 +19,53 @@ from app.schemas.users import (
     UsersCreate,
     UsersRead,
     UsersUpdate,
+    UserInfoRead,
 )
 from app.services.users.core.auth_service import AuthService
 
 
 class UsersService:
     """
-    Service layer for core user management operations.
+    Service layer for core user management operations, utilizing repositories
+    with mixins for enhanced functionality and code reuse.
     """
 
     def __init__(
         self,
         users_repository: UsersRepository,
+        user_info_repository: UserInfoRepository,
+        user_address_repository: UserAddressRepository,
+        user_role_repository: UserRoleRepository,
+        user_photo_repository: UserPhotosRepository,
     ):
         self.users_repository = users_repository
+        self.user_info_repository = user_info_repository
+        self.user_address_repository = user_address_repository
+        self.user_role_repository = user_role_repository
+        self.user_photo_repository = user_photo_repository
 
-    # --- Core User Operations ---
-    async def get_user_by_id(self, user_id: UUID) -> Users:
+    async def get_user_by_id(self, user_id: UUID4) -> UsersRead:
         """Retrieves a user by their ID."""
-        user = await self.users_repository.get_user_by_id(user_id)
+        user = await self.users_repository.get_by_id(self.users_repository.db_session, user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return user
+        return UsersRead.model_validate(user)
 
-    async def get_user_by_login(self, login: str) -> Users:
+    async def get_user_by_login(self, login: str) -> UsersRead:
         """Retrieves a user by their login."""
         user = await self.users_repository.get_user_by_login(login)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return user
+        return UsersRead.model_validate(user)
 
-    async def get_all_users(self) -> list[Users]:
+    async def get_all_users(self) -> list[UsersRead]:
         """Retrieves all users."""
-        return await self.users_repository.get_all_users()
+        users = await self.users_repository.get_all(self.users_repository.db_session)
+        return [UsersRead.model_validate(user) for user in users]
 
-    async def create_user(self, user_data: UsersCreate) -> Users:
+    async def create_user(self, user_data: UsersCreate) -> UsersRead:
         """
-        Registers a new user, handling password validation, uniqueness,
-        and optional welcome email sending.
+        Registers a new user.
         """
         if user_data.password != user_data.password_confirmation:
             raise HTTPException(status_code=400, detail="Passwords don't match")
@@ -73,25 +88,26 @@ class UsersService:
             UserInfoCreate(email=new_user.login, first_name="", last_name=""),
         )
 
-        # TODO: Send a welcome email in the background (optional)
-        # background_tasks.add_task(self.send_welcome_email, new_user)
+        return UsersRead.model_validate(new_user)
 
-        return new_user
-
-    async def update_user(self, user_id: UUID, user_data: UsersUpdate) -> Users:
+    async def update_user(
+        self, user_id: UUID4, user_data: UsersUpdate, current_user: Users
+    ) -> Users:
         """
-        Updates a user's core information, potentially handling authorization.
+        Updates a user's core information.
         """
-        # TODO: Authorization check with Roles:
-        # if current_user.id != user_id and not current_user.is_admin:
-        #     raise HTTPException(
-        #         status_code=status.HTTP_403_FORBIDDEN,
-        #         detail="Not authorized to update this user",
-        #     )
+        # Authorization check:
+        if current_user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to update this user",
+            )
 
         return await self.users_repository.update_user(user_id, user_data)
 
-    async def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
+    async def authenticate_user(
+        self, login_data: UserLogin
+    ) -> Optional[Users]:
         """Authenticates a user based on login and password."""
         user = await self.users_repository.get_user_by_login(login_data.login)
         if not user or not AuthService.verify_password(
@@ -100,89 +116,51 @@ class UsersService:
             return None
         return user
 
-    async def delete_user(self, user_id: UUID) -> None:
+    async def delete_user(self, user_id: UUID4, current_user: Users) -> None:
         """
-        Deletes a user and associated data, with authorization checks.
+        Deletes a user and associated data.
         """
-        # TODO: Authorization check with Roles:
-        # if current_user.id != user_id and not current_user.is_admin:
-        #     raise HTTPException(status_code=403, detail="Not authorized to delete this user")
+        # Authorization check:
+        if current_user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to delete this user",
+            )
 
-        # Cascading Delete Logic (example with addresses and photos):
-        user_addresses = await self.user_address_repository.get_addresses_by_user_id(
-            user_id
+        async with self.users_repository.db_session as session:
+            # Cascading Delete Logic
+            user_addresses = await self.user_address_repository.get_addresses_by_user_id(
+                user_id
+            )
+            for address in user_addresses:
+                await self.user_address_repository.delete_user_address(address.id)
+
+            user_photos = await self.user_photo_repository.get_user_photos(user_id)
+            for photo in user_photos:
+                await self.user_photo_repository.delete_user_photo(user_id, photo.id)
+
+            await self.users_repository.delete_user(user_id)
+
+    async def update_user_info(
+        self, user_id: UUID4, user_info_update: UserInfoUpdate, context: str
+    ) -> UserInfoRead:
+        """
+        Updates additional user info.
+        """
+        updated_user_info = await self.user_info_repository.update_user_info(
+            user_id, user_info_update, context
         )
-        for address in user_addresses:
-            await self.user_address_repository.delete_user_address(address.id)
-
-        user_photos = await self.user_photo_repository.get_user_photos(user_id)
-        for photo in user_photos:
-            await self.user_photo_repository.delete_user_photo(user_id, photo.id)
-
-        # TODO: Deactivate any active subscriptions
-        # ...
-
-        await self.users_repository.delete_user(user_id)
-
-    async def update_user_profile(
-        self,
-        user_id: UUID,
-        user_update: UsersUpdate,
-        user_info_update: Optional[UserInfoUpdate] = None,
-    ) -> Users:
-        """
-        Updates a user's profile, including both core user data and user info.
-        """
-        updated_user = await self.users_repository.update_user(user_id, user_update)
-
-        if user_info_update:
-            await self.user_info_repository.update_user_info(user_id, user_info_update)
-        return updated_user
-
-    async def get_user_profile(self, user_id: UUID) -> UsersRead:
-        """
-        Retrieves a complete user profile, including related data.
-        """
-        user = await self.users_repository.get_user_by_id(user_id)
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        user_info = await self.user_info_repository.get_user_info_by_user_id(user_id)
-        user_addresses = await self.user_address_repository.get_addresses_by_user_id(
-            user_id
-        )
-        user_roles = await self.user_role_repository.get_user_roles(user_id)
-        user_photos = await self.user_photo_repository.get_user_photos(user_id)
-        # ... (Fetch other related data: subscriptions, orders, etc.)
-
-        return UsersRead(
-            **user.model_dump(),
-            info=user_info,
-            addresses=user_addresses,
-            roles=user_roles,
-            photos=user_photos,
-            # ... other related data
-        )
-
-    async def send_welcome_email(self, user: Users):
-        """
-        Sends a welcome email to the newly registered user.
-        """
-        # Implement email sending logic here using an email service
-        # (e.g., SendGrid, Mailgun).
-        # ...
-        print(f"Welcome email sent to {user.email}!")
-
-    async def activate_account(self, user_id: UUID) -> None:
-        """Activates a user's account."""
-        await self.users_repository.activate_account(user_id)
-
-    async def reset_password_basic(self, user_id: UUID, new_password: str) -> None:
-        """Resets the user's password (used if token verification is not implemented)."""
-        await self.users_repository.reset_password_basic(user_id, new_password)
+        return UserInfoRead.model_validate(updated_user_info)
 
     async def toggle_notifications(
-        self, user_id: UUID, enable_notifications: bool
+        self, user_id: UUID4, enable_notifications: bool, current_user: Users
     ) -> None:
         """Toggles user notifications on or off."""
+        # Authorization check:
+        if current_user.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to modify this user's notifications",
+            )
+
         await self.users_repository.toggle_notifications(user_id, enable_notifications)

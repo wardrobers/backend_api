@@ -1,16 +1,10 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class StockKeepingUnits(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class StockKeepingUnits(Base, BaseMixin):
     __tablename__ = "stock_keeping_units"
 
     free_articles_count = Column(Integer, nullable=False, default=0)

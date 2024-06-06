@@ -5,13 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
 class DeliveryStatus(Enum):
@@ -24,7 +18,7 @@ class DeliveryStatus(Enum):
     Returned = "Returned"
 
 
-class ShippingDetails(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class ShippingDetails(Base, BaseMixin):
     __tablename__ = "shipping_details"
 
     tracking_number = Column(String, nullable=True)

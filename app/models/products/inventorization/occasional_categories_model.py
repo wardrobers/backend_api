@@ -2,18 +2,10 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class OccasionalCategories(
-    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
-):
+class OccasionalCategories(Base, BaseMixin):
     __tablename__ = "occasional_categories"
 
     name = Column(String, nullable=False)
@@ -35,9 +27,7 @@ class OccasionalCategories(
     )
 
 
-class ProductOccasionalCategories(
-    Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin
-):
+class ProductOccasionalCategories(Base, BaseMixin):
     __tablename__ = "product_occasional_categories"
 
     # Foreign Keys

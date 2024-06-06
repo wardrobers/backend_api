@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserInfoRepository, UsersRepository
-from app.schemas.common import Message
+
 from app.schemas.users import (
     UpdateContext,
     UserInfoRead,
@@ -39,8 +39,7 @@ async def get_current_user_profile(
     **Response (Success - 200 OK):**
         - `UsersRead` (schema): The complete user profile including related info.
     """
-    user = await user_service.get_user_by_id(current_user.id)
-    return UsersRead.model_validate(user)
+    return await user_service.get_user_by_id(current_user.id)
 
 
 @router.put("/me", response_model=UsersRead)
@@ -64,8 +63,7 @@ async def update_current_user_profile(
         - 400 Bad Request: If update data is invalid or a conflict occurs (e.g., duplicate email).
         - 403 Forbidden: If the user is not authorized to update the profile.
     """
-    new_profile = await user_service.update_user(current_user.id, user_update, current_user)
-    return UsersRead.model_validate(new_profile)
+    return await user_service.update_user(current_user.id, user_update, current_user)
 
 
 @router.put("/me/info", response_model=UserInfoRead)
@@ -90,10 +88,9 @@ async def update_current_user_info(
         - 403 Forbidden: If the user is not authorized to update the info.
         - 404 Not Found: If the user info for the current user is not found.
     """
-    new_user_info = await user_service.update_user_info(
+    return await user_service.update_user_info(
         current_user.id, user_info_update, UpdateContext.FULL_PROFILE
     )
-    return UserInfoRead.model_validate(new_user_info)
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=None)

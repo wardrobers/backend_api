@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_async_session
 from app.models.users import Users
-from app.repositories.users import UserInfoRepository, UsersRepository
-from app.schemas.common import Message
+from app.repositories.users import UsersRepository
+
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
@@ -23,8 +23,7 @@ async def get_user_service(
     db_session: AsyncSession = Depends(get_async_session),
 ):
     users_repository = UsersRepository(db_session)
-    user_info_repository = UserInfoRepository(db_session)
-    return UsersService(users_repository, user_info_repository)
+    return UsersService(users_repository)
 
 
 # Dependency for AuthService

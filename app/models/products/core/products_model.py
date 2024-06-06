@@ -4,16 +4,10 @@ from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class Products(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class Products(Base, BaseMixin):
     __tablename__ = "products"
 
     name = Column(String, nullable=False)

@@ -1,16 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class TypesOfOperations(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class TypesOfOperations(Base, BaseMixin):
     __tablename__ = "types_of_operations"
 
     name = Column(String, nullable=True, default=None)

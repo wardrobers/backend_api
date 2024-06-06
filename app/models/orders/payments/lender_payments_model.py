@@ -5,13 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
 class PaymentStatus(Enum):
@@ -22,7 +16,7 @@ class PaymentStatus(Enum):
     Refunded = "Refunded"
 
 
-class LenderPayments(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class LenderPayments(Base, BaseMixin):
     __tablename__ = "lender_payments"
 
     payment_percentage = Column(Integer, nullable=False)

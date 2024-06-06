@@ -5,7 +5,7 @@ import asyncpg
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from app.models.common import Base
+from app.repositories.common import Base
 
 ENV = os.getenv("ENV", default="development")
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -17,18 +17,22 @@ def create_connection_string():
             f"@/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}/{os.getenv('DB_NAME')}"
         )
     else:
-        return f"postgresql+asyncpg://{DATABASE_URL}"
+        return DATABASE_URL
 
 async def get_async_conn():
+    """
+    Asynchronously creates a database connection using asyncpg.
+    Handles both production (Cloud SQL) and development environments.
+    """
     if ENV == "production":
-        conn = await asyncpg.connect(
+        conn = await asyncpg.create_pool(
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASS"),
             database=os.getenv("DB_NAME"),
             host=f"/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}"
         )
     else:
-        conn = await asyncpg.connect(dsn=DATABASE_URL)
+        conn = await asyncpg.create_pool(dsn=DATABASE_URL)
     return conn
 
 
@@ -53,11 +57,10 @@ async def get_async_session():
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
     # Startup logic here
-    async with engine.begin() as conn:
-        if ENV in ["development", "local"]:
-            # Optional: Create database tables in non-production environments
-            await conn.run_sync(Base.metadata.create_all)
-        pass
+    # async with engine.begin() as conn:
+    #     if ENV in ["development", "local"]:
+    #         # Optional: Create database tables in non-production environments
+    #         await conn.run_sync(Base.metadata.create_all)
     yield  # The application is now ready to handle requests.
     # Shutdown logic here
     await engine.dispose()

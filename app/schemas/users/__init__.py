@@ -44,7 +44,7 @@ from .profile.user_addresses_schema import (
     UserAddressRead,
     UserAddressUpdate,
 )
-from .profile.user_photos_schema import UserPhotoBase, UserPhotoCreate, UserPhotoRead
+from .profile.user_photos_schema import UserPhotoBase, UserPhotoCreate, UserPhotoRead, UserPhotoUpdate
 from .roles.roles_schema import (
     RoleAction,
     RoleAssign,
@@ -55,6 +55,7 @@ from .roles.roles_schema import (
 )
 
 __all__ = [
+    "UserPhotoUpdate",
     "RoleAction",
     "RoleCreate",
     "RoleUpdate",

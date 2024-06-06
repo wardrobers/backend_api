@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database import engine, get_async_session
-from app.models.common import Base
+from app.repositories.common import Base
 
 # Database connection string for testing (use a dedicated test database)
 # This should ideally be set as an environment variable for better security and flexibility

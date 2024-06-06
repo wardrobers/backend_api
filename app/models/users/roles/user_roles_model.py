@@ -2,16 +2,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models.common import (
-    Base,
-    BaseMixin,
-    BulkActionsMixin,
-    CachingMixin,
-    SearchMixin,
-)
+from app.repositories.common import Base, BaseMixin
 
 
-class UserRoles(Base, BaseMixin, SearchMixin, CachingMixin, BulkActionsMixin):
+class UserRoles(Base, BaseMixin):
     __tablename__ = "user_roles"
 
     # Foreign keys
