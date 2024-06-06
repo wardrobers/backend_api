@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSON, UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class Sizing(Base):

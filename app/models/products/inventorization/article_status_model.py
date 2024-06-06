@@ -6,7 +6,7 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class ArticleCurrentStatus(Enum):

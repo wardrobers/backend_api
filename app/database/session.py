@@ -6,7 +6,6 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.repositories.common import Base
 
 ENV = os.getenv("ENV", default="development")
 DATABASE_URL = os.getenv("DATABASE_URL")

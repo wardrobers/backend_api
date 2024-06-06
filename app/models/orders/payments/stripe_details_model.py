@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import BYTEA, UUID
 from sqlalchemy.orm import mapped_column
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class StripeDetails(Base):

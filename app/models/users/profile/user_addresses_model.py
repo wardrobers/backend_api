@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models import Base
+from app.models.base_model import Base
 from app.schemas.users import AddressType
 
 

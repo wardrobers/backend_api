@@ -4,7 +4,7 @@ from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class Products(Base):

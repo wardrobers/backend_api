@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class SubscriptionTypes(Base):

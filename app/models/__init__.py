@@ -1,9 +1,8 @@
 from . import orders, pricing, products, promotions, subscriptions, users
-from .base_model import Base, ModelBase
+from .base_model import Base
 
 __all__ = [
     "Base",
-    "ModelBase",
     "orders",
     "pricing",
     "products",

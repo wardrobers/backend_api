@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class DiscountType(Enum):

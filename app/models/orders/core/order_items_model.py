@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Numeric, Text, Time
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.models import Base
+from app.models.base_model import Base
 
 
 class OrderItems(Base):
