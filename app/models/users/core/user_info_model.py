@@ -2,10 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class UserInfo(Base, BaseMixin):
+class UserInfo(Base):
     __tablename__ = "user_info"
 
     first_name = Column(String, nullable=False)

@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session
 from app.models.users import Users
 from app.repositories.users import UsersRepository
-
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,

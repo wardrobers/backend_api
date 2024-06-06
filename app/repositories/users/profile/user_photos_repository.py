@@ -39,8 +39,7 @@ class UserPhotosRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixi
                 select(UserPhotos).where(UserPhotos.user_id == user_id)
             )
             return [
-                UserPhotoRead.model_validate(photo)
-                for photo in photos.scalars().all()
+                UserPhotoRead.model_validate(photo) for photo in photos.scalars().all()
             ]
 
     async def get_user_photo_by_id(
@@ -61,9 +60,7 @@ class UserPhotosRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixi
     ) -> UserPhotoRead:
         """Adds a new photo, uploading to GCS or saving locally."""
         async with self.db_session as session:
-            new_photo = UserPhotos(
-                user_id=user_id, image_url=photo_data.image_url
-            )
+            new_photo = UserPhotos(user_id=user_id, image_url=photo_data.image_url)
             session.add(new_photo)
             await session.commit()
             await session.refresh(new_photo)
@@ -87,11 +84,11 @@ class UserPhotosRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixi
 
                 # Upload the new image and update the URL
                 filename = f"user_{user_id}/{photo_id}"
-                photo.image_url = await self._upload_image(filename, photo_data.image_url)
+                photo.image_url = await self._upload_image(
+                    filename, photo_data.image_url
+                )
 
-            await photo.update(
-                session, **photo_data.model_dump(exclude_unset=True)
-            )
+            await photo.update(session, **photo_data.model_dump(exclude_unset=True))
             await session.commit()
             await session.refresh(photo)
             return UserPhotoRead.model_validate(photo)
@@ -125,9 +122,7 @@ class UserPhotosRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixi
 
         # Upload from bytes (you'll need to get bytes from the UploadFile)
         image_bytes = await image_data.read()
-        await blob.upload_from_string(
-            image_bytes, content_type=image_data.content_type
-        ) 
+        await blob.upload_from_string(image_bytes, content_type=image_data.content_type)
         blob.make_public()
         return f"https://storage.googleapis.com/{self.gcp_bucket_name}/{filename}"
 

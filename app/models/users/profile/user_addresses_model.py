@@ -5,11 +5,11 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 from app.schemas.users import AddressType
 
 
-class UserAddresses(Base, BaseMixin):
+class UserAddresses(Base):
     __tablename__ = "user_addresses"
 
     address_line1 = Column(String)

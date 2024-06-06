@@ -3,22 +3,17 @@ from typing import Any, Optional
 from sqlalchemy import Column, DateTime, func, select, update
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import RelationshipProperty, aliased, declared_attr, mapped_column, declarative_base
+from sqlalchemy.orm import (
+    RelationshipProperty,
+    aliased,
+    declarative_base,
+    declared_attr,
+    mapped_column,
+)
 
 
 class ModelBase:
-    @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower()
-
-
-Base = declarative_base(cls=ModelBase)
-
-
-class BaseMixin:
     """
-    Base mixin providing common attributes and methods for all models.
-
     Attributes:
         id (UUID): Unique identifier for the model instance.
         created_at (DateTime): Timestamp of creation.
@@ -32,6 +27,19 @@ class BaseMixin:
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted_at = Column(DateTime)
+
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
+
+
+Base = declarative_base(cls=ModelBase)
+
+
+class BaseMixin:
+    """
+    Base mixin providing common attributes and methods for all models.
+    """
 
     @classmethod
     async def get_by_id(cls, db_session: AsyncSession, _id: UUID):

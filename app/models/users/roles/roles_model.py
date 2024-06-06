@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Roles(Base, BaseMixin):
+class Roles(Base):
     __tablename__ = "roles"
 
     code = Column(String, nullable=False)

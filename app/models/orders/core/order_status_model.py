@@ -4,7 +4,7 @@ from sqlalchemy import Column
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
 class OrderStatus(Enum):
@@ -17,7 +17,7 @@ class OrderStatus(Enum):
     Cancelled = "Cancelled"
 
 
-class OrderStatus(Base, BaseMixin):
+class OrderStatus(Base):
     __tablename__ = "order_status"
 
     name = Column(

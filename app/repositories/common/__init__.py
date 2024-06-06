@@ -1,12 +1,10 @@
-from .base_model import Base, BaseMixin, ModelBase
-from .bulk_actions_model import BulkActionsMixin
-from .cache_model import CachingMixin
-from .search_model import SearchMixin
+from .base_mixin import BaseMixin
+from .bulk_actions_mixinl import BulkActionsMixin
+from .cache_mixin import CachingMixin
+from .search_mixin import SearchMixin
 
 __all__ = [
-    "Base",
     "BaseMixin",
-    "ModelBase",
     "BulkActionsMixin",
     "CachingMixin",
     "SearchMixin",

@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class AccessoriesSize(Base, BaseMixin):
+class AccessoriesSize(Base):
     __tablename__ = "accessories_size"
 
     name = Column(String)

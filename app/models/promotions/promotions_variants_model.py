@@ -2,10 +2,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class PromotionsVariants(Base, BaseMixin):
+class PromotionsVariants(Base):
     __tablename__ = "promotions_variants"
 
     # Foreign Keys

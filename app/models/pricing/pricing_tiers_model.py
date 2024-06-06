@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class PricingTier(Base, BaseMixin):
+class PricingTier(Base):
     __tablename__ = "pricing_tiers"
 
     retail_price = Column(Numeric, nullable=False)

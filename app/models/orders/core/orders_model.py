@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Orders(Base, BaseMixin):
+class Orders(Base):
     __tablename__ = "orders"
 
     total_price = Column(Numeric, nullable=False)

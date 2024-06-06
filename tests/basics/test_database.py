@@ -3,8 +3,8 @@ from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.users import Users, UserInfo
-from app.models.products import Products, Variants, Articles
+from app.models.products import Articles, Products, Variants
+from app.models.users import UserInfo, Users
 
 
 @pytest.mark.parametrize(
@@ -89,6 +89,7 @@ def test_database_schema_consistency(model_name):
 
 # --- Tests for Data Integrity and Constraints ---
 
+
 @pytest.mark.asyncio
 async def test_unique_user_login(db_session: AsyncSession):
     """Test the unique constraint on the Users.login field."""
@@ -123,13 +124,13 @@ async def test_product_variant_article_relationship(db_session: AsyncSession):
     product = Products(name="Test Product")
     variant = Variants(product=product, name="Test Variant")
     article = Articles(
-        variant=variant,  
-        owner_type="Platform", 
-        condition="New", 
+        variant=variant,
+        owner_type="Platform",
+        condition="New",
         status_code="Available",
-        # ... Other required fields for Articles ... 
+        # ... Other required fields for Articles ...
     )
-    db_session.add(product) # Add the product, cascading will add variant and article 
+    db_session.add(product)  # Add the product, cascading will add variant and article
     await db_session.commit()
 
     retrieved_product = await db_session.get(Products, product.id)
@@ -140,11 +141,11 @@ async def test_product_variant_article_relationship(db_session: AsyncSession):
 # ... Add more data integrity tests for other models and relationships ...
 
 # --- Tests for Data Validation within Models ---
-# You can add tests here to verify that model validation (if you have any custom validation logic) 
+# You can add tests here to verify that model validation (if you have any custom validation logic)
 # works as expected. For example:
 
 # @pytest.mark.asyncio
 # async def test_product_name_validation(db_session: AsyncSession):
 #     """Test that the product name validation prevents empty names."""
-#     with pytest.raises(ValueError): 
+#     with pytest.raises(ValueError):
 #         product = Products(name="")

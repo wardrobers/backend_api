@@ -1,10 +1,12 @@
-# tests/utils/users.py 
+# tests/utils/users.py
 import random
 import string
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.users import Users, UserInfo, Roles
+
+from app.models.users import Roles, UserInfo, Users
 from app.services.users import AuthService
+
 
 async def create_random_user(db_session: AsyncSession, login_length: int = 10) -> Users:
     """
@@ -25,7 +27,13 @@ async def create_random_user(db_session: AsyncSession, login_length: int = 10) -
     await db_session.refresh(user)
     return user
 
-async def create_random_user_info(db_session: AsyncSession, user: Users, first_name_length: int = 8, last_name_length: int = 10) -> UserInfo:
+
+async def create_random_user_info(
+    db_session: AsyncSession,
+    user: Users,
+    first_name_length: int = 8,
+    last_name_length: int = 10,
+) -> UserInfo:
     """
     Creates random user info associated with a given user.
 
@@ -38,21 +46,26 @@ async def create_random_user_info(db_session: AsyncSession, user: Users, first_n
     Returns:
         UserInfo: The created UserInfo object.
     """
-    random_first_name = "".join(random.choices(string.ascii_letters, k=first_name_length))
+    random_first_name = "".join(
+        random.choices(string.ascii_letters, k=first_name_length)
+    )
     random_last_name = "".join(random.choices(string.ascii_letters, k=last_name_length))
     user_info = UserInfo(
-        first_name=random_first_name, 
-        last_name=random_last_name, 
-        phone_number="1234567890", # You can randomize this as needed
+        first_name=random_first_name,
+        last_name=random_last_name,
+        phone_number="1234567890",  # You can randomize this as needed
         email=f"{random_first_name}.{random_last_name}@example.com",
-        user_id=user.id
+        user_id=user.id,
     )
     db_session.add(user_info)
     await db_session.commit()
     await db_session.refresh(user_info)
     return user_info
 
-async def create_random_role(db_session: AsyncSession, code_length: int = 6, name_length: int = 12) -> Roles:
+
+async def create_random_role(
+    db_session: AsyncSession, code_length: int = 6, name_length: int = 12
+) -> Roles:
     """
     Creates a random role in the database.
 
@@ -65,7 +78,9 @@ async def create_random_role(db_session: AsyncSession, code_length: int = 6, nam
         Roles: The created Roles object.
     """
     random_code = "".join(random.choices(string.ascii_lowercase, k=code_length))
-    random_name = "".join(random.choices(string.ascii_letters + string.whitespace, k=name_length))
+    random_name = "".join(
+        random.choices(string.ascii_letters + string.whitespace, k=name_length)
+    )
     role = Roles(code=random_code, name=random_name)
     db_session.add(role)
     await db_session.commit()

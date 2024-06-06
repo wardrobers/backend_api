@@ -2,24 +2,17 @@ from typing import Optional
 
 from fastapi import HTTPException, status
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import Users
-from app.repositories.users import (
-    UserInfoRepository,
-    UserAddressRepository,
-    UserRoleRepository,
-    UserPhotosRepository,
-    UsersRepository,
-)
+from app.repositories.users import UsersRepository
 from app.schemas.users import (
     UserInfoCreate,
+    UserInfoRead,
     UserInfoUpdate,
     UserLogin,
     UsersCreate,
     UsersRead,
     UsersUpdate,
-    UserInfoRead,
 )
 from app.services.users.core.auth_service import AuthService
 
@@ -33,20 +26,14 @@ class UsersService:
     def __init__(
         self,
         users_repository: UsersRepository,
-        user_info_repository: UserInfoRepository,
-        user_address_repository: UserAddressRepository,
-        user_role_repository: UserRoleRepository,
-        user_photo_repository: UserPhotosRepository,
     ):
         self.users_repository = users_repository
-        self.user_info_repository = user_info_repository
-        self.user_address_repository = user_address_repository
-        self.user_role_repository = user_role_repository
-        self.user_photo_repository = user_photo_repository
 
     async def get_user_by_id(self, user_id: UUID4) -> UsersRead:
         """Retrieves a user by their ID."""
-        user = await self.users_repository.get_by_id(self.users_repository.db_session, user_id)
+        user = await self.users_repository.get_by_id(
+            self.users_repository.db_session, user_id
+        )
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return UsersRead.model_validate(user)
@@ -105,9 +92,7 @@ class UsersService:
 
         return await self.users_repository.update_user(user_id, user_data)
 
-    async def authenticate_user(
-        self, login_data: UserLogin
-    ) -> Optional[Users]:
+    async def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
         """Authenticates a user based on login and password."""
         user = await self.users_repository.get_user_by_login(login_data.login)
         if not user or not AuthService.verify_password(
@@ -129,8 +114,8 @@ class UsersService:
 
         async with self.users_repository.db_session as session:
             # Cascading Delete Logic
-            user_addresses = await self.user_address_repository.get_addresses_by_user_id(
-                user_id
+            user_addresses = (
+                await self.user_address_repository.get_addresses_by_user_id(user_id)
             )
             for address in user_addresses:
                 await self.user_address_repository.delete_user_address(address.id)

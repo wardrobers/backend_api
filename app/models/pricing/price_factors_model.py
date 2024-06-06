@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class PriceFactors(Base, BaseMixin):
+class PriceFactors(Base):
     __tablename__ = "price_factors"
 
     rental_period = Column(Numeric, nullable=False)

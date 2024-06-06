@@ -1,12 +1,11 @@
 # backend_API/app/routers/users/profile/user_addresses_router.py
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserAddressRepository
-
 from app.schemas.users import UserAddressCreate, UserAddressRead, UserAddressUpdate
 from app.services.users import AuthService
 from app.services.users.profile.user_addresses_service import UserAddressesService
@@ -44,7 +43,7 @@ async def add_user_address(
         - 400 Bad Request: If there is an error adding the address (e.g., address already exists).
         - 401 Unauthorized: If the user is not authenticated.
     """
-    return await user_address_service.create_user_address(current_user.id, address_data) 
+    return await user_address_service.create_user_address(current_user.id, address_data)
 
 
 # --- Get User Addresses ---

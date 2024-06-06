@@ -3,9 +3,9 @@ from typing import Optional
 from fastapi import HTTPException, status
 from pydantic import UUID4
 
+from app.models.users import Users
 from app.repositories.users import UserRoleRepository, UsersRepository
 from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
-from app.models.users import Users
 
 
 class UserRolesService:
@@ -17,14 +17,14 @@ class UserRolesService:
     def __init__(
         self,
         user_role_repository: UserRoleRepository,
-        users_repository: UsersRepository, # Inject dependency
+        users_repository: UsersRepository,  # Inject dependency
     ):
         self.user_role_repository = user_role_repository
         self.users_repository = users_repository
 
     async def get_all_roles(self) -> list[RoleRead]:
         """Retrieves all roles."""
-        return await self.user_role_repository.get_all_roles() 
+        return await self.user_role_repository.get_all_roles()
 
     async def create_role(self, role_data: RoleCreate) -> RoleRead:
         """Creates a new role."""
@@ -45,8 +45,8 @@ class UserRolesService:
 
     async def delete_role(self, role_id: UUID4) -> None:
         """Deletes a role."""
-        # Add authorization or validation logic here, e.g., 
-        # prevent deleting roles that are currently assigned to users. 
+        # Add authorization or validation logic here, e.g.,
+        # prevent deleting roles that are currently assigned to users.
         await self.user_role_repository.delete_role(role_id)
 
     async def assign_role_to_user(
@@ -63,7 +63,9 @@ class UserRolesService:
             )
 
         # Check if the user exists:
-        if not await self.users_repository.get_by_id(self.users_repository.db_session, user_id):
+        if not await self.users_repository.get_by_id(
+            self.users_repository.db_session, user_id
+        ):
             raise HTTPException(status_code=404, detail="User not found")
 
         # Check if the role exists:
@@ -87,15 +89,17 @@ class UserRolesService:
 
         await self.user_role_repository.remove_role_from_user(user_id, role_id)
 
-    def _is_authorized_to_manage_roles(self, current_user: Optional[Users] = None) -> bool:
+    def _is_authorized_to_manage_roles(
+        self, current_user: Optional[Users] = None
+    ) -> bool:
         """
         Checks if the current user has permissions to manage roles.
-        You'll likely want to implement more sophisticated role-based 
+        You'll likely want to implement more sophisticated role-based
         authorization logic here.
         """
         # Placeholder - replace with your actual authorization logic
-        return current_user.is_admin  
+        return current_user.is_admin
 
     async def get_user_roles(self, user_id: UUID4) -> list[RoleRead]:
         """Retrieves the roles assigned to a user."""
-        return await self.user_role_repository.get_user_roles(user_id) 
+        return await self.user_role_repository.get_user_roles(user_id)

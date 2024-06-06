@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class ProductFit(Base, BaseMixin):
+class ProductFit(Base):
     __tablename__ = "product_fit"
 
     type = Column(String, nullable=False)

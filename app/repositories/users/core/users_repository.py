@@ -6,13 +6,13 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.users import Users
 from app.repositories.common import (
     BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
 )
-from app.models.users import Users
 from app.schemas.users import UsersCreate, UsersUpdate
 
 
@@ -28,16 +28,21 @@ class UsersRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
     async def get_user_by_login(self, login: str) -> Optional[Users]:
         """Retrieves a user by their login, incorporating caching."""
         async with self.db_session as session:
+            # Attempt to retrieve user from cache first
             user = await self.cached_get_by_id(
                 session, login, extra_params={"login": login}
             )
+
+            # If the user is not found in cache, fetch from the database
             if not user:
-                result = await session.execute(
-                    select(Users).where(
-                        Users.login == login, Users.deleted_at.is_(None)
-                    )
+                # Proper use of select() with filtering by login and checking deleted_at is None
+                statement = select(Users).where(
+                    Users.login == login, Users.deleted_at.is_(None)
                 )
+                result = await session.execute(statement)
                 user = result.scalars().first()
+
+                # If user is found, cache the result
                 if user:
                     await self.invalidate_cache_by_id(
                         user.id, extra_params={"login": login}

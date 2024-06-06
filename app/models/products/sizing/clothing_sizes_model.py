@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Numeric
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class ClothingSizes(Base, BaseMixin):
+class ClothingSizes(Base):
     __tablename__ = "clothing_sizes"
 
     back_length = Column(Numeric, nullable=True)

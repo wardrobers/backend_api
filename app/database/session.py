@@ -5,10 +5,12 @@ import asyncpg
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+
 from app.repositories.common import Base
 
 ENV = os.getenv("ENV", default="development")
 DATABASE_URL = os.getenv("DATABASE_URL")
+
 
 def create_connection_string():
     if ENV == "production":
@@ -18,6 +20,7 @@ def create_connection_string():
         )
     else:
         return DATABASE_URL
+
 
 async def get_async_conn():
     """
@@ -29,7 +32,7 @@ async def get_async_conn():
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASS"),
             database=os.getenv("DB_NAME"),
-            host=f"/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}"
+            host=f"/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}",
         )
     else:
         conn = await asyncpg.create_pool(dsn=DATABASE_URL)

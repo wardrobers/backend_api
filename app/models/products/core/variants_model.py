@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Variants(Base, BaseMixin):
+class Variants(Base):
     __tablename__ = "variants"
 
     name = Column(String, nullable=False)

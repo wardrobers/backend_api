@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from sqlalchemy import String, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import DeclarativeMeta, RelationshipProperty, aliased
+from sqlalchemy.orm import RelationshipProperty, aliased
 
 
 class SearchMixin:
@@ -21,7 +21,7 @@ class SearchMixin:
 
     @classmethod
     async def search(
-        cls,
+        self,
         db_session: AsyncSession,
         search_term: str,
         fields: Optional[list[str]] = None,
@@ -55,17 +55,17 @@ class SearchMixin:
         if not fields:
             fields = [
                 column.name
-                for column in cls.__table__.columns
+                for column in self.__table__.columns
                 if isinstance(column.type, String)
             ]
 
-        search_query = select(cls)
+        search_query = select(self)
 
         # Full-text search and fuzzy search logic
         search_conditions = []
         for term, weight in (weights or {"": 1.0}).items():
             vector = func.to_tsvector(
-                "english", func.concat(*[getattr(cls, field) for field in fields])
+                "english", func.concat(*[getattr(self, field) for field in fields])
             )
             query = func.plainto_tsquery("english", term)
             search_conditions.append(
@@ -78,7 +78,7 @@ class SearchMixin:
                     search_conditions.append(
                         func.funcfilter(
                             func.levenshtein(
-                                func.lower(getattr(cls, field)), func.lower(term)
+                                func.lower(getattr(self, field)), func.lower(term)
                             ),
                             lambda dist: dist <= fuzzy_threshold,
                         )
@@ -89,9 +89,9 @@ class SearchMixin:
         # Relationship search logic
         if relationships:
             for rel_attr, (rel_field, rel_filter) in relationships.items():
-                relationship: RelationshipProperty = getattr(cls, rel_attr)
-                related_cls = relationship.mapper.class_
-                rel_alias = aliased(related_cls)
+                relationship: RelationshipProperty = getattr(self, rel_attr)
+                related_self = relationship.mapper.class_
+                rel_alias = aliased(related_self)
                 search_query = search_query.join(rel_alias, relationship).filter(
                     getattr(rel_alias, rel_field) == rel_filter
                 )
@@ -107,7 +107,7 @@ class SearchMixin:
                     search_conditions.append(
                         func.funcfilter(
                             func.levenshtein(
-                                func.lower(getattr(cls, field)), func.lower(term)
+                                func.lower(getattr(self, field)), func.lower(term)
                             ),
                             lambda dist: dist <= fuzzy_threshold,
                         )
@@ -119,10 +119,11 @@ class SearchMixin:
         if ranking:
             rank = func.ts_rank_cd(
                 func.setweight(
-                    func.to_tsvector("english", func.coalesce(cls.name, "")), "A"
+                    func.to_tsvector("english", func.coalesce(self.name, "")), "A"
                 )
                 | func.setweight(
-                    func.to_tsvector("english", func.coalesce(cls.description, "")), "B"
+                    func.to_tsvector("english", func.coalesce(self.description, "")),
+                    "B",
                 ),
                 func.plainto_tsquery("english", search_term),
             )

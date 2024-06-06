@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
 class DiscountType(Enum):
@@ -12,7 +12,7 @@ class DiscountType(Enum):
     FixedAmount = "FixedAmount"
 
 
-class PromotionsAndDiscounts(Base, BaseMixin):
+class PromotionsAndDiscounts(Base):
     __tablename__ = "promotions_and_discounts"
 
     code = Column(String, nullable=False)

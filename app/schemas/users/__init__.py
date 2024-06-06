@@ -44,7 +44,12 @@ from .profile.user_addresses_schema import (
     UserAddressRead,
     UserAddressUpdate,
 )
-from .profile.user_photos_schema import UserPhotoBase, UserPhotoCreate, UserPhotoRead, UserPhotoUpdate
+from .profile.user_photos_schema import (
+    UserPhotoBase,
+    UserPhotoCreate,
+    UserPhotoRead,
+    UserPhotoUpdate,
+)
 from .roles.roles_schema import (
     RoleAction,
     RoleAssign,

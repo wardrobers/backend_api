@@ -2,10 +2,10 @@ from sqlalchemy import Column, DateTime, ForeignKey, Numeric, Text, Time
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class OrderItems(Base, BaseMixin):
+class OrderItems(Base):
     __tablename__ = "order_items"
 
     start_date = Column(DateTime, nullable=False)

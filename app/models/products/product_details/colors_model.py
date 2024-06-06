@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Colors(Base, BaseMixin):
+class Colors(Base):
     __tablename__ = "colors"
 
     name = Column(String)

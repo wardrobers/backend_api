@@ -1,10 +1,10 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Specifications(Base, BaseMixin):
+class Specifications(Base):
     __tablename__ = "specifications"
 
     name = Column(String)

@@ -6,7 +6,7 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
 class ArticleCurrentStatus(Enum):
@@ -19,7 +19,7 @@ class ArticleCurrentStatus(Enum):
     Retired = "Retired"
 
 
-class ArticleStatus(Base, BaseMixin):
+class ArticleStatus(Base):
     __tablename__ = "article_status"
 
     status_code = mapped_column(

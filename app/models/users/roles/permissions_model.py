@@ -4,7 +4,7 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
 class CRUDOperation(Enum):
@@ -14,7 +14,7 @@ class CRUDOperation(Enum):
     Delete = "Delete"
 
 
-class Permissions(Base, BaseMixin):
+class Permissions(Base):
     __tablename__ = "permissions"
 
     name = Column(String, nullable=False)

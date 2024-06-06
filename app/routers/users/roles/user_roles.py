@@ -3,11 +3,10 @@ from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.repositories.users import UserRoleRepository
-
-from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
-from app.services.users import UserRolesService, AuthService
 from app.models.users import Users
+from app.repositories.users import UserRoleRepository
+from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
+from app.services.users import AuthService, UserRolesService
 
 router = APIRouter()
 

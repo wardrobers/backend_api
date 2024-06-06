@@ -53,9 +53,7 @@ class UserRoleRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin)
             role = await self.get_role_by_id(role_id)
             if not role:
                 raise HTTPException(status_code=404, detail="Role not found")
-            await role.update(
-                session, **role_data.model_dump(exclude_unset=True)
-            )
+            await role.update(session, **role_data.model_dump(exclude_unset=True))
             await session.commit()
             await session.refresh(role)
             return role
@@ -69,9 +67,7 @@ class UserRoleRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin)
             await session.delete(role)
             await session.commit()
 
-    async def assign_role_to_user(
-        self, user_id: UUID, role_id: UUID
-    ) -> None:
+    async def assign_role_to_user(self, user_id: UUID, role_id: UUID) -> None:
         """Assigns a role to a user."""
         async with self.db_session as session:
             existing_role = await session.execute(

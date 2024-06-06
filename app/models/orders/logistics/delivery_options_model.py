@@ -1,10 +1,10 @@
 from sqlalchemy import Boolean, Column, Numeric, String
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class DeliveryOptions(Base, BaseMixin):
+class DeliveryOptions(Base):
     __tablename__ = "delivery_options"
 
     name = Column(String, nullable=False)

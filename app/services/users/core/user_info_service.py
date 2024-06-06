@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import HTTPException, BackgroundTasks
+from fastapi import BackgroundTasks, HTTPException
 from pydantic import UUID4
 
 from app.repositories.users import UserInfoRepository
@@ -10,12 +10,13 @@ from app.schemas.users import (
     UserInfoRead,
     UserInfoUpdate,
 )
+
 # TODO: from app.services.email import send_welcome_email
 
 
 class UserInfoService:
     """
-    Service layer for managing user information, utilizing the UserInfoRepository 
+    Service layer for managing user information, utilizing the UserInfoRepository
     for database interactions. Includes advanced logic and business-specific methods.
     """
 
@@ -30,12 +31,17 @@ class UserInfoService:
         return UserInfoRead.model_validate(user_info)
 
     async def create_user_info(
-        self, user_id: UUID4, user_info_data: UserInfoCreate, background_tasks: BackgroundTasks
+        self,
+        user_id: UUID4,
+        user_info_data: UserInfoCreate,
+        background_tasks: BackgroundTasks,
     ) -> UserInfoRead:
         """
         Creates new user info and optionally sends a welcome email.
         """
-        user_info = await self.user_info_repository.create_user_info(user_id, user_info_data)
+        user_info = await self.user_info_repository.create_user_info(
+            user_id, user_info_data
+        )
 
         # TODO: Add a background task to send a welcome email
         # if user_info.email:
@@ -51,7 +57,7 @@ class UserInfoService:
         current_user_id: Optional[UUID4] = None,  # Optional: for authorization
     ) -> UserInfoRead:
         """
-        Updates user info based on the provided context. 
+        Updates user info based on the provided context.
         Includes basic authorization logic (example).
         """
         if current_user_id and user_id != current_user_id:
@@ -99,7 +105,7 @@ class UserInfoService:
             raise HTTPException(
                 status_code=403, detail="Not authorized to delete this user info."
             )
-        
+
         await self.user_info_repository.delete_user_info(user_id)
 
     # --- Additional Business Logic Methods ---

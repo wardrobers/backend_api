@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class SizeSystems(Base, BaseMixin):
+class SizeSystems(Base):
     __tablename__ = "size_systems"
 
     name = Column(String, nullable=False)

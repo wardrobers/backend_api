@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class SubscriptionTypes(Base, BaseMixin):
+class SubscriptionTypes(Base):
     __tablename__ = "subscription_types"
 
     name = Column(String, nullable=True)

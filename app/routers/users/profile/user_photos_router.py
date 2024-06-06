@@ -1,7 +1,7 @@
 # app/routers/users/profile/user_photos_router.py
 from fastapi import APIRouter, Depends, File, UploadFile, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import UUID4
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
 from app.models.users import Users

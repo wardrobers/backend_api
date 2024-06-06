@@ -1,5 +1,7 @@
-from pydantic import UUID4, BaseModel
 from typing import Optional
+
+from pydantic import UUID4, BaseModel
+
 
 class UserPhotoBase(BaseModel):
     image_url: str

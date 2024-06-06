@@ -6,14 +6,14 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_async_session
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 from app.models.orders import OrderItems, Orders
 from app.models.products import Articles, Products, StockKeepingUnits
 from app.models.users import UserInfo, Users
 
 
 # Mocking for testing purposes
-class MockModel(Base, BaseMixin):
+class MockModel(Base):
     __tablename__ = "mock_model"
     name = Column(String)
 

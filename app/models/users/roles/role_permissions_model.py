@@ -2,10 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class RolePermissions(Base, BaseMixin):
+class RolePermissions(Base):
     __tablename__ = "role_permissions"
 
     to_create = Column(Boolean, default=False, name="create")

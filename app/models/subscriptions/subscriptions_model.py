@@ -2,10 +2,10 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Subscriptions(Base, BaseMixin):
+class Subscriptions(Base):
     __tablename__ = "subscriptions"
 
     subscription_start = Column(DateTime, nullable=True)

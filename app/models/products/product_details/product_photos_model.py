@@ -2,10 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class ProductPhotos(Base, BaseMixin):
+class ProductPhotos(Base):
     __tablename__ = "product_photos"
 
     index = Column(Integer, default=1)

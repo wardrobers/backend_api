@@ -5,14 +5,14 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.users import UserInfo
 from app.repositories.common import (
     BaseMixin,
     BulkActionsMixin,
     CachingMixin,
     SearchMixin,
 )
-from app.models.users import UserInfo
-from app.schemas.users import UserInfoCreate, UserInfoUpdate, UserInfoRead
+from app.schemas.users import UserInfoCreate, UserInfoRead, UserInfoUpdate
 
 
 class UserInfoRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin):
@@ -36,9 +36,7 @@ class UserInfoRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMixin)
     ) -> UserInfoRead:
         """Creates new user info."""
         async with self.db_session as session:
-            new_user_info = UserInfo(
-                **user_info_data.model_dump(), user_id=user_id
-            )
+            new_user_info = UserInfo(**user_info_data.model_dump(), user_id=user_id)
             session.add(new_user_info)
             await session.commit()
             await session.refresh(new_user_info)

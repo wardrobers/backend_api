@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class UserPhotos(Base, BaseMixin):
+class UserPhotos(Base):
     __tablename__ = "user_photos"
 
     image_url = Column(String, nullable=False)

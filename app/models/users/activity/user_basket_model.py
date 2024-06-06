@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class UserBasket(Base, BaseMixin):
+class UserBasket(Base):
     __tablename__ = "user_basket"
 
     count = Column(Integer, default=1)

@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class OccasionalCategories(Base, BaseMixin):
+class OccasionalCategories(Base):
     __tablename__ = "occasional_categories"
 
     name = Column(String, nullable=False)
@@ -27,7 +27,7 @@ class OccasionalCategories(Base, BaseMixin):
     )
 
 
-class ProductOccasionalCategories(Base, BaseMixin):
+class ProductOccasionalCategories(Base):
     __tablename__ = "product_occasional_categories"
 
     # Foreign Keys

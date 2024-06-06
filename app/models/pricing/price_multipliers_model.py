@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class PriceMultipliers(Base, BaseMixin):
+class PriceMultipliers(Base):
     __tablename__ = "price_multipliers"
 
     multiplier = Column(Numeric, nullable=False)

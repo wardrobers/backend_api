@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
 class TransactionStatus(Enum):
@@ -16,7 +16,7 @@ class TransactionStatus(Enum):
     Chargeback = "Chargeback"
 
 
-class Transactions(Base, BaseMixin):
+class Transactions(Base):
     __tablename__ = "transactions"
 
     amount = Column(Numeric, nullable=False)

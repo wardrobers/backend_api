@@ -2,10 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Categories(Base, BaseMixin):
+class Categories(Base):
     __tablename__ = "categories"
 
     name = Column(String)
@@ -32,7 +32,7 @@ class Categories(Base, BaseMixin):
     )
 
 
-class ProductCategories(Base, BaseMixin):
+class ProductCategories(Base):
     __tablename__ = "product_categories"
 
     # Foreign Keys

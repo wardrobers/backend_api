@@ -1,10 +1,10 @@
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class RevolutDetails(Base, BaseMixin):
+class RevolutDetails(Base):
     __tablename__ = "revolut_details"
 
     revolut_account_id = Column(String, nullable=True)

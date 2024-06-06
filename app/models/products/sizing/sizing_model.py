@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSON, UUID
 from sqlalchemy.orm import mapped_column
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Sizing(Base, BaseMixin):
+class Sizing(Base):
     __tablename__ = "sizing"
 
     label = Column(String, nullable=False)

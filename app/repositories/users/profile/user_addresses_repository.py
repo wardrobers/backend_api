@@ -27,9 +27,7 @@ class UserAddressRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMix
         self.db_session = db_session
         self.model = UserAddresses  # Define the model for this repository
 
-    async def get_address_by_id(
-        self, address_id: UUID
-    ) -> Optional[UserAddressRead]:
+    async def get_address_by_id(self, address_id: UUID) -> Optional[UserAddressRead]:
         """Retrieves an address by its ID."""
         async with self.db_session as session:
             address = await session.execute(
@@ -38,18 +36,14 @@ class UserAddressRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMix
             address = address.scalars().first()
             return UserAddressRead.model_validate(address) if address else None
 
-    async def get_addresses_by_user_id(
-        self, user_id: UUID
-    ) -> list[UserAddressRead]:
+    async def get_addresses_by_user_id(self, user_id: UUID) -> list[UserAddressRead]:
         """Retrieves all addresses for a given user."""
         async with self.db_session as session:
             addresses = await session.execute(
                 select(UserAddresses).where(UserAddresses.user_id == user_id)
             )
             addresses = addresses.scalars().all()
-            return [
-                UserAddressRead.model_validate(address) for address in addresses
-            ]
+            return [UserAddressRead.model_validate(address) for address in addresses]
 
     async def get_address_by_user_id_and_type(
         self, user_id: UUID, address_type: AddressType
@@ -82,9 +76,7 @@ class UserAddressRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMix
                     detail="Address of this type already exists for the user",
                 )
 
-            new_address = UserAddresses(
-                **address_data.model_dump(), user_id=user_id
-            )
+            new_address = UserAddresses(**address_data.model_dump(), user_id=user_id)
             session.add(new_address)
             await session.commit()
             await session.refresh(new_address)
@@ -99,9 +91,7 @@ class UserAddressRepository(BaseMixin, CachingMixin, BulkActionsMixin, SearchMix
             if not address:
                 raise HTTPException(status_code=404, detail="Address not found")
 
-            await address.update(
-                session, **address_data.model_dump(exclude_unset=True)
-            )
+            await address.update(session, **address_data.model_dump(exclude_unset=True))
 
             await session.commit()
             await session.refresh(address)

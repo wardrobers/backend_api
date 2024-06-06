@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class TypesOfOperations(Base, BaseMixin):
+class TypesOfOperations(Base):
     __tablename__ = "types_of_operations"
 
     name = Column(String, nullable=True, default=None)

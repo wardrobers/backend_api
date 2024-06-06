@@ -2,10 +2,10 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
-from app.repositories.common import Base, BaseMixin
+from app.models import Base
 
 
-class Materials(Base, BaseMixin):
+class Materials(Base):
     __tablename__ = "materials"
 
     name = Column(String)
@@ -23,7 +23,7 @@ class Materials(Base, BaseMixin):
     )
 
 
-class ProductMaterials(Base, BaseMixin):
+class ProductMaterials(Base):
     __tablename__ = "product_materials"
 
     percent = Column(Integer)
