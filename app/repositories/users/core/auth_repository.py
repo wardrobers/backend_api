@@ -5,24 +5,18 @@ import re
 from datetime import timedelta
 from typing import Optional
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Security, HTTPException, status
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import Users
 from app.schemas.users import UserLogin
-
-# Initialize OAuth2 scheme
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# Password hashing configuration
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+from app.config import oauth2_scheme, pwd_context
 
 
-class AuthService:
+
+class AuthRepository:
     """
     Handles user authentication, token management, and password-related operations.
 
@@ -46,15 +40,16 @@ class AuthService:
         r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     )
 
-    def __init__(self, db_session: AsyncSession):
+    def __init__(self, db_session: AsyncSession = None):
         self.db_session = db_session
+        self.model = Users
 
     async def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
         """
         Authenticates a user based on their login and password.
         """
         user = await self.db_session.execute(
-            select(Users).filter(Users.login == login_data.login)
+            select(self.model).filter(self.model.login == login_data.login)
         )
         user = user.scalars().first()
         if user and pwd_context.verify(login_data.password, user.password):
@@ -95,7 +90,7 @@ class AuthService:
         encoded_jwt = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return encoded_jwt
 
-    async def get_current_user(self, token: str = Depends(oauth2_scheme)) -> Users:
+    async def get_current_user(self, token: str = Security(oauth2_scheme)) -> Users:
         """
         Decodes the JWT token, retrieves the user from the database, and raises an exception if
         credentials are invalid or the user is not found.
@@ -106,7 +101,7 @@ class AuthService:
             if username is None:
                 raise self._credentials_exception()
             user = await self.db_session.execute(
-                select(Users).filter(Users.login == username)
+                select(self.model).filter(self.model.login == username)
             )
             user = user.scalars().first()
             if user is None:
@@ -120,7 +115,7 @@ class AuthService:
         Changes the user's password, handling hashing and database updates.
         """
         self.validate_password_strength(new_password)
-        hashed_password = pwd_context.hash(new_password)
+        hashed_password = self.get_password_hash(new_password)
         user.password = hashed_password
         await self.db_session.commit()
 
@@ -150,3 +145,8 @@ class AuthService:
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    @staticmethod
+    def get_password_hash(password: str) -> str:
+        """Hashes the password using bcrypt."""
+        return pwd_context.hash(password)

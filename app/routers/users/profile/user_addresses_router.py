@@ -7,7 +7,7 @@ from app.database.session import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserAddressRepository
 from app.schemas.users import UserAddressCreate, UserAddressRead, UserAddressUpdate
-from app.services.users import AuthService
+from app.repositories.users import AuthRepository
 from app.services.users.profile.user_addresses_service import UserAddressesService
 
 router = APIRouter()
@@ -25,7 +25,7 @@ async def get_user_address_service(
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserAddressRead)
 async def add_user_address(
     address_data: UserAddressCreate,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(AuthRepository.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
@@ -65,7 +65,7 @@ async def get_address(
 
 @router.get("/", response_model=list[UserAddressRead])
 async def get_all_user_addresses(
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(AuthRepository.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
@@ -86,7 +86,7 @@ async def get_all_user_addresses(
 async def update_user_address(
     address_id: UUID4,
     address_update: UserAddressUpdate,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(AuthRepository.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
@@ -117,7 +117,7 @@ async def update_user_address(
 )
 async def delete_user_address(
     address_id: UUID4,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(AuthRepository.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """

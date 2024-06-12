@@ -6,7 +6,8 @@ from app.database.session import get_async_session
 from app.models.users import Users
 from app.repositories.users import UserRoleRepository
 from app.schemas.users import RoleCreate, RoleRead, RoleUpdate
-from app.services.users import AuthService, UserRolesService
+from app.repositories.users import AuthRepository
+from app.services.users import UserRolesService
 
 router = APIRouter()
 
@@ -127,7 +128,7 @@ async def delete_role(
 async def assign_role_to_user(
     role_id: UUID4,
     user_id: UUID4,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(AuthRepository.get_current_user),
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
     """
@@ -154,7 +155,7 @@ async def assign_role_to_user(
 async def remove_role_from_user(
     role_id: UUID4,
     user_id: UUID4,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(AuthRepository.get_current_user),
     user_roles_service: UserRolesService = Depends(get_user_roles_service),
 ):
     """

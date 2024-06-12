@@ -5,7 +5,7 @@ import string
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.users import Roles, UserInfo, Users
-from app.services.users import AuthService
+from app.repositories.users import AuthRepository
 
 
 async def create_random_user(db_session: AsyncSession, login_length: int = 10) -> Users:
@@ -20,7 +20,7 @@ async def create_random_user(db_session: AsyncSession, login_length: int = 10) -
         Users: The created Users object.
     """
     random_login = "".join(random.choices(string.ascii_letters, k=login_length))
-    hashed_password = AuthService.get_password_hash("testpassword")
+    hashed_password = AuthRepository.get_password_hash("testpassword")
     user = Users(login=random_login, password=hashed_password)
     db_session.add(user)
     await db_session.commit()

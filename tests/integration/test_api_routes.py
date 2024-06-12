@@ -19,7 +19,7 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
-from app.services.users import AuthService
+from app.repositories.users import AuthRepository
 from tests.utils.users import (
     create_random_role,
     create_random_user,
@@ -31,7 +31,7 @@ client = TestClient(app)
 
 # --- Helper Function to get access token ---
 async def get_access_token(db_session: AsyncSession, user_data: UserLogin):
-    auth_service = AuthService(db_session)
+    auth_service = AuthRepository(db_session)
     user = await auth_service.authenticate_user(user_data)
     if not user:
         return None

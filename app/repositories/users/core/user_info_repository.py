@@ -25,7 +25,7 @@ class UserInfoRepository(CachingMixin, BulkActionsMixin, SearchMixin):
         """Gets user info by user ID."""
         async with self.db_session as session:
             user_info = await session.execute(
-                select(UserInfo).where(UserInfo.user_id == user_id)
+                select(self.model).where(self.model.user_id == user_id)
             )
             user_info = user_info.scalars().first()
             return UserInfoRead.model_validate(user_info) if user_info else None
@@ -35,7 +35,7 @@ class UserInfoRepository(CachingMixin, BulkActionsMixin, SearchMixin):
     ) -> UserInfoRead:
         """Creates new user info."""
         async with self.db_session as session:
-            new_user_info = UserInfo(**user_info_data.model_dump(), user_id=user_id)
+            new_user_info = self.model(**user_info_data.model_dump(), user_id=user_id)
             session.add(new_user_info)
             await session.commit()
             await session.refresh(new_user_info)

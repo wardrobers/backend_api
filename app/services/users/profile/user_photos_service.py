@@ -20,11 +20,11 @@ class UserPhotosService:
         self.user_photo_repository = user_photo_repository
 
     # --- User Photo Operations ---
-    async def get_user_photos(self, user_id: UUID) -> list[UserPhotoRead]:
+    def get_user_photos(self, user_id: UUID) -> list[UserPhotoRead]:
         """Retrieves all photos for a user."""
-        return await self.user_photo_repository.get_user_photos(user_id)
+        return self.user_photo_repository.get_user_photos(user_id)
 
-    async def add_user_photo(
+    def add_user_photo(
         self, user_id: UUID, photo_data: UploadFile
     ) -> UserPhotoRead:
         """
@@ -44,20 +44,20 @@ class UserPhotosService:
             )
 
         # Process image (resize/compress)
-        image_bytes = await photo_data.read()
+        image_bytes = photo_data.read()
         image_np = np.frombuffer(image_bytes, np.uint8)
         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
         image = self._process_image(image)
 
         # Upload image and create database record
-        new_photo = await self.user_photo_repository.add_user_photo(
+        new_photo = self.user_photo_repository.add_user_photo(
             user_id, photo_data, image
         )
         return UserPhotoRead.model_validate(new_photo)
 
-    async def delete_user_photo(self, user_id: UUID, photo_id: UUID) -> None:
+    def delete_user_photo(self, user_id: UUID, photo_id: UUID) -> None:
         """Deletes a user photo, including storage cleanup."""
-        await self.user_photo_repository.delete_user_photo(user_id, photo_id)
+        self.user_photo_repository.delete_user_photo(user_id, photo_id)
 
     def _process_image(self, image: np.ndarray) -> bytes:
         """

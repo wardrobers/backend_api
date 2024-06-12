@@ -1,7 +1,6 @@
 from typing import Any, Optional
-import logging
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import RelationshipProperty, aliased
@@ -12,7 +11,6 @@ class BaseMixin:
     Base mixin providing common attributes and methods for all models.
     """
 
-    logger = logging.getLogger(__name__)
     model = None
 
     async def get_by_id(self, db_session: AsyncSession, _id: UUID):
@@ -182,11 +180,12 @@ class BaseMixin:
         """
         Update an existing model instance.
         """
-        for key, value in kwargs.items():
-            setattr(self.model, key, value)
-        await db_session.commit()
-        await db_session.refresh(self.model)
-        return self.model
+        async with db_session.begin():
+            for key, value in kwargs.items():
+                setattr(self.model, key, value)
+            await db_session.commit()
+            await db_session.refresh(self.model)
+            return self.model
 
     async def soft_delete(self, db_session: AsyncSession):
         """

@@ -22,34 +22,34 @@ class UserRolesService:
         self.user_role_repository = user_role_repository
         self.users_repository = users_repository
 
-    async def get_all_roles(self) -> list[RoleRead]:
+    def get_all_roles(self) -> list[RoleRead]:
         """Retrieves all roles."""
-        return await self.user_role_repository.get_all_roles()
+        return self.user_role_repository.get_all_roles()
 
-    async def create_role(self, role_data: RoleCreate) -> RoleRead:
+    def create_role(self, role_data: RoleCreate) -> RoleRead:
         """Creates a new role."""
         # Add any validation or business logic here before creating the role.
-        return await self.user_role_repository.create_role(role_data)
+        return self.user_role_repository.create_role(role_data)
 
-    async def get_role_by_id(self, role_id: UUID4) -> RoleRead:
+    def get_role_by_id(self, role_id: UUID4) -> RoleRead:
         """Retrieves a role by its ID."""
-        role = await self.user_role_repository.get_role_by_id(role_id)
+        role = self.user_role_repository.get_role_by_id(role_id)
         if not role:
             raise HTTPException(status_code=404, detail="Role not found")
         return role
 
-    async def update_role(self, role_id: UUID4, role_data: RoleUpdate) -> RoleRead:
+    def update_role(self, role_id: UUID4, role_data: RoleUpdate) -> RoleRead:
         """Updates a role."""
         # Add any authorization or validation logic here.
-        return await self.user_role_repository.update_role(role_id, role_data)
+        return self.user_role_repository.update_role(role_id, role_data)
 
-    async def delete_role(self, role_id: UUID4) -> None:
+    def delete_role(self, role_id: UUID4) -> None:
         """Deletes a role."""
         # Add authorization or validation logic here, e.g.,
         # prevent deleting roles that are currently assigned to users.
-        await self.user_role_repository.delete_role(role_id)
+        self.user_role_repository.delete_role(role_id)
 
-    async def assign_role_to_user(
+    def assign_role_to_user(
         self, user_id: UUID4, role_id: UUID4, current_user: Optional[Users] = None
     ) -> None:
         """
@@ -63,18 +63,18 @@ class UserRolesService:
             )
 
         # Check if the user exists:
-        if not await self.users_repository.get_by_id(
+        if not self.users_repository.get_by_id(
             self.users_repository.db_session, user_id
         ):
             raise HTTPException(status_code=404, detail="User not found")
 
         # Check if the role exists:
-        if not await self.user_role_repository.get_role_by_id(role_id):
+        if not self.user_role_repository.get_role_by_id(role_id):
             raise HTTPException(status_code=404, detail="Role not found")
 
-        await self.user_role_repository.assign_role_to_user(user_id, role_id)
+        self.user_role_repository.assign_role_to_user(user_id, role_id)
 
-    async def remove_role_from_user(
+    def remove_role_from_user(
         self, user_id: UUID4, role_id: UUID4, current_user: Optional[Users] = None
     ) -> None:
         """
@@ -87,7 +87,7 @@ class UserRolesService:
                 detail="Not authorized to remove roles.",
             )
 
-        await self.user_role_repository.remove_role_from_user(user_id, role_id)
+        self.user_role_repository.remove_role_from_user(user_id, role_id)
 
     def _is_authorized_to_manage_roles(
         self, current_user: Optional[Users] = None
@@ -100,6 +100,6 @@ class UserRolesService:
         # Placeholder - replace with your actual authorization logic
         return current_user.is_admin
 
-    async def get_user_roles(self, user_id: UUID4) -> list[RoleRead]:
+    def get_user_roles(self, user_id: UUID4) -> list[RoleRead]:
         """Retrieves the roles assigned to a user."""
-        return await self.user_role_repository.get_user_roles(user_id)
+        return self.user_role_repository.get_user_roles(user_id)

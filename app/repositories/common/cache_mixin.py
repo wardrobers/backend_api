@@ -13,13 +13,9 @@ from app.repositories.common import BaseMixin
 ENV = os.getenv("ENV", default="development")
 
 # Get Redis credentials
-if ENV == "production":
-    redis_credentials = json.loads(os.environ["REDISCRED"])
-else:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-    redis_credentials = json.loads(os.getenv("REDISCRED", "{}"))
+REDIS_CREDENTIALS = (
+    json.loads(os.environ["REDISCRED"]) if ENV == "production" else {}
+)
 
 
 class CachingMixin(BaseMixin):
@@ -39,9 +35,9 @@ class CachingMixin(BaseMixin):
         """Get or create a Redis client."""
         if self._redis is None:
             self._redis = Redis(
-                host=redis_credentials["host"],
-                port=redis_credentials["port"],
-                password=redis_credentials["password"],
+                host=REDIS_CREDENTIALS.get("host"),
+                port=REDIS_CREDENTIALS.get("port"),
+                password=REDIS_CREDENTIALS.get("password"),
                 decode_responses=True,
             )
         return self._redis

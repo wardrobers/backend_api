@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-import logging
 
 from app.database import get_async_session
 from app.models.users import Users
@@ -13,23 +12,24 @@ from app.schemas.users import (
     UsersCreate,
     UsersRead,
 )
-from app.services.users import AuthService, UsersService
+from app.repositories.users import AuthRepository
+from app.services.users import UsersService
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
 # Dependency to get user service
-async def get_user_service(
+def get_user_service(
     db_session: AsyncSession = Depends(get_async_session),
 ):
+    auth_service = AuthRepository(db_session)
     users_repository = UsersRepository(db_session)
-    return UsersService(users_repository)
+    return UsersService(users_repository, auth_service)
 
 
-# Dependency for AuthService
-async def get_auth_service(db_session: AsyncSession = Depends(get_async_session)):
-    return AuthService(db_session)
+# Dependency for AuthRepository
+def get_auth_service(db_session: AsyncSession = Depends(get_async_session)):
+    return AuthRepository(db_session)
 
 
 # --- Registration ---
@@ -53,14 +53,7 @@ async def register_user(
             - If the passwords don't match.
             - If the password doesn't meet strength requirements.
     """
-    # logger.debug("Register attempt for user: %s", user_create)
-    # try:
-    user = await user_service.create_user(user_create)
-    # logger.debug("User registered successfully: %s", user_create)
-    return user
-    # except Exception as e:
-    #     logger.error("Registration failed for user %s: %s", user_create, str(e))
-    #     raise HTTPException(status_code=400, detail=str(e))
+    return await user_service.create_user(user_create)
 
 
 # --- Login ---
@@ -68,8 +61,8 @@ async def register_user(
 async def login_user(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db_session: AsyncSession = Depends(get_async_session),
     user_service: UsersService = Depends(get_user_service),
+    auth_service: AuthRepository = Depends(get_auth_service),
 ):
     """
     Logs in a user using the OAuth2 password flow and generates a JWT access token.
@@ -84,9 +77,7 @@ async def login_user(
     **Error Codes:**
         - 401 Unauthorized: If the provided credentials are incorrect.
     """
-    user = await user_service.authenticate_user(
-        db_session, UserLogin(**form_data.dict())
-    )
+    user = await user_service.authenticate_user(UserLogin(login=form_data.username, password=form_data.password))
 
     if not user:
         raise HTTPException(
@@ -94,7 +85,7 @@ async def login_user(
             detail="Incorrect login or password",
         )
 
-    access_token = AuthService.create_access_token(data={"sub": user.login})
+    access_token = auth_service.create_access_token(data={"sub": user.login})
     response.set_cookie(
         key="access_token", value=f"Bearer {access_token}", httponly=True
     )
@@ -128,12 +119,12 @@ async def reset_password(
     #     raise HTTPException(status_code=404, detail="Invalid or expired token")
 
     try:
-        AuthService.validate_password_strength(reset_data.new_password)
+        AuthRepository.validate_password_strength(reset_data.new_password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the user's password
-    # user.password = AuthService.get_password_hash(reset_data.new_password)
+    # user.password = AuthRepository.get_password_hash(reset_data.new_password)
     # await db_session.commit()
 
     return {"message": "Password reset successfully"}
@@ -143,8 +134,8 @@ async def reset_password(
 @router.put("/password/change", status_code=status.HTTP_200_OK, response_model=None)
 async def change_password(
     password_change: PasswordChange,
-    current_user: Users = Depends(AuthService.get_current_user),
-    auth_service: AuthService = Depends(get_auth_service),
+    current_user: Users = Depends(AuthRepository.get_current_user),
+    auth_service: AuthRepository = Depends(get_auth_service),
 ):
     """
     Allows authenticated users to change their password.

@@ -11,23 +11,29 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
-from app.services.users import AuthService, UsersService
+from app.repositories.users import AuthRepository
+from app.services.users import UsersService
 
 router = APIRouter()
 
 
 # Dependency to get user service
-async def get_user_service(
+def get_user_service(
     db_session: AsyncSession = Depends(get_async_session),
 ):
+    auth_service = AuthRepository(db_session)
     users_repository = UsersRepository(db_session)
-    user_info_repository = UserInfoRepository(db_session)
-    return UsersService(users_repository, user_info_repository)
+    return UsersService(users_repository, auth_service)
 
+def get_current_user(
+    db_session: AsyncSession = Depends(get_async_session),
+):
+    auth_repo = AuthRepository(db_session)
+    return auth_repo.get_current_user()
 
 @router.get("/me", response_model=UsersRead)
 async def get_current_user_profile(
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
     """
@@ -44,7 +50,7 @@ async def get_current_user_profile(
 @router.put("/me", response_model=UsersRead)
 async def update_current_user_profile(
     user_update: UsersUpdate,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
     """
@@ -68,7 +74,7 @@ async def update_current_user_profile(
 @router.put("/me/info", response_model=UserInfoRead)
 async def update_current_user_info(
     user_info_update: UserInfoUpdate,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
     """
@@ -94,7 +100,7 @@ async def update_current_user_info(
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_current_user_account(
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
     """
@@ -115,7 +121,7 @@ async def delete_current_user_account(
 @router.put("/notifications", status_code=status.HTTP_200_OK, response_model=None)
 async def update_notification_preferences(
     enabled: bool,
-    current_user: Users = Depends(AuthService.get_current_user),
+    current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
     """

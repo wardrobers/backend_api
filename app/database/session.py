@@ -1,10 +1,12 @@
 import os
+from asyncio import current_task
 from contextlib import asynccontextmanager
 
 import asyncpg
 from fastapi import FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_scoped_session
 from sqlalchemy.orm import sessionmaker
+from google.cloud.sql.connector import create_async_connector
 
 
 ENV = os.getenv("ENV", default="development")
@@ -27,11 +29,13 @@ async def get_async_conn():
     Handles both production (Cloud SQL) and development environments.
     """
     if ENV == "production":
-        conn = await asyncpg.create_pool(
+        connector = await create_async_connector()
+        conn: asyncpg.Connection = await connector.connect_async(
+            os.getenv('CLOUD_SQL_CONNECTION_NAME'),
+            "asyncpg",
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASS"),
-            database=os.getenv("DB_NAME"),
-            host=f"/cloudsql/{os.getenv('CLOUD_SQL_CONNECTION_NAME')}",
+            db=os.getenv("DB_NAME"),
         )
     else:
         conn = await asyncpg.create_pool(dsn=DATABASE_URL)
