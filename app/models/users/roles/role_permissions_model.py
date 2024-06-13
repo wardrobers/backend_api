@@ -21,9 +21,9 @@ class RolePermissions(Base):
 
     # Relationships
     roles = relationship(
-        "app.models.users.roles.roles_model.Roles", back_populates="role_permissions"
+        "app.models.users.Roles", back_populates="role_permissions"
     )
     permissions = relationship(
-        "app.models.users.roles.permissions_model.Permissions",
+        "app.models.users.Permissions",
         back_populates="role_permissions",
     )

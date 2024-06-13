@@ -28,8 +28,8 @@ class OrderItems(Base):
 
     # Relationships
     promotions = relationship(
-        "app.model.promotions.order_items_promotions_model.OrderItemsPromotions",
-        backref="order_item",
+        "app.models.promotions.OrderItemsPromotions",
+        backref="order_items",
         lazy="joined",
     )
 

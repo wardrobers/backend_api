@@ -28,21 +28,25 @@ class PromotionsAndDiscounts(Base):
 
     # Relationships
     user_promotions = relationship(
-        "app.models.promotions.user_promotions_model.UserPromotions",
+        "app.models.promotions.UserPromotions",
+        backref="promotions_and_discounts",
+    )
+    order_promotions = relationship(
+        "app.models.promotions.OrderPromotions",
         backref="promotions_and_discounts",
     )
     promotions_variants = relationship(
-        "app.models.promotions.promotions_variants_model.PromotionsVariants",
+        "app.models.promotions.PromotionsVariants",
         backref="promotions_and_discounts",
     )
     occasional_categories = relationship(
-        "app.models.promotions.promotions_occasional_categories.PromotionsOccasionalCategories",
-        backref="promotion",
+        "app.models.promotions.PromotionsOccasionalCategories",
+        backref="promotions_and_discounts",
         lazy="dynamic",
     )
     variants = relationship(
-        "app.models.products.core.variants_model.Variants",
-        backref="promotion",
+        "app.models.products.Variants",
+        backref="promotions_and_discounts",
         lazy="dynamic",
     )
 

@@ -38,15 +38,15 @@ class Transactions(Base):
 
     # Relationships
     revolut_details = relationship(
-        "app.models.orders.payments.revolut_details_model.RevolutDetails",
+        "app.models.orders.RevolutDetails",
         backref="transactions",
     )
     stripe_details = relationship(
-        "app.models.orders.payments.stripe_details_model.StripeDetails",
+        "app.models.orders.StripeDetails",
         backref="transactions",
     )
     lender_payment = relationship(
-        "app.models.orders.paymentslender_payments_model.LenderPayments",
+        "app.models.orders.LenderPayments",
         backref="transactions",
     )
 

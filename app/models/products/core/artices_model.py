@@ -57,24 +57,24 @@ class Articles(Base):
 
     # Relationships
     specification = relationship(
-        "app.model.products.maintenance.specifications_model.Specifications",
+        "app.models.products.maintenance.specifications_model.Specifications",
         backref="articles",
     )
     cleaning_logs = relationship(
-        "app.model.products.maintenance.cleaning_log_model.CleaningLogs",
+        "app.models.products.maintenance.cleaning_log_model.CleaningLogs",
         backref="articles",
     )
     repair_logs = relationship(
-        "app.model.products.maintenance.repair_log_model.RepairLogs", backref="articles"
+        "app.models.products.maintenance.repair_log_model.RepairLogs", backref="articles"
     )
     lender_payments = relationship(
-        "app.model.orders.payments.lender_payments_model.LenderPayments",
+        "app.models.orders.payments.lender_payments_model.LenderPayments",
         backref="articles",
     )
     user_saved_items = relationship(
-        "app.model.users.activity.user_saved_items_model.UserSavedItems",
+        "app.models.users.activity.user_saved_items_model.UserSavedItems",
         backref="articles",
     )
     order_items = relationship(
-        "app.model.orders.core.order_items_model.OrderItems", backref="articles"
+        "app.models.orders.OrderItems", backref="articles"
     )

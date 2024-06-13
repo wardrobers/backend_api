@@ -39,6 +39,6 @@ class PaymentMethods(Base):
 
     # Relationships
     transactions = relationship(
-        "app.model.orders.payments.transactions_model.Transactions",
+        "app.models.orders.Transactions",
         backref="payment_methods",
     )

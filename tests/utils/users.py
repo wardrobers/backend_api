@@ -2,18 +2,18 @@
 import random
 import string
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.models.users import Roles, UserInfo, Users
 from app.repositories.users import AuthRepository
 
 
-async def create_random_user(db_session: AsyncSession, login_length: int = 10) -> Users:
+def create_random_user(db_session: Session, login_length: int = 10) -> Users:
     """
     Creates a random user with a hashed password in the database.
 
     Args:
-        db_session (AsyncSession): The database session.
+        db_session (Session): The database session.
         login_length (int, optional): Length of the random login to generate. Defaults to 10.
 
     Returns:
@@ -23,13 +23,13 @@ async def create_random_user(db_session: AsyncSession, login_length: int = 10) -
     hashed_password = AuthRepository.get_password_hash("testpassword")
     user = Users(login=random_login, password=hashed_password)
     db_session.add(user)
-    await db_session.commit()
-    await db_session.refresh(user)
+    db_session.commit()
+    db_session.refresh(user)
     return user
 
 
-async def create_random_user_info(
-    db_session: AsyncSession,
+def create_random_user_info(
+    db_session: Session,
     user: Users,
     first_name_length: int = 8,
     last_name_length: int = 10,
@@ -38,7 +38,7 @@ async def create_random_user_info(
     Creates random user info associated with a given user.
 
     Args:
-        db_session (AsyncSession): The database session.
+        db_session (Session): The database session.
         user (Users): The user to associate the info with.
         first_name_length (int, optional): Length of the random first name. Defaults to 8.
         last_name_length (int, optional): Length of the random last name. Defaults to 10.
@@ -58,19 +58,19 @@ async def create_random_user_info(
         user_id=user.id,
     )
     db_session.add(user_info)
-    await db_session.commit()
-    await db_session.refresh(user_info)
+    db_session.commit()
+    db_session.refresh(user_info)
     return user_info
 
 
-async def create_random_role(
-    db_session: AsyncSession, code_length: int = 6, name_length: int = 12
+def create_random_role(
+    db_session: Session, code_length: int = 6, name_length: int = 12
 ) -> Roles:
     """
     Creates a random role in the database.
 
     Args:
-        db_session (AsyncSession): The database session.
+        db_session (Session): The database session.
         code_length (int, optional): Length of the random role code. Defaults to 6.
         name_length (int, optional): Length of the random role name. Defaults to 12.
 
@@ -83,6 +83,6 @@ async def create_random_role(
     )
     role = Roles(code=random_code, name=random_name)
     db_session.add(role)
-    await db_session.commit()
-    await db_session.refresh(role)
+    db_session.commit()
+    db_session.refresh(role)
     return role

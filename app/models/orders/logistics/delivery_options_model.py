@@ -13,6 +13,6 @@ class DeliveryOptions(Base):
 
     # Relationships
     shipping_details = relationship(
-        "app.model.orders.logistics.shipping_details_model.ShippingDetails",
+        "app.models.orders.ShippingDetails",
         backref="delivery_options",
     )

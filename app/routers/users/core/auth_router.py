@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
-from app.database import get_async_session
+from app.database import get_db
 from app.models.users import Users
-from app.repositories.users import UsersRepository
+from app.repositories.users import AuthRepository, UsersRepository
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
@@ -12,7 +12,6 @@ from app.schemas.users import (
     UsersCreate,
     UsersRead,
 )
-from app.repositories.users import AuthRepository
 from app.services.users import UsersService
 
 router = APIRouter()
@@ -20,7 +19,7 @@ router = APIRouter()
 
 # Dependency to get user service
 def get_user_service(
-    db_session: AsyncSession = Depends(get_async_session),
+    db_session: Session = Depends(get_db),
 ):
     auth_service = AuthRepository(db_session)
     users_repository = UsersRepository(db_session)
@@ -28,13 +27,13 @@ def get_user_service(
 
 
 # Dependency for AuthRepository
-def get_auth_service(db_session: AsyncSession = Depends(get_async_session)):
+def get_auth_service(db_session: Session = Depends(get_db)):
     return AuthRepository(db_session)
 
 
 # --- Registration ---
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UsersRead)
-async def register_user(
+def register_user(
     user_create: UsersCreate,
     user_service: UsersService = Depends(get_user_service),
 ):
@@ -53,12 +52,12 @@ async def register_user(
             - If the passwords don't match.
             - If the password doesn't meet strength requirements.
     """
-    return await user_service.create_user(user_create)
+    return user_service.create_user(user_create)
 
 
 # --- Login ---
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=None)
-async def login_user(
+def login_user(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     user_service: UsersService = Depends(get_user_service),
@@ -77,7 +76,9 @@ async def login_user(
     **Error Codes:**
         - 401 Unauthorized: If the provided credentials are incorrect.
     """
-    user = await user_service.authenticate_user(UserLogin(login=form_data.username, password=form_data.password))
+    user = user_service.authenticate_user(
+        UserLogin(login=form_data.username, password=form_data.password)
+    )
 
     if not user:
         raise HTTPException(
@@ -94,7 +95,7 @@ async def login_user(
 
 # --- Password Reset Confirmation ---
 @router.post("/password/reset", status_code=status.HTTP_200_OK, response_model=None)
-async def reset_password(
+def reset_password(
     reset_data: PasswordResetConfirm,
 ):
     """
@@ -113,7 +114,7 @@ async def reset_password(
         - 404 Not Found: If no user is associated with the token.
     """
     # TODO: Retrieve the user associated with the reset token.
-    # user = await get_user_by_reset_token(db_session, reset_data.token)
+    # user = get_user_by_reset_token(db_session, reset_data.token)
 
     # if not user:
     #     raise HTTPException(status_code=404, detail="Invalid or expired token")
@@ -125,14 +126,14 @@ async def reset_password(
 
     # Update the user's password
     # user.password = AuthRepository.get_password_hash(reset_data.new_password)
-    # await db_session.commit()
+    # db_session.commit()
 
     return {"message": "Password reset successfully"}
 
 
 # --- Password Change Route ---
 @router.put("/password/change", status_code=status.HTTP_200_OK, response_model=None)
-async def change_password(
+def change_password(
     password_change: PasswordChange,
     current_user: Users = Depends(AuthRepository.get_current_user),
     auth_service: AuthRepository = Depends(get_auth_service),
@@ -167,6 +168,6 @@ async def change_password(
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the password
-    await auth_service.change_password(current_user, password_change.new_password)
+    auth_service.change_password(current_user, password_change.new_password)
 
     return {"message": "Password changed successfully"}

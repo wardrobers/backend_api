@@ -12,7 +12,7 @@ class Roles(Base):
 
     # Relationships
     users = relationship(
-        "app.models.users.core.users_model.Users",
+        "app.models.users.Users",
         secondary="user_roles",
         backref="roles",
     )

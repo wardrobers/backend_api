@@ -26,8 +26,11 @@ class Orders(Base):
 
     # Relationships
     transactions = relationship(
-        "app.model.orders.payments.transactions_model.Transactions", backref="orders"
+        "app.models.orders.Transactions", backref="orders"
     )
     order_items = relationship(
-        "app.model.orders.core.order_items_model.OrderItems", backref="orders"
+        "app.models.orders.OrderItems", backref="orders"
+    )
+    order_promotions = relationship(
+        "app.models.promotions.OrderPromotions", backref="orders"
     )

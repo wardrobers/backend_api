@@ -56,9 +56,7 @@ class UserAddressesService:
         # You can add more validation or business logic here, e.g.,
         # checking address validity using an external service.
 
-        address = self.user_address_repository.add_user_address(
-            user_id, address_data
-        )
+        address = self.user_address_repository.add_user_address(user_id, address_data)
         return UserAddressRead.model_validate(address)
 
     def update_user_address(
@@ -86,9 +84,7 @@ class UserAddressesService:
         )
         return UserAddressRead.model_validate(address)
 
-    def delete_user_address(
-        self, address_id: UUID4, current_user_id: UUID4
-    ) -> None:
+    def delete_user_address(self, address_id: UUID4, current_user_id: UUID4) -> None:
         """
         Deletes a user address, with authorization check.
         """

@@ -17,49 +17,49 @@ class Users(Base):
         "app.models.users.core.user_info_model.UserInfo", uselist=False, backref="users"
     )
     activity = relationship(
-        "app.models.users.activity.user_activity_model.UserActivity",
+        "app.models.users.UserActivity",
         uselist=False,
         backref="users",
     )
     basket = relationship(
-        "app.models.users.profile.user_basket_model.UserBasket",
+        "app.models.users.UserBasket",
         uselist=False,
         backref="users",
     )
     photos = relationship(
-        "app.models.users.profile.user_photos_model.UserPhotos", backref="users"
+        "app.models.users.UserPhotos", backref="users"
     )
     role = relationship(
-        "app.models.users.roles.roles_model.Roles",
+        "app.models.users.Roles",
         secondary="user_roles",
         backref="users",
     )
-    order = relationship("app.models.orders.core.order_model.Orders", backref="users")
+    order = relationship("app.models.orders.Orders", backref="users")
     subscriptions = relationship(
-        "app.models.subscriptions.subscriptions_model.Subscriptions", backref="users"
+        "app.models.subscriptions.Subscriptions", backref="users"
     )
     reviews_and_ratings = relationship(
-        "app.models.users.activity.user_reviews_and_ratings_model.UserReviewsAndRatings",
+        "app.models.users.UserReviewsAndRatings",
         backref="users",
     )
     saved_items = relationship(
-        "app.models.users.activity.user_saved_items_model.UserSavedItems",
+        "app.models.users.UserSavedItems",
         backref="users",
     )
     promotions = relationship(
-        "app.models.promotions.user_promotions_model.UserPromotions", backref="users"
+        "app.models.UserPromotions", backref="users"
     )
     addresses = relationship(
-        "app.models.users.profile.user_addresses_model.UserAddresses", backref="users"
+        "app.models.users.UserAddresses", backref="users"
     )
     categories_for_user = relationship(
-        "app.models.products.product_details.category_model.CategoriesForUser",
+        "app.models.products.CategoriesForUser",
         backref="users",
     )
     data_privacy_consents = relationship(
-        "app.models.users.core.data_privacy_consents_model.DataPrivacyConsents",
+        "app.models.users.DataPrivacyConsents",
         backref="users",
     )
     transactions = relationship(
-        "app.models.orders.payments.transactions_model.Transactions", backref="users"
+        "app.models.orders.Transactions", backref="users"
     )

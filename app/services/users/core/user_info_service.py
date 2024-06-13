@@ -39,9 +39,7 @@ class UserInfoService:
         """
         Creates new user info and optionally sends a welcome email.
         """
-        user_info = self.user_info_repository.create_user_info(
-            user_id, user_info_data
-        )
+        user_info = self.user_info_repository.create_user_info(user_id, user_info_data)
 
         # TODO: Add a background task to send a welcome email
         # if user_info.email:

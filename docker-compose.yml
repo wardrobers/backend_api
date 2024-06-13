@@ -8,5 +8,5 @@ services:
     volumes:
       - .:/backend_api
     environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:password@localhost/postgres
+      - DATABASE_URL=postgresql+pg8000://postgres:password@localhost/postgres
       - ENV=development

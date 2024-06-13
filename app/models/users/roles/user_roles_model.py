@@ -21,7 +21,7 @@ class UserRoles(Base):
     )
 
     # Relationships
-    user = relationship("app.models.users.core.users_model.Users", backref="user_roles")
+    user = relationship("app.models.users.Users", backref="user_roles")
     roles = relationship(
-        "app.models.users.roles.roles_model.Roles", backref="user_roles"
+        "app.models.users.Roles", backref="user_roles"
     )

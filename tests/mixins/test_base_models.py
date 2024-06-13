@@ -3,9 +3,9 @@ import pytest
 from sqlalchemy import Column, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
-from app.database.session import get_async_session
+from app.database.session import get_db
 from app.models.base_model import Base
 from app.models.orders import OrderItems, Orders
 from app.models.products import Articles, Products, StockKeepingUnits
@@ -19,161 +19,161 @@ class MockModel(Base):
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_get_by_id():
+def test_base_mixin_get_by_id():
     """Test retrieving a model instance by its ID."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(name="Test Instance")
         session.add(mock_instance)
-        await session.commit()
+        session.commit()
 
-        retrieved_instance = await MockModel.get_by_id(session, mock_instance.id)
+        retrieved_instance = MockModel.get_by_id(session, mock_instance.id)
         assert retrieved_instance.id == mock_instance.id
         assert retrieved_instance.name == "Test Instance"
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_get_by_id_nonexistent():
+def test_base_mixin_get_by_id_nonexistent():
     """Test retrieving a non-existent model instance by ID."""
-    async with get_async_session() as session:
-        retrieved_instance = await MockModel.get_by_id(
+    with get_db() as session:
+        retrieved_instance = MockModel.get_by_id(
             session, UUID("00000000-0000-0000-0000-000000000001")
         )
         assert retrieved_instance is None
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_get_all():
+def test_base_mixin_get_all():
     """Test retrieving all instances of a model."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance1 = MockModel(name="Instance 1")
         mock_instance2 = MockModel(name="Instance 2")
         session.add_all([mock_instance1, mock_instance2])
-        await session.commit()
+        session.commit()
 
-        retrieved_instances = await MockModel.get_all(session)
+        retrieved_instances = MockModel.get_all(session)
         assert len(retrieved_instances) == 2
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_get_by_ids():
+def test_base_mixin_get_by_ids():
     """Test retrieving multiple instances by their IDs."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance1 = MockModel(name="Instance 1")
         mock_instance2 = MockModel(name="Instance 2")
         session.add_all([mock_instance1, mock_instance2])
-        await session.commit()
+        session.commit()
 
-        retrieved_instances = await MockModel.get_by_ids(
+        retrieved_instances = MockModel.get_by_ids(
             session, [mock_instance1.id, mock_instance2.id]
         )
         assert len(retrieved_instances) == 2
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_get_by_ids_empty():
+def test_base_mixin_get_by_ids_empty():
     """Test retrieving instances with an empty list of IDs."""
-    async with get_async_session() as session:
-        retrieved_instances = await MockModel.get_by_ids(session, [])
+    with get_db() as session:
+        retrieved_instances = MockModel.get_by_ids(session, [])
         assert len(retrieved_instances) == 0
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_create():
+def test_base_mixin_create():
     """Test creating a new model instance."""
-    async with get_async_session() as session:
+    with get_db() as session:
         new_instance = MockModel(name="New Instance")
-        created_instance = await new_instance.create(session)
+        created_instance = new_instance.create(session)
         assert created_instance.id is not None
         assert created_instance.name == "New Instance"
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_create_empty_data():
+def test_base_mixin_create_empty_data():
     """Test creating a new instance with empty data."""
-    async with get_async_session() as session:
+    with get_db() as session:
         new_instance = MockModel()
-        created_instance = await new_instance.create(session)
+        created_instance = new_instance.create(session)
         assert created_instance.id is not None
         # No name was set, so the name attribute should be None
         assert created_instance.name is None
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_update():
+def test_base_mixin_update():
     """Test updating an existing model instance."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(name="Original Instance")
         session.add(mock_instance)
-        await session.commit()
+        session.commit()
 
-        await mock_instance.update(session, name="Updated Instance")
-        updated_instance = await MockModel.get_by_id(session, mock_instance.id)
+        mock_instance.update(session, name="Updated Instance")
+        updated_instance = MockModel.get_by_id(session, mock_instance.id)
         assert updated_instance.name == "Updated Instance"
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_update_nonexistent():
+def test_base_mixin_update_nonexistent():
     """Test updating a non-existent model instance."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(
             id=UUID("00000000-0000-0000-0000-000000000001"), name="Original Instance"
         )
-        await mock_instance.update(session, name="Updated Instance")
+        mock_instance.update(session, name="Updated Instance")
         # No exception raised, update should just do nothing
-        updated_instance = await MockModel.get_by_id(session, mock_instance.id)
+        updated_instance = MockModel.get_by_id(session, mock_instance.id)
         assert updated_instance is None
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_soft_delete():
+def test_base_mixin_soft_delete():
     """Test soft deleting a model instance."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(name="Test Instance")
         session.add(mock_instance)
-        await session.commit()
+        session.commit()
 
-        await mock_instance.soft_delete(session)
-        deleted_instance = await MockModel.get_by_id(session, mock_instance.id)
+        mock_instance.soft_delete(session)
+        deleted_instance = MockModel.get_by_id(session, mock_instance.id)
         assert deleted_instance.deleted_at is not None
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_soft_delete_already_deleted():
+def test_base_mixin_soft_delete_already_deleted():
     """Test soft deleting a model instance that is already soft deleted."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(name="Test Instance", deleted_at=func.now())
         session.add(mock_instance)
-        await session.commit()
+        session.commit()
 
-        await mock_instance.soft_delete(session)
-        deleted_instance = await MockModel.get_by_id(session, mock_instance.id)
+        mock_instance.soft_delete(session)
+        deleted_instance = MockModel.get_by_id(session, mock_instance.id)
         # The deleted_at timestamp should remain the same
         assert deleted_instance.deleted_at == mock_instance.deleted_at
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_delete():
+def test_base_mixin_delete():
     """Test permanently deleting a model instance."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(name="Test Instance")
         session.add(mock_instance)
-        await session.commit()
+        session.commit()
 
-        await mock_instance.delete(session)
-        deleted_instance = await MockModel.get_by_id(session, mock_instance.id)
+        mock_instance.delete(session)
+        deleted_instance = MockModel.get_by_id(session, mock_instance.id)
         assert deleted_instance is None
 
 
 @pytest.mark.asyncio
-async def test_base_mixin_delete_already_deleted():
+def test_base_mixin_delete_already_deleted():
     """Test permanently deleting a model instance that is already soft deleted."""
-    async with get_async_session() as session:
+    with get_db() as session:
         mock_instance = MockModel(name="Test Instance", deleted_at=func.now())
         session.add(mock_instance)
-        await session.commit()
+        session.commit()
 
-        await mock_instance.delete(session)
-        deleted_instance = await MockModel.get_by_id(session, mock_instance.id)
+        mock_instance.delete(session)
+        deleted_instance = MockModel.get_by_id(session, mock_instance.id)
         assert deleted_instance is None
 
 
@@ -182,7 +182,7 @@ async def test_base_mixin_delete_already_deleted():
 
 # Specific model tests for Users, UserInfo, Products, StockKeepingUnits, Articles, Orders, etc.
 @pytest.mark.asyncio
-async def test_user_creation_with_info(session: AsyncSession):
+def test_user_creation_with_info(session: Session):
     """Test creating a new Users with associated UserInfo."""
     user = Users(login="testuser", password="securepassword")
     user_info = UserInfo(
@@ -190,14 +190,14 @@ async def test_user_creation_with_info(session: AsyncSession):
     )
     user.info = user_info  # Set relationship
     session.add(user)
-    await session.commit()
+    session.commit()
 
     assert user.id is not None
     assert user.info.id is not None
 
 
 @pytest.mark.asyncio
-async def test_user_creation_with_duplicate_email(session: AsyncSession):
+def test_user_creation_with_duplicate_email(session: Session):
     """Test preventing duplicate email for Users creation."""
     user1 = Users(login="user1", password="securepassword")
     user1.info = UserInfo(
@@ -209,15 +209,15 @@ async def test_user_creation_with_duplicate_email(session: AsyncSession):
     )
 
     session.add(user1)
-    await session.commit()
+    session.commit()
 
     session.add(user2)
     with pytest.raises(IntegrityError):
-        await session.commit()
+        session.commit()
 
 
 @pytest.mark.asyncio
-async def test_product_creation_with_stock_and_article(session: AsyncSession):
+def test_product_creation_with_stock_and_article(session: Session):
     """Test creating a Product with associated StockKeepingUnits and Articles."""
     sku = StockKeepingUnits(sku_name="SKU123", free_articles_count=1)
     article = Articles(
@@ -235,7 +235,7 @@ async def test_product_creation_with_stock_and_article(session: AsyncSession):
     product.variants.append(article)
 
     session.add_all([product, sku, article])
-    await session.commit()
+    session.commit()
 
     assert product.id is not None
     assert sku.id is not None
@@ -243,17 +243,17 @@ async def test_product_creation_with_stock_and_article(session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_order_creation_with_order_items(session: AsyncSession):
+def test_order_creation_with_order_items(session: Session):
     """Test creating an Orders with associated OrderItems."""
     product = Products(
         name="Test Product", sku_product="SKU123"
     )  # Add a Product for testing
     session.add(product)
-    await session.commit()
+    session.commit()
 
     user = Users(login="testuser", password="securepassword")
     session.add(user)
-    await session.commit()
+    session.commit()
 
     order = Orders(user_id=user.id, total_price=100.00)
     order_item = OrderItems(
@@ -264,7 +264,7 @@ async def test_order_creation_with_order_items(session: AsyncSession):
     order.order_items.append(order_item)  # Set relationship
 
     session.add_all([order, order_item])
-    await session.commit()
+    session.commit()
 
     assert order.id is not None
     assert order_item.id is not None

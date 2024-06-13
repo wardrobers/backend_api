@@ -29,5 +29,5 @@ class PricingTier(Base):
 
     # Relationships
     price_factors = relationship(
-        "app.models.pricing.pricing_factors_model.PriceFactors", backref="pricing_tiers"
+        "app.models.pricing.PriceFactors", backref="pricing_tiers"
     )

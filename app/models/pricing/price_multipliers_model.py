@@ -17,6 +17,6 @@ class PriceMultipliers(Base):
 
     # Relationships
     pricing_tiers = relationship(
-        "app.models.pricing.pricing_tiers_model.PricingTiers",
+        "app.models.pricing.PricingTiers",
         backref="price_multipliers",
     )

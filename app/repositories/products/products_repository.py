@@ -2,7 +2,6 @@ from enum import Enum, auto
 
 from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.models.pricing import PriceFactors, PriceMultipliers, PricingTier
@@ -39,12 +38,10 @@ class ProductsRepository:
 
     NEW_ITEM_PREMIUM = 1.10
 
-    def __init__(self, db_session: AsyncSession):
+    def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    async def get_available_products(
-        cls, db_session: AsyncSession, category=None, brand=None
-    ):
+    def get_available_products(cls, db_session: Session, category=None, brand=None):
         """
         Retrieves products with available sku based on filters.
         Optimized to use EXISTS clause to check for stock directly in the query.

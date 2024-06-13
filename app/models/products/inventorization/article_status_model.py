@@ -29,5 +29,5 @@ class ArticleStatus(Base):
 
     # Relationships
     article = relationship(
-        "app.model.products.core.articles_model.Articles", backref="article_status"
+        "app.models.products.core.articles_model.Articles", backref="article_status"
     )

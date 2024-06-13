@@ -5,15 +5,14 @@ import re
 from datetime import timedelta
 from typing import Optional
 
-from fastapi import Security, HTTPException, status
+from fastapi import HTTPException, Security, status
 from jose import JWTError, jwt
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
+from app.config import oauth2_scheme, pwd_context
 from app.models.users import Users
 from app.schemas.users import UserLogin
-from app.config import oauth2_scheme, pwd_context
-
 
 
 class AuthRepository:
@@ -40,15 +39,15 @@ class AuthRepository:
         r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     )
 
-    def __init__(self, db_session: AsyncSession = None):
+    def __init__(self, db_session: Session = None):
         self.db_session = db_session
         self.model = Users
 
-    async def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
+    def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
         """
         Authenticates a user based on their login and password.
         """
-        user = await self.db_session.execute(
+        user = self.db_session.execute(
             select(self.model).filter(self.model.login == login_data.login)
         )
         user = user.scalars().first()
@@ -90,7 +89,7 @@ class AuthRepository:
         encoded_jwt = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return encoded_jwt
 
-    async def get_current_user(self, token: str = Security(oauth2_scheme)) -> Users:
+    def get_current_user(self, token: str = Security(oauth2_scheme)) -> Users:
         """
         Decodes the JWT token, retrieves the user from the database, and raises an exception if
         credentials are invalid or the user is not found.
@@ -100,7 +99,7 @@ class AuthRepository:
             username: str = payload.get("sub")
             if username is None:
                 raise self._credentials_exception()
-            user = await self.db_session.execute(
+            user = self.db_session.execute(
                 select(self.model).filter(self.model.login == username)
             )
             user = user.scalars().first()
@@ -110,14 +109,14 @@ class AuthRepository:
         except JWTError:
             raise self._credentials_exception()
 
-    async def change_password(self, user: Users, new_password: str) -> None:
+    def change_password(self, user: Users, new_password: str) -> None:
         """
         Changes the user's password, handling hashing and database updates.
         """
         self.validate_password_strength(new_password)
         hashed_password = self.get_password_hash(new_password)
         user.password = hashed_password
-        await self.db_session.commit()
+        self.db_session.commit()
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """

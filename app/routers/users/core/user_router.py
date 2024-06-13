@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
-from app.database import get_async_session
+from app.database import get_db
 from app.models.users import Users
-from app.repositories.users import UserInfoRepository, UsersRepository
+from app.repositories.users import AuthRepository, UserInfoRepository, UsersRepository
 from app.schemas.users import (
     UpdateContext,
     UserInfoRead,
@@ -11,7 +11,6 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
-from app.repositories.users import AuthRepository
 from app.services.users import UsersService
 
 router = APIRouter()
@@ -19,20 +18,22 @@ router = APIRouter()
 
 # Dependency to get user service
 def get_user_service(
-    db_session: AsyncSession = Depends(get_async_session),
+    db_session: Session = Depends(get_db),
 ):
     auth_service = AuthRepository(db_session)
     users_repository = UsersRepository(db_session)
     return UsersService(users_repository, auth_service)
 
+
 def get_current_user(
-    db_session: AsyncSession = Depends(get_async_session),
+    db_session: Session = Depends(get_db),
 ):
     auth_repo = AuthRepository(db_session)
     return auth_repo.get_current_user()
 
+
 @router.get("/me", response_model=UsersRead)
-async def get_current_user_profile(
+def get_current_user_profile(
     current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
@@ -44,11 +45,11 @@ async def get_current_user_profile(
     **Response (Success - 200 OK):**
         - `UsersRead` (schema): The complete user profile including related info.
     """
-    return await user_service.get_user_by_id(current_user.id)
+    return user_service.get_user_by_id(current_user.id)
 
 
 @router.put("/me", response_model=UsersRead)
-async def update_current_user_profile(
+def update_current_user_profile(
     user_update: UsersUpdate,
     current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
@@ -68,11 +69,11 @@ async def update_current_user_profile(
         - 400 Bad Request: If update data is invalid or a conflict occurs (e.g., duplicate email).
         - 403 Forbidden: If the user is not authorized to update the profile.
     """
-    return await user_service.update_user(current_user.id, user_update, current_user)
+    return user_service.update_user(current_user.id, user_update, current_user)
 
 
 @router.put("/me/info", response_model=UserInfoRead)
-async def update_current_user_info(
+def update_current_user_info(
     user_info_update: UserInfoUpdate,
     current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
@@ -93,13 +94,13 @@ async def update_current_user_info(
         - 403 Forbidden: If the user is not authorized to update the info.
         - 404 Not Found: If the user info for the current user is not found.
     """
-    return await user_service.update_user_info(
+    return user_service.update_user_info(
         current_user.id, user_info_update, UpdateContext.FULL_PROFILE
     )
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
-async def delete_current_user_account(
+def delete_current_user_account(
     current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
 ):
@@ -115,11 +116,11 @@ async def delete_current_user_account(
         - 403 Forbidden: If the user is not authorized to delete the account.
         - 404 Not Found: If the user is not found.
     """
-    await user_service.delete_user(current_user.id, current_user)
+    user_service.delete_user(current_user.id, current_user)
 
 
 @router.put("/notifications", status_code=status.HTTP_200_OK, response_model=None)
-async def update_notification_preferences(
+def update_notification_preferences(
     enabled: bool,
     current_user: Users = Depends(get_current_user),
     user_service: UsersService = Depends(get_user_service),
@@ -139,5 +140,5 @@ async def update_notification_preferences(
         - 403 Forbidden: If the user is not authorized to modify notifications.
         - 404 Not Found: If the user is not found.
     """
-    await user_service.toggle_notifications(current_user.id, enabled, current_user)
+    user_service.toggle_notifications(current_user.id, enabled, current_user)
     return {"message": "Notification preferences updated successfully"}

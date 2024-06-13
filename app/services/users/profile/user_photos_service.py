@@ -24,9 +24,7 @@ class UserPhotosService:
         """Retrieves all photos for a user."""
         return self.user_photo_repository.get_user_photos(user_id)
 
-    def add_user_photo(
-        self, user_id: UUID, photo_data: UploadFile
-    ) -> UserPhotoRead:
+    def add_user_photo(self, user_id: UUID, photo_data: UploadFile) -> UserPhotoRead:
         """
         Adds a new photo for the user, handling image processing and upload.
 

@@ -23,6 +23,6 @@ class Permissions(Base):
 
     # Relationships
     role_permissions = relationship(
-        "app.models.users.roles.role_permissions_model.RolePermissions",
+        "app.models.users.RolePermissions",
         backref="permissions",
     )

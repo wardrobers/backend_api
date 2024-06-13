@@ -13,7 +13,7 @@ class Categories(Base):
 
     # Relationships
     materials = relationship(
-        "app.model.products.product_details.materials_model.Materials",
+        "app.models.products.product_details.materials_model.Materials",
         backref="categories",
     )
     product_categories = relationship(
@@ -24,10 +24,10 @@ class Categories(Base):
         "app.models.products.inventorization.types_model.Types", backref="categories"
     )
     pricing_tiers = relationship(
-        "app.model.pricing.pricing_tier_model.PricingTier", backref="categories"
+        "app.models.pricing.pricing_tier_model.PricingTier", backref="categories"
     )
     price_multiplier = relationship(
-        "app.model.pricing.price_multipliers_model.PriceMultipliers",
+        "app.models.pricing.price_multipliers_model.PriceMultipliers",
         backref="categories",
     )
 

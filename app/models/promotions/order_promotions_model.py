@@ -15,9 +15,3 @@ class OrderPromotions(Base):
     promotion_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("promotions_and_discounts.id"), nullable=False
     )
-
-    # Relationships
-    order = relationship("Orders", backref=backref("order_promotions", uselist=True))
-    promotion = relationship(
-        "Promotion", backref=backref("order_promotions", uselist=True)
-    )

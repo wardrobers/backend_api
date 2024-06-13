@@ -1,10 +1,9 @@
 import asyncio
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, create_async_engine, sessionmaker
 
-from app.database import engine, get_async_session
+from app.database import engine, get_db
 from app.repositories.common import Base
 
 # Database connection string for testing (use a dedicated test database)
@@ -14,33 +13,33 @@ TEST_DATABASE_URL = "postgresql+asyncpg://postgres:password@localhost/wardrobers
 
 # --- Pytest Fixtures for Database Session and Clean Up ---
 @pytest.fixture(scope="session")
-async def async_engine():
+def async_engine():
     """
     Fixture to create and teardown the database engine.
     Runs once per test session.
     """
     # Use a separate engine for testing to avoid conflicts with the main application
     test_engine = create_async_engine(TEST_DATABASE_URL, echo=True)
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)  # Drop existing tables
-        await conn.run_sync(Base.metadata.create_all)  # Create tables
+    with test_engine.begin() as conn:
+        conn.run_sync(Base.metadata.drop_all)  # Drop existing tables
+        conn.run_sync(Base.metadata.create_all)  # Create tables
     yield test_engine
-    await test_engine.dispose()
+    test_engine.dispose()
 
 
 @pytest.fixture
-async def db_session(async_engine) -> AsyncSession:
+def db_session(async_engine) -> Session:
     """
     Fixture to create and teardown a database session for each test.
     Ensures a clean session for each test, preventing side effects.
     """
     # Use a separate session factory for testing
     TestAsyncSessionLocal = sessionmaker(
-        bind=async_engine, class_=AsyncSession, expire_on_commit=False
+        bind=async_engine, class_=Session, expire_on_commit=False
     )
-    async with TestAsyncSessionLocal() as session:
+    with TestAsyncSessionLocal() as session:
         yield session
-    await session.rollback()
+    session.rollback()
 
 
 # --- Event Loop Fixture ---

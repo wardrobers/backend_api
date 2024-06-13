@@ -27,5 +27,5 @@ class OrderStatus(Base):
 
     # Relationships
     order = relationship(
-        "app.model.orders.core.order_model.Orders", backref="order_status"
+        "app.models.orders.Orders", backref="order_status"
     )

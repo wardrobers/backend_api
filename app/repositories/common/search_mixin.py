@@ -1,8 +1,7 @@
 from typing import Any, Optional
 
 from sqlalchemy import String, func, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import RelationshipProperty, aliased
+from sqlalchemy.orm import RelationshipProperty, Session, aliased
 
 
 class SearchMixin:
@@ -21,9 +20,9 @@ class SearchMixin:
 
     model = None
 
-    async def search(
+    def search(
         self,
-        db_session: AsyncSession,
+        db_session: Session,
         search_term: str,
         fields: Optional[list[str]] = None,
         relationships: Optional[dict[str, tuple[str, Any]]] = None,
@@ -37,7 +36,7 @@ class SearchMixin:
         Performs a comprehensive search across specified fields and relationships.
 
         Args:
-            db_session (AsyncSession): The async database session.
+            db_session (Session): The database session.
             search_term (str): The term to search for.
             fields (Optional[List[str]]): A list of fields to search in the current entity.
             relationships (Optional[Dict[str, Tuple[str, Any]]]): A dictionary specifying relationships to search.
@@ -66,7 +65,8 @@ class SearchMixin:
         search_conditions = []
         for term, weight in (weights or {"": 1.0}).items():
             vector = func.to_tsvector(
-                "english", func.concat(*[getattr(self.model, field) for field in fields])
+                "english",
+                func.concat(*[getattr(self.model, field) for field in fields]),
             )
             query = func.plainto_tsquery("english", term)
             search_conditions.append(
@@ -123,7 +123,9 @@ class SearchMixin:
                     func.to_tsvector("english", func.coalesce(self.model.name, "")), "A"
                 )
                 | func.setweight(
-                    func.to_tsvector("english", func.coalesce(self.model.description, "")),
+                    func.to_tsvector(
+                        "english", func.coalesce(self.model.description, "")
+                    ),
                     "B",
                 ),
                 func.plainto_tsquery("english", search_term),
@@ -135,6 +137,6 @@ class SearchMixin:
         if offset:
             search_query = search_query.offset(offset)
 
-        async with db_session.begin():
-            result = await db_session.execute(search_query)
+        with db_session.begin():
+            result = db_session.execute(search_query)
             return result.scalars().all()

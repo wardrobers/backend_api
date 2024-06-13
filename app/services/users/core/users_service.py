@@ -5,6 +5,7 @@ from pydantic import UUID4
 
 from app.models.users import Users
 from app.repositories.users import UsersRepository
+from app.repositories.users.core.auth_repository import AuthRepository
 from app.schemas.users import (
     UserInfoCreate,
     UserInfoRead,
@@ -14,7 +15,6 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
-from app.repositories.users.core.auth_repository import AuthRepository
 
 
 class UsersService:
@@ -99,9 +99,7 @@ class UsersService:
         user = self.users_repository.get_user_by_login(login_data.login)
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
-        if not self.auth_service.verify_password(
-            login_data.password, user.password
-        ):
+        if not self.auth_service.verify_password(login_data.password, user.password):
             return None
         return user
 
@@ -119,7 +117,7 @@ class UsersService:
         # TODO: Cascading Delete Logic
         # user_addresses = self.user_address_repository.get_addresses_by_user_id(user_id)
         # for address in user_addresses:
-        #     await self.user_address_repository.delete_user_address(address.id)
+        #     self.user_address_repository.delete_user_address(address.id)
 
         # user_photos = self.user_photo_repository.get_user_photos(user_id)
         # for photo in user_photos:

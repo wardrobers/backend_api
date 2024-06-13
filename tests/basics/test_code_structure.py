@@ -31,7 +31,7 @@ EXPECTED_STRUCTURE = {
         "users",  # 'products', 'orders', etc. - as needed
     ],
     "database": [
-        "get_async_session",
+        "get_db",
         "app_lifespan",
         "engine",
     ],

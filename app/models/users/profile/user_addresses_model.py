@@ -24,10 +24,10 @@ class UserAddresses(Base):
 
     # Relationships
     shipping_details = relationship(
-        "app.models.orders.logistics.shipping_details_model.ShippingDetails",
+        "app.models.orders.ShippingDetails",
         back_populates="user_addresses",
     )
     transactions = relationship(
-        "app.models.orders.payments.transactions_model.Transactions",
+        "app.models.orders.Transactions",
         back_populates="user_addresses",
     )

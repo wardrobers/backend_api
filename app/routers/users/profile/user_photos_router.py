@@ -1,28 +1,27 @@
 # app/routers/users/profile/user_photos_router.py
 from fastapi import APIRouter, Depends, File, UploadFile, status
 from pydantic import UUID4
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
-from app.database.session import get_async_session
+from app.database.session import get_db
 from app.models.users import Users
-from app.repositories.users import UserPhotosRepository
+from app.repositories.users import AuthRepository, UserPhotosRepository
 from app.schemas.users import UserPhotoRead
-from app.repositories.users import AuthRepository
 from app.services.users import UserPhotosService
 
 router = APIRouter()
 
 
 # Dependency to get user photos service
-async def get_user_photos_service(
-    db_session: AsyncSession = Depends(get_async_session),
+def get_user_photos_service(
+    db_session: Session = Depends(get_db),
 ):
     user_photo_repository = UserPhotosRepository(db_session)
     return UserPhotosService(user_photo_repository)
 
 
 @router.get("/", response_model=list[UserPhotoRead])
-async def get_user_photos(
+def get_user_photos(
     current_user: Users = Depends(AuthRepository.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
@@ -34,11 +33,11 @@ async def get_user_photos(
     **Response (Success - 200 OK):**
         - `List[UserPhotoRead]` (schema): A list of user photos.
     """
-    return await user_photos_service.get_user_photos(current_user.id)
+    return user_photos_service.get_user_photos(current_user.id)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserPhotoRead)
-async def upload_user_photo(
+def upload_user_photo(
     photo: UploadFile = File(...),
     current_user: Users = Depends(AuthRepository.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
@@ -57,13 +56,13 @@ async def upload_user_photo(
     **Error Codes:**
         - 400 Bad Request: If the provided photo data is invalid (e.g., wrong file type).
     """
-    return await user_photos_service.add_user_photo(current_user.id, photo)
+    return user_photos_service.add_user_photo(current_user.id, photo)
 
 
 @router.delete(
     "/{photo_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None
 )
-async def delete_user_photo(
+def delete_user_photo(
     photo_id: UUID4,
     current_user: Users = Depends(AuthRepository.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
@@ -80,4 +79,4 @@ async def delete_user_photo(
         - 403 Forbidden: If the user is not authorized to delete the photo.
         - 404 Not Found: If the photo with the provided ID is not found for the user.
     """
-    await user_photos_service.delete_user_photo(current_user.id, photo_id)
+    user_photos_service.delete_user_photo(current_user.id, photo_id)

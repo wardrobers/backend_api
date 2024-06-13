@@ -2,8 +2,7 @@ from typing import Any, Optional
 
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import RelationshipProperty, aliased
+from sqlalchemy.orm import RelationshipProperty, Session, aliased
 
 
 class BaseMixin:
@@ -13,42 +12,44 @@ class BaseMixin:
 
     model = None
 
-    async def get_by_id(self, db_session: AsyncSession, _id: UUID):
+    def get_by_id(self, db_session: Session, _id: UUID):
         """
-        Retrieve a model instance by its ID. Handles async session execution.
+        Retrieve a model instance by its ID. Handles session execution.
         """
         self.logger.debug("Fetching by ID: %s", _id)
-        async with db_session as session:
-            result = await session.execute(
-                select(self.model).where(self.model.id == _id, self.model.deleted_at.is_(None))
+        with db_session as session:
+            result = session.execute(
+                select(self.model).where(
+                    self.model.id == _id, self.model.deleted_at.is_(None)
+                )
             )
             return result.scalars().first()
 
-    async def get_all(self, db_session: AsyncSession):
+    def get_all(self, db_session: Session):
         """
         Retrieve all non-deleted instances of the model.
         """
-        async with db_session as session:
-            result = await session.execute(
+        with db_session as session:
+            result = session.execute(
                 select(self.model).where(self.model.deleted_at.is_(None))
             )
             return result.scalars().all()
 
-    async def get_by_ids(self, db_session: AsyncSession, ids: list[UUID]):
+    def get_by_ids(self, db_session: Session, ids: list[UUID]):
         """
         Retrieve multiple model instances by their IDs.
         """
-        async with db_session as session:
-            result = await session.execute(select(self.model).where(self.model.id.in_(ids)))
+        with db_session as session:
+            result = session.execute(select(self.model).where(self.model.id.in_(ids)))
             return result.scalars().all()
 
-    async def _apply_filters(
-        self, db_session: AsyncSession, query: select, filters: Optional[dict[str, Any]]
+    def _apply_filters(
+        self, db_session: Session, query: select, filters: Optional[dict[str, Any]]
     ) -> select:
         """
         Applies filter conditions to the query.
         """
-        async with db_session.begin():
+        with db_session.begin():
             if filters:
                 for attribute, value in filters.items():
                     column = self.model.__table__.c.get(attribute)
@@ -60,13 +61,16 @@ class BaseMixin:
                         query = query.where(column == value)
             return query
 
-    async def _apply_relationship_filters(
-        self, db_session: AsyncSession, query: select, relationships: Optional[dict[str, tuple[str, Any]]]
+    def _apply_relationship_filters(
+        self,
+        db_session: Session,
+        query: select,
+        relationships: Optional[dict[str, tuple[str, Any]]],
     ) -> select:
         """
         Applies filters based on related model attributes.
         """
-        async with db_session.begin():
+        with db_session.begin():
             if relationships:
                 for rel_attr, (rel_field, rel_filter) in relationships.items():
                     relationship: RelationshipProperty = getattr(self.model, rel_attr)
@@ -77,13 +81,16 @@ class BaseMixin:
                     )
             return query
 
-    async def _apply_ordering(
-        self, db_session: AsyncSession, query: select, order_by: Optional[list[tuple[str, str]]]
+    def _apply_ordering(
+        self,
+        db_session: Session,
+        query: select,
+        order_by: Optional[list[tuple[str, str]]],
     ) -> select:
         """
         Applies ordering to the query.
         """
-        async with db_session.begin():
+        with db_session.begin():
             if order_by:
                 for field, direction in order_by:
                     column = self.model.__table__.c.get(field)
@@ -93,9 +100,9 @@ class BaseMixin:
                         query = query.order_by(column)
             return query
 
-    async def filter(
+    def filter(
         self,
-        db_session: AsyncSession,
+        db_session: Session,
         filters: Optional[dict[str, Any]] = None,
         relationships: Optional[dict[str, tuple[str, Any]]] = None,
         order_by: Optional[list[tuple[str, str]]] = None,
@@ -106,7 +113,7 @@ class BaseMixin:
         Perform advanced filtering, ordering, and pagination asynchronously.
 
         Args:
-            db_session (AsyncSession): The async database session.
+            db_session (Session): The database session.
             filters (Optional[Dict[str, Any]]): Filtering criteria for the main model.
             relationships (Optional[Dict[str, Tuple[str, Any]]]): Filtering based on related models.
             order_by (Optional[List[Tuple[str, str]]]): Ordering criteria.
@@ -116,24 +123,24 @@ class BaseMixin:
         Returns:
             List: A list of filtered and ordered model instances.
         """
-        async with db_session.begin():
+        with db_session.begin():
             query = select(self.model)
-            query = await self._apply_filters(query, filters)
-            query = await self._apply_relationship_filters(query, relationships)
-            query = await self._apply_ordering(query, order_by)
+            query = self._apply_filters(query, filters)
+            query = self._apply_relationship_filters(query, relationships)
+            query = self._apply_ordering(query, order_by)
 
             if limit:
                 query = query.limit(limit)
             if offset:
                 query = query.offset(offset)
 
-            async with db_session as session:
-                result = await session.execute(query)
+            with db_session as session:
+                result = session.execute(query)
                 return result.scalars().all()
 
-    async def paginate(
+    def paginate(
         self,
-        db_session: AsyncSession,
+        db_session: Session,
         page: int,
         page_size: int,
         filters: Optional[dict[str, any]] = None,
@@ -144,7 +151,7 @@ class BaseMixin:
         Retrieve paginated model instances asynchronously.
 
         Args:
-            db_session (AsyncSession): The async database session.
+            db_session (Session): The database session.
             page (int): The page number to retrieve (1-based indexing).
             page_size (int): Number of items per page.
             filters (Optional[Dict[str, Any]]): Filtering criteria.
@@ -155,8 +162,8 @@ class BaseMixin:
             List: A list of model instances for the specified page.
         """
         offset = (page - 1) * page_size
-        async with db_session.begin():
-            return await self.filter(
+        with db_session.begin():
+            return self.filter(
                 db_session,
                 filters=filters,
                 relationships=relationships,
@@ -165,43 +172,43 @@ class BaseMixin:
                 offset=offset,
             )
 
-    async def create(self, db_session: AsyncSession, **kwargs):
+    def create(self, db_session: Session, **kwargs):
         """
         Create and save a new instance of the model.
         """
-        async with db_session.begin():
+        with db_session.begin():
             new_instance = self.model(**kwargs)
             db_session.add(new_instance)
-            await db_session.commit()
-            await db_session.refresh(new_instance)
+            db_session.commit()
+            db_session.refresh(new_instance)
             return self.model
 
-    async def update(self, db_session: AsyncSession, **kwargs):
+    def update(self, db_session: Session, **kwargs):
         """
         Update an existing model instance.
         """
-        async with db_session.begin():
+        with db_session.begin():
             for key, value in kwargs.items():
                 setattr(self.model, key, value)
-            await db_session.commit()
-            await db_session.refresh(self.model)
+            db_session.commit()
+            db_session.refresh(self.model)
             return self.model
 
-    async def soft_delete(self, db_session: AsyncSession):
+    def soft_delete(self, db_session: Session):
         """
         Mark the model instance as deleted (soft delete).
         """
-        async with db_session.begin():
+        with db_session.begin():
             self.model.is_active = False
             self.model.deleted_at = func.now()
-            await db_session.commit()
-            await db_session.refresh(self.model)
+            db_session.commit()
+            db_session.refresh(self.model)
             return self.model
 
-    async def delete(self, db_session: AsyncSession):
+    def delete(self, db_session: Session):
         """
         Permanently delete the model instance (hard delete).
         """
-        async with db_session.begin():
-            await db_session.delete(self.model)
-            await db_session.commit()
+        with db_session.begin():
+            db_session.delete(self.model)
+            db_session.commit()

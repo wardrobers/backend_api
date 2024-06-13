@@ -42,6 +42,6 @@ class ShippingDetails(Base):
 
     # Relationships
     order_items = relationship(
-        "app.model.orders.core.order_items_model.OrderItems",
+        "app.models.orders.OrderItems",
         back_populates="shipping_details",
     )

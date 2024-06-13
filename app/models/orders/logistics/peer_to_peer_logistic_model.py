@@ -24,20 +24,20 @@ class PeerToPeerLogistics(Base):
 
     # Relationships
     lender_user = relationship(
-        "app.model.users.core.users_model.Users",
+        "app.models.users.Users",
         foreign_keys=[lender_user_id],
         backref=backref("lender_logistics", uselist=True),
     )
     renter_user = relationship(
-        "app.model.users.core.users_model.Users",
+        "app.models.users.Users",
         foreign_keys=[renter_user_id],
         backref=backref("renter_logistics", uselist=True),
     )
     order_item = relationship(
-        "app.model.orders.core.order_items_model.OrderItems",
+        "app.models.orders.OrderItems",
         backref=backref("logistics", uselist=True),
     )
     shipping_detail = relationship(
-        "app.model.orders.logistics.shipping_details_model.ShippingDetail",
+        "app.models.orders.ShippingDetail",
         backref=backref("logistics", uselist=True),
     )

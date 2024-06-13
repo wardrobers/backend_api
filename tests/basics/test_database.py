@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.models.products import Articles, Products, Variants
 from app.models.users import UserInfo, Users
@@ -91,35 +91,35 @@ def test_database_schema_consistency(model_name):
 
 
 @pytest.mark.asyncio
-async def test_unique_user_login(db_session: AsyncSession):
+def test_unique_user_login(db_session: Session):
     """Test the unique constraint on the Users.login field."""
     user1 = Users(login="testuser", password="testpassword")
     db_session.add(user1)
-    await db_session.commit()
+    db_session.commit()
 
     user2 = Users(login="testuser", password="anotherpassword")
     db_session.add(user2)
     with pytest.raises(IntegrityError):
-        await db_session.commit()
+        db_session.commit()
 
 
 @pytest.mark.asyncio
-async def test_user_info_relationship(db_session: AsyncSession):
+def test_user_info_relationship(db_session: Session):
     """Test the one-to-one relationship between Users and UserInfo."""
     user = Users(login="testuser", password="testpassword")
     user_info = UserInfo(
         first_name="Test", last_name="User", email="test@example.com", user=user
     )
     db_session.add(user)  # No need to add user_info explicitly
-    await db_session.commit()
+    db_session.commit()
 
-    retrieved_user = await db_session.get(Users, user.id)
+    retrieved_user = db_session.get(Users, user.id)
     assert retrieved_user.info is not None
     assert retrieved_user.info.email == "test@example.com"
 
 
 @pytest.mark.asyncio
-async def test_product_variant_article_relationship(db_session: AsyncSession):
+def test_product_variant_article_relationship(db_session: Session):
     """Test the relationships between Products, Variants, and Articles."""
     product = Products(name="Test Product")
     variant = Variants(product=product, name="Test Variant")
@@ -131,9 +131,9 @@ async def test_product_variant_article_relationship(db_session: AsyncSession):
         # ... Other required fields for Articles ...
     )
     db_session.add(product)  # Add the product, cascading will add variant and article
-    await db_session.commit()
+    db_session.commit()
 
-    retrieved_product = await db_session.get(Products, product.id)
+    retrieved_product = db_session.get(Products, product.id)
     assert retrieved_product.variants is not None
     assert retrieved_product.variants[0].articles is not None
 
@@ -145,7 +145,7 @@ async def test_product_variant_article_relationship(db_session: AsyncSession):
 # works as expected. For example:
 
 # @pytest.mark.asyncio
-# async def test_product_name_validation(db_session: AsyncSession):
+# def test_product_name_validation(db_session: Session):
 #     """Test that the product name validation prevents empty names."""
 #     with pytest.raises(ValueError):
 #         product = Products(name="")

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
-from app.database.session import get_async_session
+from app.database.session import get_db
 from app.models.users.core.users_model import Users
 from app.routers.users import auth_handler
 
@@ -9,9 +9,9 @@ router = APIRouter()
 
 
 @router.post("/subscriptions", status_code=status.HTTP_201_CREATED)
-async def create_user_subscription(
+def create_user_subscription(
     # subscription_data: SubscriptionCreate = Body(...),  # Define this Pydantic model
-    db: AsyncSession = Depends(get_async_session),
+    db: Session = Depends(get_db),
     current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
@@ -36,9 +36,9 @@ async def create_user_subscription(
 
 
 @router.put("/subscriptions", status_code=status.HTTP_200_OK)
-async def update_user_subscription(
+def update_user_subscription(
     # subscription_data: SubscriptionUpdate = Body(...),  # Define this Pydantic model
-    db: AsyncSession = Depends(get_async_session),
+    db: Session = Depends(get_db),
     current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
@@ -58,8 +58,8 @@ async def update_user_subscription(
 
 
 @router.delete("/subscriptions", status_code=status.HTTP_204_NO_CONTENT)
-async def cancel_user_subscription(
-    db: AsyncSession = Depends(get_async_session),
+def cancel_user_subscription(
+    db: Session = Depends(get_db),
     current_user: Users = Depends(auth_handler.get_current_user),
 ):
     """
