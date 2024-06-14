@@ -6,6 +6,11 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
+from app.models.orders.payments.lender_payments_model import LenderPayments
+from app.models.products.inventorization.specifications_model import Specifications
+from app.models.products.maintenance.cleaning_logs_model import CleaningLogs
+from app.models.products.maintenance.repair_logs_model import RepairLogs
+from app.models.users.activity.user_saved_items_model import UserSavedItems
 
 
 class OwnerType(Enum):
@@ -46,7 +51,7 @@ class Articles(Base):
     )
     status_code = mapped_column(
         String,
-        ForeignKey("article_status.status_code"),
+        ForeignKey("article_status.id"),
         nullable=False,
     )
     types_of_operation_id = mapped_column(
@@ -57,24 +62,20 @@ class Articles(Base):
 
     # Relationships
     specification = relationship(
-        "app.models.products.maintenance.specifications_model.Specifications",
+        "Specifications",
         backref="articles",
     )
     cleaning_logs = relationship(
-        "app.models.products.maintenance.cleaning_log_model.CleaningLogs",
+        "CleaningLogs",
         backref="articles",
     )
-    repair_logs = relationship(
-        "app.models.products.maintenance.repair_log_model.RepairLogs", backref="articles"
-    )
+    repair_logs = relationship("RepairLogs", backref="articles")
     lender_payments = relationship(
-        "app.models.orders.payments.lender_payments_model.LenderPayments",
+        "LenderPayments",
         backref="articles",
     )
     user_saved_items = relationship(
-        "app.models.users.activity.user_saved_items_model.UserSavedItems",
+        "UserSavedItems",
         backref="articles",
     )
-    order_items = relationship(
-        "app.models.orders.OrderItems", backref="articles"
-    )
+    order_items = relationship("OrderItems", backref="articles")

@@ -3,6 +3,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
 from app.models.base_model import Base
+from app.models.orders.payments.transactions_model import Transactions
+from app.models.promotions import OrderPromotions
 
 
 class Orders(Base):
@@ -25,12 +27,6 @@ class Orders(Base):
     )
 
     # Relationships
-    transactions = relationship(
-        "app.models.orders.Transactions", backref="orders"
-    )
-    order_items = relationship(
-        "app.models.orders.OrderItems", backref="orders"
-    )
-    order_promotions = relationship(
-        "app.models.promotions.OrderPromotions", backref="orders"
-    )
+    transactions = relationship("Transactions", backref="orders")
+    order_items = relationship("OrderItems", backref="orders")
+    order_promotions = relationship("OrderPromotions", backref="orders")

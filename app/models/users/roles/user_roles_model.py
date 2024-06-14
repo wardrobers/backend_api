@@ -19,9 +19,3 @@ class UserRoles(Base):
         ForeignKey("roles.id"),
         primary_key=True,
     )
-
-    # Relationships
-    user = relationship("app.models.users.Users", backref="user_roles")
-    roles = relationship(
-        "app.models.users.Roles", backref="user_roles"
-    )

@@ -18,10 +18,9 @@ class Variants(Base):
 
     # Relationships
     sizing = relationship(
-        "app.models.products.sizing.sizing_model.Sizing", backref="variants"
+        "Sizing", backref="variants"
     )
     promotions = relationship(
-        "app.models.promotions.promotions_and_discounts_model.PromotionsAndDiscounts",
-        secondary="promotions_variants",
+        "PromotionsVariants",
         backref="variants",
     )

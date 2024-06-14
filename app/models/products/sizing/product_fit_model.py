@@ -11,5 +11,5 @@ class ProductFit(Base):
 
     # Relationships
     product = relationship(
-        "app.models.products.core.products_model.Products", backref="product_fit"
+        "Products", backref="product_fit"
     )

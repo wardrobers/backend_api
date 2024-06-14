@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, Column, Numeric, String
 from sqlalchemy.orm import relationship
 
 from app.models.base_model import Base
+from app.models.orders.logistics.shipping_details_model import ShippingDetails
 
 
 class DeliveryOptions(Base):
@@ -13,6 +14,6 @@ class DeliveryOptions(Base):
 
     # Relationships
     shipping_details = relationship(
-        "app.models.orders.ShippingDetails",
+        "ShippingDetails",
         backref="delivery_options",
     )

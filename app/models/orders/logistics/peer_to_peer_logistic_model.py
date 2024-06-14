@@ -3,6 +3,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import backref, mapped_column, relationship
 
 from app.models.base_model import Base
+from app.models.orders.core.order_items_model import OrderItems
+from app.models.orders.logistics.shipping_details_model import ShippingDetails
+from app.models.users import Users
 
 
 class PeerToPeerLogistics(Base):
@@ -24,20 +27,20 @@ class PeerToPeerLogistics(Base):
 
     # Relationships
     lender_user = relationship(
-        "app.models.users.Users",
+        "Users",
         foreign_keys=[lender_user_id],
         backref=backref("lender_logistics", uselist=True),
     )
     renter_user = relationship(
-        "app.models.users.Users",
+        "Users",
         foreign_keys=[renter_user_id],
         backref=backref("renter_logistics", uselist=True),
     )
     order_item = relationship(
-        "app.models.orders.OrderItems",
+        "OrderItems",
         backref=backref("logistics", uselist=True),
     )
     shipping_detail = relationship(
-        "app.models.orders.ShippingDetail",
+        "ShippingDetails",
         backref=backref("logistics", uselist=True),
     )

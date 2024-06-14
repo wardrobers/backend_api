@@ -11,5 +11,5 @@ class Colors(Base):
 
     # Relationships
     variant = relationship(
-        "app.models.products.core.variants_model.Variants", backref="colors"
+        "Variants", backref="colors"
     )

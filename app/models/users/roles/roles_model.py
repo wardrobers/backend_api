@@ -12,7 +12,10 @@ class Roles(Base):
 
     # Relationships
     users = relationship(
-        "app.models.users.Users",
-        secondary="user_roles",
+        "UserRoles",
+        backref="roles",
+    )
+    role_permissions = relationship(
+        "RolePermissions",
         backref="roles",
     )

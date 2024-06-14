@@ -16,9 +16,8 @@ class Materials(Base):
     )
 
     # Relationships
-    product = relationship(
-        "app.models.products.core.products_model.Products",
-        secondary="product_materials",
+    materials = relationship(
+        "ProductMaterials",
         backref="materials",
     )
 

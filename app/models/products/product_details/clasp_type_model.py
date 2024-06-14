@@ -11,5 +11,5 @@ class ClaspType(Base):
 
     # Relationships
     product = relationship(
-        "app.models.products.core.products_model.Products", backref="clasp_types"
+        "Products", backref="clasp_types"
     )

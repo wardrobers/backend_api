@@ -5,6 +5,13 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
+from app.models.products import Variants
+from app.models.promotions.order_promotions_model import OrderPromotions
+from app.models.promotions.promotions_occasional_categories_model import (
+    PromotionsOccasionalCategories,
+)
+from app.models.promotions.promotions_variants_model import PromotionsVariants
+from app.models.promotions.user_promotions_model import UserPromotions
 
 
 class DiscountType(Enum):
@@ -28,24 +35,19 @@ class PromotionsAndDiscounts(Base):
 
     # Relationships
     user_promotions = relationship(
-        "app.models.promotions.UserPromotions",
+        "UserPromotions",
         backref="promotions_and_discounts",
     )
     order_promotions = relationship(
-        "app.models.promotions.OrderPromotions",
+        "OrderPromotions",
         backref="promotions_and_discounts",
     )
     promotions_variants = relationship(
-        "app.models.promotions.PromotionsVariants",
+        "PromotionsVariants",
         backref="promotions_and_discounts",
     )
     occasional_categories = relationship(
-        "app.models.promotions.PromotionsOccasionalCategories",
-        backref="promotions_and_discounts",
-        lazy="dynamic",
-    )
-    variants = relationship(
-        "app.models.products.Variants",
+        "PromotionsOccasionalCategories",
         backref="promotions_and_discounts",
         lazy="dynamic",
     )

@@ -8,7 +8,7 @@ from app.repositories.common import Base
 
 # Database connection string for testing (use a dedicated test database)
 # This should ideally be set as an environment variable for better security and flexibility
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:password@localhost/wardrobers_test"
+TEST_DATABASE_URL = "postgresql+pg8000://postgres:password@localhost/postgres"
 
 
 # --- Pytest Fixtures for Database Session and Clean Up ---

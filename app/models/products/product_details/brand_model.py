@@ -11,5 +11,5 @@ class Brand(Base):
 
     # Relationships
     product = relationship(
-        "app.models.products.core.products_model.Products", backref="brands"
+        "Products", backref="brands"
     )

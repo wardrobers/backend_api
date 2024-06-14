@@ -16,4 +16,3 @@ class UserSavedItems(Base):
     article_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("articles.id"), nullable=False
     )
-    article = mapped_column(String, nullable=False)

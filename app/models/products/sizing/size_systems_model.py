@@ -12,5 +12,5 @@ class SizeSystems(Base):
 
     # Relationships
     sizings = relationship(
-        "app.models.products.sizing.sizing_model.Sizing", back_populates="size_system"
+        "Sizing", backref="size_system"
     )

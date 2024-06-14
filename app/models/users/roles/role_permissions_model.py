@@ -18,12 +18,3 @@ class RolePermissions(Base):
     permission_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("permissions.id"), nullable=False
     )
-
-    # Relationships
-    roles = relationship(
-        "app.models.users.Roles", back_populates="role_permissions"
-    )
-    permissions = relationship(
-        "app.models.users.Permissions",
-        back_populates="role_permissions",
-    )

@@ -28,30 +28,26 @@ class Products(Base):
 
     # Relationships
     types = relationship(
-        "app.models.products.inventorization.types_model.ProductTypes",
+        "ProductTypes",
         backref="products",
     )
     photos = relationship(
-        "app.models.products.product_details.product_photos_model.ProductPhotos",
+        "ProductPhotos",
         backref="products",
     )
     variants = relationship(
-        "app.models.products.core.variants_model.Variants", backref="products"
+        "Variants", backref="products"
     )
     user_reviews_and_ratings = relationship(
-        "app.models.users.activity.user_reviews_and_ratings_model.UserReviewsAndRatings",
+        "UserReviewsAndRatings",
         backref="products",
     )
     categories = relationship(
-        "app.models.products.inventorization.categories_model.ProductCategories",
-        backref="products",
-    )
-    promotions_products = relationship(
-        "app.models.promotions.promotions_variants_model.PromotionsVariants",
+        "ProductCategories",
         backref="products",
     )
     occasional_categories = relationship(
-        "app.models.products.inventorization.occasional_categories_model.ProductOccasionalCategories",
+        "ProductOccasionalCategories",
         backref="products",
         lazy="joined",  # Eager load for improved performance
     )

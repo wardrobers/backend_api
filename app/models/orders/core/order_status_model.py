@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
+from app.models.orders.core.orders_model import Orders
 
 
 class OrderStatus(Enum):
@@ -26,6 +27,4 @@ class OrderStatus(Base):
     )
 
     # Relationships
-    order = relationship(
-        "app.models.orders.Orders", backref="order_status"
-    )
+    order = relationship("Orders", backref="order_status")

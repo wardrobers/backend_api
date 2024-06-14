@@ -11,5 +11,5 @@ class AccessoriesSize(Base):
 
     # Relationships
     product = relationship(
-        "app.models.products.core.products_model.Products", backref="accessories_size"
+        "Products", backref="accessories_size"
     )

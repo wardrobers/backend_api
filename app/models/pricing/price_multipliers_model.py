@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
 from app.models.base_model import Base
+from app.models.pricing.pricing_tiers_model import PricingTiers
 
 
 class PriceMultipliers(Base):
@@ -17,6 +18,6 @@ class PriceMultipliers(Base):
 
     # Relationships
     pricing_tiers = relationship(
-        "app.models.pricing.PricingTiers",
+        "PricingTiers",
         backref="price_multipliers",
     )

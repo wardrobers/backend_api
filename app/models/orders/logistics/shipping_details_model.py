@@ -6,6 +6,7 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
+from app.models.orders.core.order_items_model import OrderItems
 
 
 class DeliveryStatus(Enum):
@@ -42,6 +43,6 @@ class ShippingDetails(Base):
 
     # Relationships
     order_items = relationship(
-        "app.models.orders.OrderItems",
-        back_populates="shipping_details",
+        "OrderItems",
+        backref="shipping_details",
     )

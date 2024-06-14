@@ -12,18 +12,18 @@ class StockKeepingUnits(Base):
 
     # Relationships
     articles = relationship(
-        "app.models.products.core.articles_model.Articles",
+        "Articles",
         backref="stock_keeping_units",
     )
     variants = relationship(
-        "app.models.products.core.variants_model.Variants",
+        "Variants",
         backref="stock_keeping_units",
     )
     user_basket = relationship(
-        "app.models.users.activity.user_basket_model.UserBasket",
+        "UserBasket",
         backref="stock_keeping_units",
     )
     pricing_tiers = relationship(
-        "app.models.pricing.pricing_tiers_model.PricingTiers",
-        backref="stock_keeping_unit",
+        "PricingTiers",
+        backref="stock_keeping_units",
     )

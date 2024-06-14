@@ -11,6 +11,6 @@ class TypesOfOperations(Base):
 
     # Relationships
     articles = relationship(
-        "app.models.products.core.articles_model.Articles",
+        "Articles",
         backref="types_of_operations",
     )

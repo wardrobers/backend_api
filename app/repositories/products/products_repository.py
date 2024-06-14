@@ -4,7 +4,7 @@ from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session, joinedload, selectinload
 
-from app.models.pricing import PriceFactors, PriceMultipliers, PricingTier
+from app.models.pricing import PriceFactors, PriceMultipliers, PricingTiers
 from app.models.products import (
     Articles,
     ArticleStatus,

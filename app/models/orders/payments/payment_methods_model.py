@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
+from app.models.orders.payments.transactions_model import Transactions
 
 
 class PaymentMethodType(Enum):
@@ -39,6 +40,6 @@ class PaymentMethods(Base):
 
     # Relationships
     transactions = relationship(
-        "app.models.orders.Transactions",
+        "Transactions",
         backref="payment_methods",
     )

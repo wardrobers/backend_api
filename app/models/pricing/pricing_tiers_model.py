@@ -5,7 +5,7 @@ from sqlalchemy.orm import mapped_column, relationship
 from app.models.base_model import Base
 
 
-class PricingTier(Base):
+class PricingTiers(Base):
     __tablename__ = "pricing_tiers"
 
     retail_price = Column(Numeric, nullable=False)
@@ -17,11 +17,8 @@ class PricingTier(Base):
     cleaning = Column(Numeric)
 
     # Foreign keys
-    product_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("products.id"), nullable=False
-    )
-    category_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("categories.id"), nullable=False
+    sku_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("stock_keeping_units.id"), nullable=False
     )
     price_multiplier_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("price_multipliers.id"), nullable=False
@@ -29,5 +26,5 @@ class PricingTier(Base):
 
     # Relationships
     price_factors = relationship(
-        "app.models.pricing.PriceFactors", backref="pricing_tiers"
+        "PriceFactors", backref="pricing_tiers"
     )

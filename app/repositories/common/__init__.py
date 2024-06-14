@@ -1,5 +1,5 @@
 from .base_mixin import BaseMixin
-from .bulk_actions_mixinl import BulkActionsMixin
+from .bulk_actions_mixin import BulkActionsMixin
 from .cache_mixin import CachingMixin
 from .search_mixin import SearchMixin
 

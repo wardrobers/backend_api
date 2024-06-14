@@ -22,12 +22,9 @@ class ArticleCurrentStatus(Enum):
 class ArticleStatus(Base):
     __tablename__ = "article_status"
 
-    status_code = mapped_column(
-        UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4()
-    )
     name = Column(SQLAEnum(ArticleCurrentStatus))
 
     # Relationships
     article = relationship(
-        "app.models.products.core.articles_model.Articles", backref="article_status"
+        "Articles", backref="article_status"
     )

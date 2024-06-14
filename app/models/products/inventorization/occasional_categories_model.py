@@ -13,16 +13,11 @@ class OccasionalCategories(Base):
 
     # Relationships
     product_occasional_categories = relationship(
-        "app.models.products.inventorization.products_occasional_categories_model.ProductOccasionalCategories",
+        "ProductOccasionalCategories",
         backref="occasional_categories",
     )
     promotions_occasional_categories = relationship(
-        "app.models.promotions.promotions_occasional_categories_model.PromotionsOccasionalCategories",
-        backref="occasional_categories",
-    )
-    products = relationship(
-        "app.models.products.core.products_model.Products",
-        secondary="product_occasional_categories",
+        "PromotionsOccasionalCategories",
         backref="occasional_categories",
     )
 

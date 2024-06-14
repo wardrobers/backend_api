@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, relationship
 
 from app.models.base_model import Base
+from app.models.promotions.order_items_promotions_model import OrderItemsPromotions
 
 
 class OrderItems(Base):
@@ -28,18 +29,18 @@ class OrderItems(Base):
 
     # Relationships
     promotions = relationship(
-        "app.models.promotions.OrderItemsPromotions",
+        "OrderItemsPromotions",
         backref="order_items",
         lazy="joined",
     )
 
-    def calculate_total_price(self):
-        """Calculates the total price of the order item, including discounts."""
-        base_price = self.price + self.delivery_price
-        total_discount = sum(
-            p.promotions_and_discounts.discount_value for p in self.promotions
-        )
-        return base_price * (1 - total_discount / 100)
+    # def calculate_total_price(self):
+    #     """Calculates the total price of the order item, including discounts."""
+    #     base_price = self.price + self.delivery_price
+    #     total_discount = sum(
+    #         p.promotions_and_discounts.discount_value for p in self.promotions
+    #     )
+    #     return base_price * (1 - total_discount / 100)
 
     def __repr__(self):
-        return f"<OrderItem(id={self.id}, order={self.order_id}, article={self.article_id}, start_date={self.start_date}, end_date={self.end_date})>"
+        return f"<OrderItems(id={self.id}, order={self.order_id}, article={self.article_id}, start_date={self.start_date}, end_date={self.end_date})>"

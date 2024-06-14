@@ -1,4 +1,4 @@
 from .config import oauth2_scheme, pwd_context
-from .database import session
+# from .database.session import engine, get_db
 
-__all__ = ["session", "oauth2_scheme", "pwd_context"]
+__all__ = ["oauth2_scheme", "pwd_context"]

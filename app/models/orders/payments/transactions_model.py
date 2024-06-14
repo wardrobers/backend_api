@@ -6,6 +6,9 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
+from app.models.orders.payments.lender_payments_model import LenderPayments
+from app.models.orders.payments.revolut_details_model import RevolutDetails
+from app.models.orders.payments.stripe_details_model import StripeDetails
 
 
 class TransactionStatus(Enum):
@@ -38,15 +41,15 @@ class Transactions(Base):
 
     # Relationships
     revolut_details = relationship(
-        "app.models.orders.RevolutDetails",
+        "RevolutDetails",
         backref="transactions",
     )
     stripe_details = relationship(
-        "app.models.orders.StripeDetails",
+        "StripeDetails",
         backref="transactions",
     )
     lender_payment = relationship(
-        "app.models.orders.LenderPayments",
+        "LenderPayments",
         backref="transactions",
     )
 

@@ -23,5 +23,5 @@ class ProductStatus(Base):
 
     # Relationships
     product = relationship(
-        "app.models.products.core.products_model.Products", backref="product_status"
+        "Products", backref="product_status"
     )
