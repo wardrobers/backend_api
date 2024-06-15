@@ -18,7 +18,6 @@ class ProductCurrentStatus(Enum):
 class ProductStatus(Base):
     __tablename__ = "product_status"
 
-    code = Column(String, nullable=False)
     name = Column(SQLAEnum(ProductCurrentStatus), nullable=False)
 
     # Relationships

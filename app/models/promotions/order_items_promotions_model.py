@@ -12,6 +12,6 @@ class OrderItemsPromotions(Base):
     order_item_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("order_items.id"), nullable=False
     )
-    promotions_and_discounts_id = mapped_column(
+    promotion_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("promotions_and_discounts.id"), nullable=False
     )

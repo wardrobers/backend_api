@@ -32,6 +32,12 @@ class OrderItems(Base):
         "OrderItemsPromotions",
         backref="order_items",
         lazy="joined",
+        cascade="all, delete-orphan",
+    )
+    peer_to_peer = relationship(
+        "PeerToPeerLogistics",
+        backref="order_items",
+        cascade="all, delete-orphan",
     )
 
     # def calculate_total_price(self):

@@ -2,7 +2,7 @@ from enum import Enum
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import mapped_column, relationship, backref
 from sqlalchemy.types import Enum as SQLAEnum
 
 from app.models.base_model import Base
@@ -45,4 +45,10 @@ class ShippingDetails(Base):
     order_items = relationship(
         "OrderItems",
         backref="shipping_details",
+        cascade="all, delete-orphan",
+    )
+    peer_to_peer = relationship(
+        "PeerToPeerLogistics",
+        backref="shipping_details",
+        cascade="all, delete-orphan",
     )

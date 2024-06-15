@@ -14,6 +14,7 @@ class StockKeepingUnits(Base):
     articles = relationship(
         "Articles",
         backref="stock_keeping_units",
+        cascade="all, delete-orphan",
     )
     variants = relationship(
         "Variants",

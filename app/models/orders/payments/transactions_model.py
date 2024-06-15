@@ -36,21 +36,24 @@ class Transactions(Base):
         UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False
     )
     user_address_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user_addresses.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("user_addresses.id")
     )
 
     # Relationships
     revolut_details = relationship(
         "RevolutDetails",
         backref="transactions",
+        cascade="all, delete-orphan",
     )
     stripe_details = relationship(
         "StripeDetails",
         backref="transactions",
+        cascade="all, delete-orphan",
     )
     lender_payment = relationship(
         "LenderPayments",
         backref="transactions",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):

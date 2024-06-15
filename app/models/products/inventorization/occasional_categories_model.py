@@ -29,6 +29,6 @@ class ProductOccasionalCategories(Base):
     product_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("products.id"), nullable=False
     )
-    occasional_category_id = mapped_column(
+    occasional_categories_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("occasional_categories.id"), nullable=False
     )

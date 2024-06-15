@@ -8,7 +8,7 @@ from app.models.base_model import Base
 from app.models.orders.core.orders_model import Orders
 
 
-class OrderStatus(Enum):
+class CurrentOrderStatus(Enum):
     Placed = "Placed"
     Confirmed = "Confirmed"
     Processing = "Processing"
@@ -22,7 +22,7 @@ class OrderStatus(Base):
     __tablename__ = "order_status"
 
     name = Column(
-        SQLAEnum(OrderStatus),
+        SQLAEnum(CurrentOrderStatus),
         nullable=False,
     )
 

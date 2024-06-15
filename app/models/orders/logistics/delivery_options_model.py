@@ -16,4 +16,5 @@ class DeliveryOptions(Base):
     shipping_details = relationship(
         "ShippingDetails",
         backref="delivery_options",
+        cascade="all, delete-orphan",
     )

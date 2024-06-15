@@ -29,18 +29,10 @@ class PeerToPeerLogistics(Base):
     lender_user = relationship(
         "Users",
         foreign_keys=[lender_user_id],
-        backref=backref("lender_logistics", uselist=True),
+        backref="lender_logistics",
     )
     renter_user = relationship(
         "Users",
         foreign_keys=[renter_user_id],
-        backref=backref("renter_logistics", uselist=True),
-    )
-    order_item = relationship(
-        "OrderItems",
-        backref=backref("logistics", uselist=True),
-    )
-    shipping_detail = relationship(
-        "ShippingDetails",
-        backref=backref("logistics", uselist=True),
+        backref="renter_logistics",
     )

@@ -23,38 +23,51 @@ class Users(Base):
     last_login_at = Column(DateTime)
 
     # Relationships
-    info = relationship("UserInfo", uselist=False, backref="users")
+    info = relationship("UserInfo", uselist=False, backref="users", cascade="all, delete-orphan")
     activity = relationship(
         "UserActivity",
         uselist=False,
         backref="users",
+        cascade="all, delete-orphan",
     )
     basket = relationship(
         "UserBasket",
         uselist=False,
         backref="users",
+        cascade="all, delete-orphan",
     )
-    photos = relationship("UserPhotos", backref="users")
+    photos = relationship("UserPhotos", backref="users", cascade="all, delete-orphan")
     user_roles = relationship(
         "UserRoles",
         backref="users",
     )
     orders = relationship("Orders", backref="users")
     subscriptions = relationship(
-        "Subscriptions", backref="users"
+        "Subscriptions", backref="users",
+        cascade="all, delete-orphan"
     )
     reviews_and_ratings = relationship(
         "UserReviewsAndRatings",
         backref="users",
+        cascade="all, delete-orphan",
     )
     saved_items = relationship(
         "UserSavedItems",
         backref="users",
+        cascade="all, delete-orphan"
     )
-    promotions = relationship("UserPromotions", backref="users")
-    addresses = relationship("UserAddresses", backref="users")
+    promotions = relationship("UserPromotions", backref="users", cascade="all, delete-orphan")
+    addresses = relationship("UserAddresses", backref="users", cascade="all, delete-orphan")
     data_privacy_consents = relationship(
         "DataPrivacyConsents",
         backref="users",
     )
     transactions = relationship("Transactions", backref="users")
+    # peer_to_peer_lender = relationship(
+    #     "PeerToPeerLogistics",
+    #     back_populates="lender_user",
+    # )
+    # peer_to_peer_renter = relationship(
+    #     "PeerToPeerLogistics",
+    #     back_populates="renter_user",
+    # )

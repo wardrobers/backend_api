@@ -26,6 +26,7 @@ class UserAddresses(Base):
     shipping_details = relationship(
         "ShippingDetails",
         backref="user_addresses",
+        cascade="all, delete-orphan",
     )
     transactions = relationship(
         "Transactions",

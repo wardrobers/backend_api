@@ -21,34 +21,39 @@ class Products(Base):
     )
     clasp_type_id = mapped_column(UUID(as_uuid=True), ForeignKey("clasp_types.id"))
     size_and_fit_id = mapped_column(UUID(as_uuid=True), ForeignKey("product_fit.id"))
-    status_code = mapped_column(String, ForeignKey("product_status.code"))
+    status_code = mapped_column(UUID(as_uuid=True), ForeignKey("product_status.id"))
     accessories_size_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("accessories_size.id"), nullable=False
+        UUID(as_uuid=True), ForeignKey("accessories_size.id")
     )
 
     # Relationships
     types = relationship(
         "ProductTypes",
         backref="products",
+        cascade="all, delete-orphan",
     )
     photos = relationship(
         "ProductPhotos",
         backref="products",
+        cascade="all, delete-orphan",
     )
     variants = relationship(
-        "Variants", backref="products"
+        "Variants", backref="products", cascade="all, delete-orphan",
     )
     user_reviews_and_ratings = relationship(
         "UserReviewsAndRatings",
         backref="products",
+        cascade="all, delete-orphan",
     )
     categories = relationship(
         "ProductCategories",
         backref="products",
+        cascade="all, delete-orphan",
     )
     occasional_categories = relationship(
         "ProductOccasionalCategories",
         backref="products",
+        cascade="all, delete-orphan",
         lazy="joined",  # Eager load for improved performance
     )
 

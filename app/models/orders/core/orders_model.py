@@ -27,6 +27,6 @@ class Orders(Base):
     )
 
     # Relationships
-    transactions = relationship("Transactions", backref="orders")
-    order_items = relationship("OrderItems", backref="orders")
-    order_promotions = relationship("OrderPromotions", backref="orders")
+    transactions = relationship("Transactions", backref="orders", cascade="all, delete-orphan")
+    order_items = relationship("OrderItems", backref="orders", cascade="all, delete-orphan")
+    order_promotions = relationship("OrderPromotions", backref="orders", cascade="all, delete-orphan")

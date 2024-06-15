@@ -18,9 +18,10 @@ class Variants(Base):
 
     # Relationships
     sizing = relationship(
-        "Sizing", backref="variants"
+        "Sizing", backref="variants", cascade="all, delete-orphan",
     )
     promotions = relationship(
         "PromotionsVariants",
         backref="variants",
+        cascade="all, delete-orphan",
     )

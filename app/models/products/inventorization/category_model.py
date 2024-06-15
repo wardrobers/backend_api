@@ -19,6 +19,7 @@ class Categories(Base):
     product_categories = relationship(
         "ProductCategories",
         backref="categories",
+        cascade="all, delete-orphan",
     )
     types = relationship(
         "Types", backref="categories"
