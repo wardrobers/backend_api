@@ -10,6 +10,4 @@ class Colors(Base):
     name = Column(String)
 
     # Relationships
-    variant = relationship(
-        "Variants", backref="colors"
-    )
+    variant = relationship("Variants", backref="colors")

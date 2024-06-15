@@ -9,10 +9,10 @@ from app.models.promotions.order_items_promotions_model import OrderItemsPromoti
 class OrderItems(Base):
     __tablename__ = "order_items"
 
-    start_date = Column(DateTime, nullable=False)
-    end_date = Column(DateTime, nullable=False)
-    time_start = Column(Time, nullable=False)
-    price = Column(Numeric, nullable=True)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    time_start = Column(Time)
+    price = Column(Numeric)
     delivery_price = Column(Numeric, nullable=True)
     comment = Column(Text, nullable=True)
 

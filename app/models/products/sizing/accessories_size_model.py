@@ -10,6 +10,4 @@ class AccessoriesSize(Base):
     name = Column(String)
 
     # Relationships
-    product = relationship(
-        "Products", backref="accessories_size"
-    )
+    product = relationship("Products", backref="accessories_size")

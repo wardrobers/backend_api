@@ -21,6 +21,4 @@ class ProductStatus(Base):
     name = Column(SQLAEnum(ProductCurrentStatus), nullable=False)
 
     # Relationships
-    product = relationship(
-        "Products", backref="product_status"
-    )
+    product = relationship("Products", backref="product_status")

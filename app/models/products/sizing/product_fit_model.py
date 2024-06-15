@@ -10,6 +10,4 @@ class ProductFit(Base):
     type = Column(String, nullable=False)
 
     # Relationships
-    product = relationship(
-        "Products", backref="product_fit"
-    )
+    product = relationship("Products", backref="product_fit")

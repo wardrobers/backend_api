@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import mapped_column
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import mapped_column
 
 from app.models.base_model import Base
 
@@ -13,4 +13,6 @@ class Specifications(Base):
     value = Column(String)
 
     # Foreign keys
-    article_id = mapped_column(UUID(as_uuid=True), ForeignKey("articles.id"), nullable=False)
+    article_id = mapped_column(
+        UUID(as_uuid=True), ForeignKey("articles.id"), nullable=False
+    )

@@ -1,9 +1,9 @@
 from .core.order_items_model import OrderItems
-from .core.order_status_model import OrderStatus, CurrentOrderStatus
+from .core.order_status_model import CurrentOrderStatus, OrderStatus
 from .core.orders_model import Orders
 from .logistics.delivery_options_model import DeliveryOptions
 from .logistics.peer_to_peer_logistic_model import PeerToPeerLogistics
-from .logistics.shipping_details_model import ShippingDetails, DeliveryStatus
+from .logistics.shipping_details_model import DeliveryStatus, ShippingDetails
 from .payments.lender_payments_model import LenderPayments
 from .payments.payment_methods_model import (
     PaymentMethods,

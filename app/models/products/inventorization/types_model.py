@@ -14,12 +14,8 @@ class Types(Base):
     category_id = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id"))
 
     # Relationships
-    product_types = relationship(
-        "ProductTypes", backref="types"
-    )
-    created_types = relationship(
-        "TypesFromUser", backref="types"
-    )
+    product_types = relationship("ProductTypes", backref="types")
+    created_types = relationship("TypesFromUser", backref="types")
 
 
 class ProductTypes(Base):

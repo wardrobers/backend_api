@@ -13,6 +13,4 @@ class ClothingSizes(Base):
     skirt_length = Column(Numeric, nullable=True)
 
     # Relationships
-    product = relationship(
-        "Products", backref="clothing_sizes"
-    )
+    product = relationship("Products", backref="clothing_sizes")

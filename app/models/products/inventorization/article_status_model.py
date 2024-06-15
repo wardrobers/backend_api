@@ -25,6 +25,4 @@ class ArticleStatus(Base):
     name = Column(SQLAEnum(ArticleCurrentStatus))
 
     # Relationships
-    article = relationship(
-        "Articles", backref="article_status"
-    )
+    article = relationship("Articles", backref="article_status")

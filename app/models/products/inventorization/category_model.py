@@ -21,9 +21,7 @@ class Categories(Base):
         backref="categories",
         cascade="all, delete-orphan",
     )
-    types = relationship(
-        "Types", backref="categories"
-    )
+    types = relationship("Types", backref="categories")
     price_multiplier = relationship(
         "PriceMultipliers",
         backref="categories",

@@ -25,6 +25,4 @@ class PricingTiers(Base):
     )
 
     # Relationships
-    price_factors = relationship(
-        "PriceFactors", backref="pricing_tiers"
-    )
+    price_factors = relationship("PriceFactors", backref="pricing_tiers")

@@ -11,6 +11,4 @@ class SizeSystems(Base):
     description = Column(Text)
 
     # Relationships
-    sizings = relationship(
-        "Sizing", backref="size_system"
-    )
+    sizings = relationship("Sizing", backref="size_system")

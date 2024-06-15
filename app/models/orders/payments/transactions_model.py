@@ -35,9 +35,7 @@ class Transactions(Base):
     order_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False
     )
-    user_address_id = mapped_column(
-        UUID(as_uuid=True), ForeignKey("user_addresses.id")
-    )
+    user_address_id = mapped_column(UUID(as_uuid=True), ForeignKey("user_addresses.id"))
 
     # Relationships
     revolut_details = relationship(

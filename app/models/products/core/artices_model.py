@@ -50,7 +50,7 @@ class Articles(Base):
         nullable=False,
     )
     status_code = mapped_column(
-        String,
+        UUID(as_uuid=True),
         ForeignKey("article_status.id"),
         nullable=False,
     )

@@ -10,6 +10,4 @@ class ClaspType(Base):
     name = Column(String, nullable=True)
 
     # Relationships
-    product = relationship(
-        "Products", backref="clasp_types"
-    )
+    product = relationship("Products", backref="clasp_types")

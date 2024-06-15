@@ -38,7 +38,9 @@ class Products(Base):
         cascade="all, delete-orphan",
     )
     variants = relationship(
-        "Variants", backref="products", cascade="all, delete-orphan",
+        "Variants",
+        backref="products",
+        cascade="all, delete-orphan",
     )
     user_reviews_and_ratings = relationship(
         "UserReviewsAndRatings",

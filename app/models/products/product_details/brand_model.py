@@ -10,6 +10,4 @@ class Brand(Base):
     name = Column(String, nullable=False)
 
     # Relationships
-    product = relationship(
-        "Products", backref="brands"
-    )
+    product = relationship("Products", backref="brands")
