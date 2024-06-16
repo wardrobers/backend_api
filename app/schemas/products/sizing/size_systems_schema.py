@@ -21,3 +21,7 @@ class SizeSystemRead(SizeSystemBase):
 class SizeSystemUpdate(SizeSystemBase):
     name: Optional[str] = None
     description: Optional[str] = None
+
+
+# --- Resolving Forward References ---
+SizeSystemRead.model_rebuild()

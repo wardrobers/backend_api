@@ -28,3 +28,4 @@ class CategoryUpdate(CategoryBase):
 
 # --- Resolving Forward References ---
 CategoryRead.model_rebuild()
+CategoryCreate.model_rebuild()

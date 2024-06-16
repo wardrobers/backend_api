@@ -19,3 +19,7 @@ class ColorRead(ColorBase):
 
 class ColorUpdate(ColorBase):
     name: Optional[str] = None
+
+
+# --- Resolving Forward References ---
+ColorRead.model_rebuild()

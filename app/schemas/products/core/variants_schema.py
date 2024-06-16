@@ -34,3 +34,4 @@ class VariantUpdate(VariantBase):
 
 # --- Resolving Forward References ---
 VariantRead.model_rebuild()
+VariantCreate.model_rebuild()

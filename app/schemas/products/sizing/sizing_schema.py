@@ -26,3 +26,8 @@ class SizingRead(SizingBase):
 class SizingUpdate(SizingBase):
     label: Optional[str] = None
     measurements: Optional[dict] = None
+
+
+# --- Resolving Forward References ---
+SizingRead.model_rebuild()
+SizingCreate.model_rebuild()
