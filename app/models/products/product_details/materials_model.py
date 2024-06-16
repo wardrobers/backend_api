@@ -19,6 +19,7 @@ class Materials(Base):
     materials = relationship(
         "ProductMaterials",
         backref="materials",
+        cascade="all, delete-orphan",
     )
 
 

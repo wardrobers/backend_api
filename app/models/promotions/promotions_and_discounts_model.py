@@ -37,14 +37,17 @@ class PromotionsAndDiscounts(Base):
     user_promotions = relationship(
         "UserPromotions",
         backref="promotions_and_discounts",
+        cascade="all, delete-orphan",
     )
     order_promotions = relationship(
         "OrderPromotions",
         backref="promotions_and_discounts",
+        cascade="all, delete-orphan",
     )
     promotions_variants = relationship(
         "PromotionsVariants",
         backref="promotions_and_discounts",
+        cascade="all, delete-orphan",
     )
     occasional_categories = relationship(
         "PromotionsOccasionalCategories",

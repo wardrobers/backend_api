@@ -15,10 +15,12 @@ class OccasionalCategories(Base):
     product_occasional_categories = relationship(
         "ProductOccasionalCategories",
         backref="occasional_categories",
+        cascade="all, delete-orphan",
     )
     promotions_occasional_categories = relationship(
         "PromotionsOccasionalCategories",
         backref="occasional_categories",
+        cascade="all, delete-orphan",
     )
 
 

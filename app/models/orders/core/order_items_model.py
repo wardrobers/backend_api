@@ -40,13 +40,5 @@ class OrderItems(Base):
         cascade="all, delete-orphan",
     )
 
-    # def calculate_total_price(self):
-    #     """Calculates the total price of the order item, including discounts."""
-    #     base_price = self.price + self.delivery_price
-    #     total_discount = sum(
-    #         p.promotions_and_discounts.discount_value for p in self.promotions
-    #     )
-    #     return base_price * (1 - total_discount / 100)
-
     def __repr__(self):
         return f"<OrderItems(id={self.id}, order={self.order_id}, article={self.article_id}, start_date={self.start_date}, end_date={self.end_date})>"

@@ -77,11 +77,10 @@ class CachingMixin(BaseMixin):
         if data:
             return pickle.loads(data)
 
-        with db_session.begin():
-            instance = self.get_by_id(db_session, _id)
-            if instance:
-                redis.set(cache_key, pickle.dumps(instance), expire=ttl)
-            return instance
+        instance = self.get_by_id(db_session, _id)
+        if instance:
+            redis.set(cache_key, pickle.dumps(instance), expire=ttl)
+        return instance
 
     def invalidate_cache_by_id(
         self, _id: UUID, extra_params: Optional[dict[str, Any]] = None

@@ -27,3 +27,8 @@ class Variants(Base):
         backref="variants",
         cascade="all, delete-orphan",
     )
+    user_saved_items = relationship(
+        "UserSavedItems",
+        backref="variants",
+        cascade="all, delete-orphan",
+    )

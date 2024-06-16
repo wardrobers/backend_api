@@ -9,10 +9,11 @@ from .profile.user_addresses_model import AddressType, UserAddresses
 from .profile.user_photos_model import UserPhotos
 from .roles.permissions_model import CRUDOperation, Permissions
 from .roles.role_permissions_model import RolePermissions
-from .roles.roles_model import Roles
+from .roles.roles_model import Roles, RoleType
 from .roles.user_roles_model import UserRoles
 
 __all__ = [
+    "RoleType",
     "Users",
     "DataPrivacyConsents",
     "UserInfo",

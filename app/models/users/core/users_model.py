@@ -26,7 +26,7 @@ class Users(Base):
 
     # Relationships
     info = relationship(
-        "UserInfo", uselist=False, backref="users", cascade="all, delete-orphan"
+        "UserInfo", uselist=False, back_populates="user", cascade="all, delete-orphan"
     )
     activity = relationship(
         "UserActivity",
@@ -36,7 +36,6 @@ class Users(Base):
     )
     basket = relationship(
         "UserBasket",
-        uselist=False,
         backref="users",
         cascade="all, delete-orphan",
     )
@@ -44,8 +43,13 @@ class Users(Base):
     user_roles = relationship(
         "UserRoles",
         backref="users",
+        cascade="all, delete-orphan",
     )
-    orders = relationship("Orders", backref="users")
+    orders = relationship(
+        "Orders",
+        backref="users",
+        cascade="all, delete-orphan",
+    )
     subscriptions = relationship(
         "Subscriptions", backref="users", cascade="all, delete-orphan"
     )
@@ -65,14 +69,8 @@ class Users(Base):
     )
     data_privacy_consents = relationship(
         "DataPrivacyConsents",
+        uselist=False,
         backref="users",
+        cascade="all, delete-orphan",
     )
     transactions = relationship("Transactions", backref="users")
-    # peer_to_peer_lender = relationship(
-    #     "PeerToPeerLogistics",
-    #     back_populates="lender_user",
-    # )
-    # peer_to_peer_renter = relationship(
-    #     "PeerToPeerLogistics",
-    #     back_populates="renter_user",
-    # )

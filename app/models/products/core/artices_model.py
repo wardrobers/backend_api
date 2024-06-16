@@ -68,14 +68,15 @@ class Articles(Base):
     cleaning_logs = relationship(
         "CleaningLogs",
         backref="articles",
+        cascade="all, delete-orphan",
     )
-    repair_logs = relationship("RepairLogs", backref="articles")
+    repair_logs = relationship(
+        "RepairLogs",
+        backref="articles",
+        cascade="all, delete-orphan",
+    )
     lender_payments = relationship(
         "LenderPayments",
-        backref="articles",
-    )
-    user_saved_items = relationship(
-        "UserSavedItems",
         backref="articles",
     )
     order_items = relationship("OrderItems", backref="articles")

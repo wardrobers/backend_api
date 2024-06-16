@@ -42,4 +42,5 @@ class PaymentMethods(Base):
     transactions = relationship(
         "Transactions",
         backref="payment_methods",
+        cascade="all, delete-orphan",
     )

@@ -8,10 +8,10 @@ from app.models.base_model import Base
 class UserBasket(Base):
     __tablename__ = "user_basket"
 
-    count = Column(Integer, default=1)
+    count = Column(Integer, default=0)
 
     # Foreign keys
     user_id = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    stock_keeping_unit_id = mapped_column(
+    sku_id = mapped_column(
         UUID(as_uuid=True), ForeignKey("stock_keeping_units.id"), nullable=False
     )

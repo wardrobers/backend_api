@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 
 from app.main import app
 from app.models.users import Roles, UserAddresses, UserInfo, Users
-from app.repositories.users import AuthRepository
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
@@ -20,6 +19,7 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
+from app.services.users import AuthService
 from tests.utils.users import (
     create_random_role,
     create_random_user,
@@ -31,7 +31,7 @@ client = TestClient(app)
 
 # --- Helper Function to get access token ---
 def get_access_token(db_session: Session, user_data: UserLogin):
-    auth_service = AuthRepository(db_session)
+    auth_service = AuthService(db_session)
     user = auth_service.authenticate_user(user_data)
     if not user:
         return None

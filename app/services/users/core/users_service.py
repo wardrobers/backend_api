@@ -5,7 +5,6 @@ from pydantic import UUID4
 
 from app.models.users import Users
 from app.repositories.users import UsersRepository
-from app.repositories.users.core.auth_repository import AuthRepository
 from app.schemas.users import (
     UserInfoCreate,
     UserInfoRead,
@@ -15,6 +14,7 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
+from app.services.users.core.auth_service import AuthService
 
 
 class UsersService:
@@ -26,7 +26,7 @@ class UsersService:
     def __init__(
         self,
         users_repository: UsersRepository,
-        auth_service: AuthRepository,
+        auth_service: AuthService,
     ):
         self.users_repository = users_repository
         self.auth_service = auth_service

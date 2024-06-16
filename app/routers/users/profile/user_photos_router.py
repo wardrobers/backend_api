@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.models.users import Users
-from app.repositories.users import AuthRepository, UserPhotosRepository
+from app.repositories.users import UserPhotosRepository
 from app.schemas.users import UserPhotoRead
-from app.services.users import UserPhotosService
+from app.services.users import AuthService, UserPhotosService
 
 router = APIRouter()
 
@@ -22,7 +22,7 @@ def get_user_photos_service(
 
 @router.get("/", response_model=list[UserPhotoRead])
 def get_user_photos(
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
     """
@@ -39,7 +39,7 @@ def get_user_photos(
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserPhotoRead)
 def upload_user_photo(
     photo: UploadFile = File(...),
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
     """
@@ -64,7 +64,7 @@ def upload_user_photo(
 )
 def delete_user_photo(
     photo_id: UUID4,
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_photos_service: UserPhotosService = Depends(get_user_photos_service),
 ):
     """

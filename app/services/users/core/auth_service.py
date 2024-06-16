@@ -15,7 +15,7 @@ from app.models.users import Users
 from app.schemas.users import UserLogin
 
 
-class AuthRepository:
+class AuthService:
     """
     Handles user authentication, token management, and password-related operations.
 

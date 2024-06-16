@@ -5,7 +5,7 @@ import string
 from sqlalchemy.orm import Session
 
 from app.models.users import Roles, UserInfo, Users
-from app.repositories.users import AuthRepository
+from app.services.users import AuthService
 
 
 def create_random_user(db_session: Session, login_length: int = 10) -> Users:
@@ -20,7 +20,7 @@ def create_random_user(db_session: Session, login_length: int = 10) -> Users:
         Users: The created Users object.
     """
     random_login = "".join(random.choices(string.ascii_letters, k=login_length))
-    hashed_password = AuthRepository.get_password_hash("testpassword")
+    hashed_password = AuthService.get_password_hash("testpassword")
     user = Users(login=random_login, password=hashed_password)
     db_session.add(user)
     db_session.commit()

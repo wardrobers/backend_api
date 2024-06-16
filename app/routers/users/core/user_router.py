@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.users import Users
-from app.repositories.users import AuthRepository, UserInfoRepository, UsersRepository
+from app.repositories.users import UserInfoRepository, UsersRepository
 from app.schemas.users import (
     UpdateContext,
     UserInfoRead,
@@ -11,7 +11,7 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
-from app.services.users import UsersService
+from app.services.users import AuthService, UsersService
 
 router = APIRouter()
 
@@ -20,7 +20,7 @@ router = APIRouter()
 def get_user_service(
     db_session: Session = Depends(get_db),
 ):
-    auth_service = AuthRepository(db_session)
+    auth_service = AuthService(db_session)
     users_repository = UsersRepository(db_session)
     return UsersService(users_repository, auth_service)
 
@@ -28,7 +28,7 @@ def get_user_service(
 def get_current_user(
     db_session: Session = Depends(get_db),
 ):
-    auth_repo = AuthRepository(db_session)
+    auth_repo = AuthService(db_session)
     return auth_repo.get_current_user()
 
 

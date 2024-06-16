@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.models.users import Users
-from app.repositories.users import AuthRepository, UserAddressRepository
+from app.repositories.users import UserAddressRepository
 from app.schemas.users import UserAddressCreate, UserAddressRead, UserAddressUpdate
+from app.services.users import AuthService
 from app.services.users.profile.user_addresses_service import UserAddressesService
 
 router = APIRouter()
@@ -24,7 +25,7 @@ def get_user_address_service(
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserAddressRead)
 def add_user_address(
     address_data: UserAddressCreate,
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
@@ -64,7 +65,7 @@ def get_address(
 
 @router.get("/", response_model=list[UserAddressRead])
 def get_all_user_addresses(
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
@@ -85,7 +86,7 @@ def get_all_user_addresses(
 def update_user_address(
     address_id: UUID4,
     address_update: UserAddressUpdate,
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """
@@ -116,7 +117,7 @@ def update_user_address(
 )
 def delete_user_address(
     address_id: UUID4,
-    current_user: Users = Depends(AuthRepository.get_current_user),
+    current_user: Users = Depends(AuthService.get_current_user),
     user_address_service: UserAddressesService = Depends(get_user_address_service),
 ):
     """

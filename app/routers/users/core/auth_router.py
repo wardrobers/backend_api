@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.users import Users
-from app.repositories.users import AuthRepository, UsersRepository
+from app.repositories.users import UsersRepository
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
@@ -12,7 +12,7 @@ from app.schemas.users import (
     UsersCreate,
     UsersRead,
 )
-from app.services.users import UsersService
+from app.services.users import AuthService, UsersService
 
 router = APIRouter()
 
@@ -21,14 +21,14 @@ router = APIRouter()
 def get_user_service(
     db_session: Session = Depends(get_db),
 ):
-    auth_service = AuthRepository(db_session)
+    auth_service = AuthService(db_session)
     users_repository = UsersRepository(db_session)
     return UsersService(users_repository, auth_service)
 
 
-# Dependency for AuthRepository
+# Dependency for AuthService
 def get_auth_service(db_session: Session = Depends(get_db)):
-    return AuthRepository(db_session)
+    return AuthService(db_session)
 
 
 # --- Registration ---
@@ -61,7 +61,7 @@ def login_user(
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     user_service: UsersService = Depends(get_user_service),
-    auth_service: AuthRepository = Depends(get_auth_service),
+    auth_service: AuthService = Depends(get_auth_service),
 ):
     """
     Logs in a user using the OAuth2 password flow and generates a JWT access token.
@@ -120,12 +120,12 @@ def reset_password(
     #     raise HTTPException(status_code=404, detail="Invalid or expired token")
 
     try:
-        AuthRepository.validate_password_strength(reset_data.new_password)
+        AuthService.validate_password_strength(reset_data.new_password)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the user's password
-    # user.password = AuthRepository.get_password_hash(reset_data.new_password)
+    # user.password = AuthService.get_password_hash(reset_data.new_password)
     # db_session.commit()
 
     return {"message": "Password reset successfully"}
@@ -135,8 +135,8 @@ def reset_password(
 @router.put("/password/change", status_code=status.HTTP_200_OK, response_model=None)
 def change_password(
     password_change: PasswordChange,
-    current_user: Users = Depends(AuthRepository.get_current_user),
-    auth_service: AuthRepository = Depends(get_auth_service),
+    current_user: Users = Depends(AuthService.get_current_user),
+    auth_service: AuthService = Depends(get_auth_service),
 ):
     """
     Allows authenticated users to change their password.
