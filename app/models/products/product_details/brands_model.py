@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app.models.base_model import Base
 
 
-class Brand(Base):
+class Brands(Base):
     __tablename__ = "brands"
 
     name = Column(String, nullable=False)

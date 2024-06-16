@@ -2,7 +2,7 @@ from .core.artices_model import Articles, Condition, OwnerType
 from .core.products_model import Products
 from .core.variants_model import Variants
 from .inventorization.article_status_model import ArticleCurrentStatus, ArticleStatus
-from .inventorization.category_model import Categories, ProductCategories
+from .inventorization.categories_model import Categories, ProductCategories
 from .inventorization.occasional_categories_model import (
     OccasionalCategories,
     ProductOccasionalCategories,
@@ -14,7 +14,7 @@ from .inventorization.types_model import ProductTypes, Types, TypesFromUser
 from .inventorization.types_of_operations_model import TypesOfOperations
 from .maintenance.cleaning_logs_model import CleaningLogs
 from .maintenance.repair_logs_model import RepairLogs
-from .product_details.brand_model import Brand
+from .product_details.brands_model import Brands
 from .product_details.clasp_type_model import ClaspType
 from .product_details.colors_model import Colors
 from .product_details.materials_model import Materials, ProductMaterials
@@ -36,7 +36,7 @@ __all__ = [
     "ProductCurrentStatus",
     "Categories",
     "ArticleStatus",
-    "Brand",
+    "Brands",
     "CleaningLogs",
     "ClaspType",
     "ClothingSizes",

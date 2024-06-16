@@ -1,3 +1,3 @@
-from .basic_schemas import Message
+from .base_schemas import PaginatedResponse
 
-__all__ = ["Message"]
+__all__ = ["PaginatedResponse"]

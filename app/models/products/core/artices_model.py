@@ -16,7 +16,7 @@ from app.models.users.activity.user_saved_items_model import UserSavedItems
 class OwnerType(Enum):
     Platform = "Platform"
     Lender = "Lender"
-    Brand = "Brand"
+    Brands = "Brands"
     Partner = "Partner"
 
 

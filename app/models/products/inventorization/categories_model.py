@@ -8,8 +8,8 @@ from app.models.base_model import Base
 class Categories(Base):
     __tablename__ = "categories"
 
-    name = Column(String)
-    is_default = Column(Boolean)
+    name = Column(String, nullable=False)
+    is_default = Column(Boolean, nullable=False)
 
     # Relationships
     materials = relationship(
