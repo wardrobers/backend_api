@@ -1,7 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel, UUID4, Field
-from app.schemas.products import ArticleRead, VariantRead, PricingTierRead
+from app.schemas.products import ArticleRead, VariantRead
 from app.schemas.users import UserBasketRead
 from app.schemas.pricing import PricingTierRead
 
@@ -20,13 +20,13 @@ class StockKeepingUnitCreate(StockKeepingUnitBase):
 
 class StockKeepingUnitRead(StockKeepingUnitBase):
     id: UUID4
-    articles: Optional[list[ArticleRead]] = None  # Optional, as it might not always be needed
+    articles: Optional[list[ArticleRead]] = None
     variants: Optional[list[VariantRead]] = None
     user_basket: Optional[list[UserBasketRead]] = None
     pricing_tiers: Optional[list[PricingTierRead]] = None
 
     class Config:
-        orm_mode = True  # Enables parsing of SQLAlchemy ORM objects
+        orm_mode = True
 
 
 class StockKeepingUnitUpdate(StockKeepingUnitBase):

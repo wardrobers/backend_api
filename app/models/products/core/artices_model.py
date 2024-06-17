@@ -13,14 +13,14 @@ from app.models.products.maintenance.repair_logs_model import RepairLogs
 from app.models.users.activity.user_saved_items_model import UserSavedItems
 
 
-class OwnerType(Enum):
+class OwnerType(str, Enum):
     Platform = "Platform"
     Lender = "Lender"
     Brands = "Brands"
     Partner = "Partner"
 
 
-class Condition(Enum):
+class Condition(str, Enum):
     New = "New"
     Excellent = "Excellent"
     Good = "Good"

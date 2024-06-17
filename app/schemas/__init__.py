@@ -1,4 +1,4 @@
-from . import common, products, subscriptions, users, pricing
+from . import common, products, subscriptions, users, pricing, orders
 
 __all__ = [
     "subscriptions",
@@ -6,4 +6,5 @@ __all__ = [
     "common",
     "products",
     "pricing",
+    "orders",
 ]

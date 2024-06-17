@@ -19,6 +19,12 @@ from .inventorization.stock_keeping_units_schema import (
     StockKeepingUnitRead,
     StockKeepingUnitUpdate,
 )
+from .inventorization.specifications_schema import (
+    SpecificationBase,
+    SpecificationCreate,
+    SpecificationRead,
+    SpecificationUpdate,
+)
 from .product_details.brand_schema import BrandBase, BrandCreate, BrandRead, BrandUpdate
 from .product_details.colors_schema import (
     ColorBase,
@@ -39,8 +45,22 @@ from .sizing.size_systems_schema import (
     SizeSystemUpdate,
 )
 from .sizing.sizing_schema import SizingBase, SizingCreate, SizingRead, SizingUpdate
+from .maintenance.cleaning_logs_schema import CleaningLogBase, CleaningLogCreate, CleaningLogRead, CleaningLogUpdate
+from .maintenance.repair_logs_schema import RepairLogBase, RepairLogCreate, RepairLogRead, RepairLogUpdate
 
 __all__ = [
+    "SpecificationBase",
+    "SpecificationCreate",
+    "SpecificationRead",
+    "SpecificationUpdate",
+    "CleaningLogBase",
+    "CleaningLogCreate",
+    "CleaningLogRead",
+    "CleaningLogUpdate",
+    "RepairLogBase",
+    "RepairLogCreate",
+    "RepairLogRead",
+    "RepairLogUpdate",
     "ArticleBase",
     "ArticleCreate",
     "ArticleRead",
