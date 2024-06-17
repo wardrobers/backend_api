@@ -21,7 +21,7 @@ class ProductStatusRead(ProductStatusBase):
     id: UUID4
     products: Optional[list[ProductRead]] = None
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProductStatusUpdate(ProductStatusBase):

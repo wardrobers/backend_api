@@ -26,7 +26,7 @@ class StockKeepingUnitRead(StockKeepingUnitBase):
     pricing_tiers: Optional[list[PricingTierRead]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class StockKeepingUnitUpdate(StockKeepingUnitBase):

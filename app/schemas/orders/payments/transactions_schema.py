@@ -11,7 +11,7 @@ from app.schemas.orders import LenderPaymentRead
 # --- Transactions Schemas (app/schemas/transactions.py) ---
 class TransactionBase(BaseModel):
     amount: Annotated[
-        Decimal, Field(..., description="The amount of the transaction.", decimal_places=2)
+        Decimal, Field(..., description="The amount of the transaction.")
     ]
     currency: str = Field(..., description="The currency of the transaction (e.g., 'USD', 'EUR').")
     transaction_date: datetime = Field(..., description="The date and time of the transaction.")
@@ -41,12 +41,12 @@ class TransactionRead(TransactionBase):
     lender_payment: Optional[LenderPaymentRead] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TransactionUpdate(TransactionBase):
     amount: Optional[
-        Annotated[Decimal, Field(description="The amount of the transaction.", decimal_places=2)]
+        Annotated[Decimal, Field(description="The amount of the transaction.")]
     ] = None
     currency: Optional[str] = Field(
         None, description="The currency of the transaction (e.g., 'USD', 'EUR')."

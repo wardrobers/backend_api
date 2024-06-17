@@ -24,7 +24,7 @@ class OrderStatusRead(OrderStatusBase):
     orders: Optional[list[OrderRead]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class OrderStatusUpdate(OrderStatusBase):

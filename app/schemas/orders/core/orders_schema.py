@@ -11,12 +11,12 @@ from app.schemas.orders import TransactionRead, OrderItemRead
 
 class OrderBase(BaseModel):
     total_price: Annotated[
-        Decimal, Field(..., description="The total price of the order.", decimal_places=2)
+        Decimal, Field(..., description="The total price of the order.")
     ]
     total_delivery_price: Annotated[
         Decimal,
         Field(
-            ..., description="The total delivery price for the order.", decimal_places=2
+            ..., description="The total delivery price for the order."
         ),
     ]
     comment: Optional[str] = Field(None, description="Any comments for the order.")
@@ -37,18 +37,18 @@ class OrderRead(OrderBase):
     # order_promotions: Optional[List["OrderPromotionRead"]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class OrderUpdate(OrderBase):
     total_price: Optional[
-        Annotated[Decimal, Field(description="The total price of the order.", decimal_places=2)]
+        Annotated[Decimal, Field(description="The total price of the order.")]
     ] = None
     total_delivery_price: Optional[
         Annotated[
             Decimal,
             Field(
-                description="The total delivery price for the order.", decimal_places=2
+                description="The total delivery price for the order."
             ),
         ]
     ] = None

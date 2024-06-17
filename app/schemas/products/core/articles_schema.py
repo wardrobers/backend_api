@@ -2,10 +2,12 @@ from typing import Optional
 
 from pydantic import BaseModel, UUID4, Field
 
-from app.schemas.products import SpecificationRead, CleaningLogRead, RepairLogRead
+from app.schemas.products.inventorization.specifications_schema import SpecificationRead
+from app.schemas.products.maintenance.cleaning_logs_schema import CleaningLogRead
+from app.schemas.products.maintenance.repair_logs_schema import RepairLogRead
 from app.schemas.orders import LenderPaymentRead, OrderItemRead
 
-
+ 
 # --- Articles ---
 
 class ArticleBase(BaseModel):
@@ -46,7 +48,7 @@ class ArticleRead(ArticleBase):
     order_items: Optional[list[OrderItemRead]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ArticleUpdate(ArticleBase):

@@ -21,7 +21,7 @@ class RepairLogRead(RepairLogBase):
     id: UUID4
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class RepairLogUpdate(RepairLogBase):
