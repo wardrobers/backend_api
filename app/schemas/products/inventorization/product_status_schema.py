@@ -1,8 +1,10 @@
 from typing import Optional
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, BaseModel, Field
 
-from app.models.products.inventorization.product_status_model import ProductCurrentStatus
+from app.models.products.inventorization.product_status_model import (
+    ProductCurrentStatus,
+)
 from app.schemas.products import ProductRead
 
 
@@ -20,6 +22,7 @@ class ProductStatusCreate(ProductStatusBase):
 class ProductStatusRead(ProductStatusBase):
     id: UUID4
     products: Optional[list[ProductRead]] = None
+
     class Config:
         from_attributes = True
 

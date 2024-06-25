@@ -17,7 +17,7 @@ class VariantBase(BaseModel):
 
 
 class VariantCreate(VariantBase):
-    sizing: list[SizingCreate] = []
+    pass
 
 
 class VariantRead(VariantBase):

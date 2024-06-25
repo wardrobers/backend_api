@@ -22,7 +22,7 @@ class CachingMixin(BaseMixin):
 
     - Personalized hash key generation specific to Wardrobers' data models.
     - Robust serialization with pickle for complex data structures.
-    - Optimized Redis interaction using aioredis for asynchronous operations.
+    - Optimized Redis interaction using aioredis for  operations.
     - Configurable cache expiry (TTL).
     - Cache invalidation methods.
     """

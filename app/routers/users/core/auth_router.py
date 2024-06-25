@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import UUID4
 from sqlalchemy.orm import Session
 
+from app.config import oauth2_scheme
 from app.database import get_db
 from app.models.users import Users
-from app.repositories.users import UsersRepository
 from app.schemas.users import (
     PasswordChange,
     PasswordResetConfirm,
@@ -15,27 +16,32 @@ from app.schemas.users import (
 from app.services.users import AuthService, UsersService
 
 router = APIRouter()
+auth_service = AuthService()
+user_service = UsersService()
 
 
-# Dependency to get user service
-def get_user_service(
-    db_session: Session = Depends(get_db),
-):
-    auth_service = AuthService(db_session)
-    users_repository = UsersRepository(db_session)
-    return UsersService(users_repository, auth_service)
+def get_current_active_user(
+    db_session: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+) -> Users:
+    """Dependency to get the currently authenticated user from the JWT token."""
+    user = auth_service.get_current_user(db_session, token)
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return user
 
 
-# Dependency for AuthService
-def get_auth_service(db_session: Session = Depends(get_db)):
-    return AuthService(db_session)
+def get_current_user_id(
+    current_user: Users = Depends(get_current_active_user),
+) -> UUID4:
+    """Dependency to get the user_id of the current user."""
+    return current_user.id
 
 
 # --- Registration ---
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UsersRead)
 def register_user(
     user_create: UsersCreate,
-    user_service: UsersService = Depends(get_user_service),
+    db_session: Session = Depends(get_db),
 ):
     """
     Registers a new user.
@@ -52,16 +58,15 @@ def register_user(
             - If the passwords don't match.
             - If the password doesn't meet strength requirements.
     """
-    return user_service.create_user(user_create)
+    return user_service.create_user(db_session, user_create)
 
 
 # --- Login ---
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=None)
 def login_user(
     response: Response,
+    db_session: Session = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
-    user_service: UsersService = Depends(get_user_service),
-    auth_service: AuthService = Depends(get_auth_service),
 ):
     """
     Logs in a user using the OAuth2 password flow and generates a JWT access token.
@@ -77,7 +82,7 @@ def login_user(
         - 401 Unauthorized: If the provided credentials are incorrect.
     """
     user = user_service.authenticate_user(
-        UserLogin(login=form_data.username, password=form_data.password)
+        db_session, UserLogin(login=form_data.username, password=form_data.password)
     )
 
     if not user:
@@ -135,8 +140,8 @@ def reset_password(
 @router.put("/password/change", status_code=status.HTTP_200_OK, response_model=None)
 def change_password(
     password_change: PasswordChange,
-    current_user: Users = Depends(AuthService.get_current_user),
-    auth_service: AuthService = Depends(get_auth_service),
+    db_session: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_active_user),
 ):
     """
     Allows authenticated users to change their password.
@@ -168,6 +173,6 @@ def change_password(
         raise HTTPException(status_code=400, detail=str(e))
 
     # Update the password
-    auth_service.change_password(current_user, password_change.new_password)
+    auth_service.change_password(db_session, current_user, password_change.new_password)
 
     return {"message": "Password changed successfully"}

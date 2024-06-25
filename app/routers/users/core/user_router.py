@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import UUID4
 from sqlalchemy.orm import Session
 
+from app.config import oauth2_scheme
 from app.database import get_db
 from app.models.users import Users
-from app.repositories.users import UserInfoRepository, UsersRepository
 from app.schemas.users import (
     UpdateContext,
     UserInfoRead,
@@ -11,31 +12,35 @@ from app.schemas.users import (
     UsersRead,
     UsersUpdate,
 )
-from app.services.users import AuthService, UsersService
+from app.services.users import AuthService, UserInfoService, UsersService
 
 router = APIRouter()
+auth_service = AuthService()
+users_service = UsersService()
+user_info_service = UserInfoService()
 
 
-# Dependency to get user service
-def get_user_service(
-    db_session: Session = Depends(get_db),
-):
-    auth_service = AuthService(db_session)
-    users_repository = UsersRepository(db_session)
-    return UsersService(users_repository, auth_service)
+def get_current_active_user(
+    db_session: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+) -> Users:
+    """Dependency to get the currently authenticated user from the JWT token."""
+    user = auth_service.get_current_user(db_session, token)
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return user
 
 
-def get_current_user(
-    db_session: Session = Depends(get_db),
-):
-    auth_repo = AuthService(db_session)
-    return auth_repo.get_current_user()
+def get_current_user_id(
+    current_user: Users = Depends(get_current_active_user),
+) -> UUID4:
+    """Dependency to get the user_id of the current user."""
+    return current_user.id
 
 
 @router.get("/me", response_model=UsersRead)
 def get_current_user_profile(
-    current_user: Users = Depends(get_current_user),
-    user_service: UsersService = Depends(get_user_service),
+    current_user: Users = Depends(get_current_active_user),
+    db_session: Session = Depends(get_db),
 ):
     """
     Retrieves the complete profile of the currently authenticated user.
@@ -45,14 +50,14 @@ def get_current_user_profile(
     **Response (Success - 200 OK):**
         - `UsersRead` (schema): The complete user profile including related info.
     """
-    return user_service.get_user_by_id(current_user.id)
+    return users_service.get_user_by_id(db_session, current_user.id)
 
 
 @router.put("/me", response_model=UsersRead)
 def update_current_user_profile(
     user_update: UsersUpdate,
-    current_user: Users = Depends(get_current_user),
-    user_service: UsersService = Depends(get_user_service),
+    db_session: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_active_user),
 ):
     """
     Updates the profile of the currently authenticated user.
@@ -69,14 +74,16 @@ def update_current_user_profile(
         - 400 Bad Request: If update data is invalid or a conflict occurs (e.g., duplicate email).
         - 403 Forbidden: If the user is not authorized to update the profile.
     """
-    return user_service.update_user(current_user.id, user_update, current_user)
+    return users_service.update_user(
+        db_session, current_user.id, user_update, current_user
+    )
 
 
 @router.put("/me/info", response_model=UserInfoRead)
 def update_current_user_info(
     user_info_update: UserInfoUpdate,
-    current_user: Users = Depends(get_current_user),
-    user_service: UsersService = Depends(get_user_service),
+    db_session: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_active_user),
 ):
     """
     Updates additional user info of the currently authenticated user.
@@ -94,15 +101,15 @@ def update_current_user_info(
         - 403 Forbidden: If the user is not authorized to update the info.
         - 404 Not Found: If the user info for the current user is not found.
     """
-    return user_service.update_user_info(
-        current_user.id, user_info_update, UpdateContext.FULL_PROFILE
+    return user_info_service.update_user_info(
+        db_session, current_user.id, user_info_update, UpdateContext.FULL_PROFILE
     )
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_current_user_account(
-    current_user: Users = Depends(get_current_user),
-    user_service: UsersService = Depends(get_user_service),
+    db_session: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_active_user),
 ):
     """
     Deletes the account of the currently authenticated user.
@@ -116,14 +123,14 @@ def delete_current_user_account(
         - 403 Forbidden: If the user is not authorized to delete the account.
         - 404 Not Found: If the user is not found.
     """
-    user_service.delete_user(current_user.id, current_user)
+    users_service.delete_user(db_session, current_user.id, current_user)
 
 
 @router.put("/notifications", status_code=status.HTTP_200_OK, response_model=None)
 def update_notification_preferences(
     enabled: bool,
-    current_user: Users = Depends(get_current_user),
-    user_service: UsersService = Depends(get_user_service),
+    db_session: Session = Depends(get_db),
+    current_user: Users = Depends(get_current_active_user),
 ):
     """
     Enables or disables notifications for the currently authenticated user.
@@ -140,5 +147,7 @@ def update_notification_preferences(
         - 403 Forbidden: If the user is not authorized to modify notifications.
         - 404 Not Found: If the user is not found.
     """
-    user_service.toggle_notifications(current_user.id, enabled, current_user)
+    users_service.toggle_notifications(
+        db_session, current_user.id, enabled, current_user
+    )
     return {"message": "Notification preferences updated successfully"}

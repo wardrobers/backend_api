@@ -9,7 +9,6 @@ class BulkActionsMixin:
     """
     Mixin for performing bulk operations on database models, featuring:
 
-    - Asynchronous operations for enhanced concurrency.
     - Optimized bulk inserts and updates.
     - Bulk soft and hard deletes.
     - Bulk upsert operation (insert or update).
@@ -23,7 +22,7 @@ class BulkActionsMixin:
         Perform a bulk insert operation asynchronously.
 
         Args:
-            db_session (Session): The asynchronous database session.
+            db_session (Session): The  database session.
             items (List[Dict[str, Any]]): A list of dictionaries representing the data to insert.
         """
         db_session.execute(insert(self.model), items)
@@ -34,7 +33,7 @@ class BulkActionsMixin:
         Perform a bulk update operation asynchronously.
 
         Args:
-            db_session (Session): The asynchronous database session.
+            db_session (Session): The  database session.
             items (List[Dict[str, Any]]): A list of dictionaries representing the data to update.
                 Each dictionary must contain the 'id' of the record to update.
         """
@@ -51,7 +50,7 @@ class BulkActionsMixin:
         Perform a bulk hard delete operation asynchronously.
 
         Args:
-            db_session (Session): The asynchronous database session.
+            db_session (Session): The  database session.
             ids (List[UUID]): A list of IDs to delete.
         """
         db_session.execute(delete(self.model).where(self.model.id.in_(ids)))
@@ -62,7 +61,7 @@ class BulkActionsMixin:
         Perform a bulk soft delete operation asynchronously.
 
         Args:
-            db_session (Session): The asynchronous database session.
+            db_session (Session): The  database session.
             ids (List[UUID]): A list of IDs to soft delete.
         """
         db_session.execute(
@@ -82,7 +81,7 @@ class BulkActionsMixin:
         Perform a bulk upsert operation (insert or update) asynchronously.
 
         Args:
-            db_session (Session): The asynchronous database session.
+            db_session (Session): The  database session.
             items (List[Dict[str, Any]]): A list of dictionaries representing the data to upsert.
             unique_constraint (Optional[Tuple[str, ...]]): The unique constraint
                 to use for determining whether to insert or update. If None, the primary key is used.

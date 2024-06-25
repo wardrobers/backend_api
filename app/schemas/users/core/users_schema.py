@@ -26,21 +26,26 @@ class UsersCreate(UsersBase):
     password_confirmation: str = Field(..., json_schema_extra="StrongP@$$w0rd")
 
 
-class UsersRead(UsersBase):
+# --- User Login Schema ---
+class UserLogin(UsersBase):
+    password: str
+
+
+class UsersRead(UserLogin):
     id: UUID4
-    info: Optional["UserInfoRead"] = None
-    activity: Optional["UserActivityRead"] = None
-    basket: Optional["UserBasketRead"] = None
-    photos: Optional[list["UserPhotoRead"]] = None
-    roles: Optional[list["RoleRead"]] = None
-    # orders: Optional[list["OrderRead"]] = None
-    subscriptions: Optional[list["SubscriptionRead"]] = None
-    reviews_and_ratings: Optional[list["UserReviewRatingRead"]] = None
-    saved_items: Optional[list["UserSavedItemRead"]] = None
-    # promotions: Optional[list["UserPromotionRead"]] = None
-    addresses: Optional[list["UserAddressRead"]] = None
-    data_privacy_consents: Optional[list["DataPrivacyConsentRead"]] = None
-    # transactions: Optional[list["TransactionRead"]] = None
+    info: Optional[UserInfoRead] = None
+    activity: Optional[UserActivityRead] = None
+    basket: Optional[UserBasketRead] = None
+    photos: Optional[list[UserPhotoRead]] = None
+    roles: Optional[list[RoleRead]] = None
+    # orders: Optional[list[OrderRead]] = None
+    subscriptions: Optional[list[SubscriptionRead]] = None
+    reviews_and_ratings: Optional[list[UserReviewRatingRead]] = None
+    saved_items: Optional[list[UserSavedItemRead]] = None
+    # promotions: Optional[list[UserPromotionRead]] = None
+    addresses: Optional[list[UserAddressRead]] = None
+    data_privacy_consents: Optional[list[DataPrivacyConsentRead]] = None
+    # transactions: Optional[list[TransactionRead]] = None
 
 
 class UsersUpdate(UsersBase):
@@ -55,12 +60,6 @@ class UsersDelete(BaseModel):
 UsersRead.model_rebuild()
 
 
-# --- User Login Schema ---
-class UserLogin(BaseModel):
-    login: str
-    password: str
-
-
 # --- Password Reset Request Schema ---
 class PasswordResetRequest(BaseModel):
     email: EmailStr
@@ -73,6 +72,6 @@ class PasswordResetConfirm(BaseModel):
 
 
 # --- Password Change Schema ---
-class PasswordChange(BaseModel):
+class PasswordChange(UsersBase):
     current_password: str
     new_password: str = Field(..., min_length=8, json_schema_extra="StrongNewP@$$w0rd")

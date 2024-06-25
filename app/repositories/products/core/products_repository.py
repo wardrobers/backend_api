@@ -1,288 +1,306 @@
-from enum import Enum, auto
+from typing import Optional
 
-from sqlalchemy import and_, func
+from sqlalchemy import func, update
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session, joinedload, selectinload
+from sqlalchemy.orm import Session, joinedload
 
-from app.models.pricing import PriceFactors, PriceMultipliers, PricingTiers
 from app.models.products import (
     Articles,
     ArticleStatus,
+    Categories,
     ProductCategories,
-    ProductOccasionalCategories,
     Products,
+    Sizing,
     StockKeepingUnits,
     Variants,
 )
-from app.models.promotions import (
-    PromotionsAndDiscounts,
-    PromotionsVariants,
-    UserPromotions,
+from app.repositories.common import BaseMixin, BulkActionsMixin, SearchMixin
+from app.schemas.common import PaginatedResponse
+from app.schemas.products import (
+    ProductCreate,
+    ProductUpdate,
+    SizingCreate,
+    VariantCreate,
 )
 
 
-class FilterKeys(Enum):
-    category_id = auto()
-    size_id = auto()
-    brand_id = auto()
-    material_id = auto()
-    color_id = auto()
-    price_range = auto()
-    available_dates = auto()
-
-
-class ProductsRepository:
+class ProductsRepository(BaseMixin, BulkActionsMixin, SearchMixin):
     """
     Repository responsible for all database operations related to the Products model.
     """
 
-    NEW_ITEM_PREMIUM = 1.10
+    model = Products
 
-    def __init__(self, db_session: Session):
-        self.db_session = db_session
+    # --- Product-Specific Retrieval Methods ---
 
-    def get_available_products(cls, db_session: Session, category=None, brand=None):
+    def get_available_products(
+        self,
+        db_session: Session,
+        category_id: Optional[UUID] = None,
+        brand_id: Optional[UUID] = None,
+        page: int = 1,
+        page_size: int = 10,
+    ) -> PaginatedResponse:
         """
-        Retrieves products with available sku based on filters.
-        Optimized to use EXISTS clause to check for stock directly in the query.
+        Retrieves products with available stock based on filters, using pagination.
         """
-        # Subquery for checking available articles
-        article_subquery = (
-            db_session.query(Variants)
-            .join(StockKeepingUnits, StockKeepingUnits.id == Variants.sku_id)
-            .join(Articles, StockKeepingUnits.id == Articles.sku_id)
-            .filter(Articles.status_code == ArticleStatus.Available)
-            .exists()
+        filters = {}
+        relationships = {}
+        if category_id:
+            relationships["categories"] = ("category_id", category_id)
+        if brand_id:
+            filters["brand_id"] = brand_id
+
+        return self.paginate(
+            db_session=db_session,
+            page=page,
+            page_size=page_size,
+            filters=filters,
+            relationships=relationships,
         )
 
-        query = db_session.query(cls).options(selectinload(cls.variants))
-        if category:
-            query = query.join(ProductCategories).filter(
-                ProductCategories.category_id == category
-            )
-        if brand:
-            query = query.filter(cls.brand_id == brand)
-
-        # Use the EXISTS clause to filter products with available stock
-        query = query.filter(article_subquery)
-
-        return query.all()
-
-    @classmethod
-    def get_available_variants(cls, db_session: Session, product_id):
+    def get_product_details(
+        self, db_session: Session, product_id: UUID
+    ) -> Optional[Products]:
         """
-        Retrieves available variants of a product based on availability of articles,
-        with optimized loading for related objects to prevent N+1 problems.
+        Retrieves a product with all its details (variants, sizing, etc.).
+        """
+        product = (
+            db_session.query(Products)
+            .options(
+                joinedload(Products.brands),
+                joinedload(Products.categories)
+                .joinedload(ProductCategories.categories)
+                .joinedload(Categories.materials),
+                joinedload(Products.variants)
+                .joinedload(Variants.sizing)
+                .joinedload(Sizing.size_system),
+            )
+            .filter(Products.id == product_id, Products.deleted_at.is_(None))
+            .first()
+        )
+        return product
+
+    def get_available_variants(
+        self, db_session: Session, product_id: UUID
+    ) -> list[Variants]:
+        """
+        Retrieves available variants of a product based on availability of articles.
         """
         return (
             db_session.query(Variants)
             .options(joinedload(Variants.articles))
-            .join(Products)
+            .join(self.model)
             .filter(
-                Products.id == product_id,
+                self.model.id == product_id,
                 Articles.status_code == ArticleStatus.Available,
             )
             .all()
         )
 
-    def get_stock_count(self, db_session: Session):
+    # --- Inventory and Stock Management ---
+
+    def get_stock_count_for_variant(self, db_session: Session, variant_id: UUID) -> int:
         """
-        Calculates the stock for the product.
+        Calculates the stock count for a specific variant.
         """
         return (
-            db_session.query(Variants)
-            .join(StockKeepingUnits)
+            db_session.query(func.count(Articles.id))
+            .join(StockKeepingUnits, Articles.sku_id == StockKeepingUnits.id)
+            .join(Variants, Variants.sku_id == StockKeepingUnits.id)
             .filter(
-                Variants.product_id == self.id,
-                StockKeepingUnits.id == Variants.sku_id,
+                Variants.id == variant_id,
+                Articles.status_code == ArticleStatus.Available,
             )
-            .count()
+            .scalar()
         )
 
-    def get_product_count(self, db_session):
-        """Returns the number of active products associated with this occasional category."""
-        return (
-            db_session.query(Products)
-            .join(ProductOccasionalCategories)
-            .filter(
-                ProductOccasionalCategories.occasional_category_id == self.id,
-                Products.deleted_at.is_(None),
+    def decrement_stock_for_variant(
+        self, db_session: Session, variant_id: UUID, quantity: int
+    ):
+        """
+        Decrements the stock count for a specific variant (e.g., after an order).
+        """
+        # Ensure atomicity for stock updates. This example assumes a simplified stock update logic.
+        # You might need a more complex approach (e.g., using transactions) for a production-ready system.
+        db_session.execute(
+            update(StockKeepingUnits)
+            .where(
+                StockKeepingUnits.id == variant_id,
+                StockKeepingUnits.free_articles_count >= quantity,
             )
-            .count()
+            .values(
+                free_articles_count=StockKeepingUnits.free_articles_count - quantity
+            )
         )
-
-    def check_stock_and_notify(self):
-        """
-        Checks stock levels and triggers notifications if needed.
-        """
-        if self.get_stock_count() < self.low_stock_threshold:
-            # Send notification to admins or trigger restocking process
-            pass
-
-    def retire_product(self, db_session: Session):
-        """
-        Retires the product and marks associated articles as retired.
-        """
-        db_session.query(Variants).join(StockKeepingUnits).join(Articles).filter(
-            Variants.product_id == self.id,
-            StockKeepingUnits.id == Variants.sku_id,
-        ).update({Articles.status_code: ArticleStatus.Retired})
         db_session.commit()
 
-    def apply_promotions(self, db_session: Session, user_id: UUID = None) -> float:
+    # --- Product Filtering and Search ---
+    def filter_products(
+        self,
+        db_session: Session,
+        category_ids: Optional[list[UUID]] = None,
+        brand_ids: Optional[list[UUID]] = None,
+        color_ids: Optional[list[UUID]] = None,
+        size_system_ids: Optional[list[UUID]] = None,
+        price_min: Optional[float] = None,
+        price_max: Optional[float] = None,
+        search_term: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 10,
+    ) -> PaginatedResponse:
         """
-        Applies variant-specific and user-specific promotions, calculating the total discount percentage.
-        This method considers both the validity and availability of promotions.
+        Provides advanced filtering and search capabilities for products.
         """
-        # Query for active variant-specific promotions
-        variant_promotions = (
-            db_session.query(PromotionsAndDiscounts)
-            .join(
-                PromotionsVariants,
-                PromotionsVariants.promotion_id == PromotionsAndDiscounts.id,
+        filters = {}
+        relationships = {}
+
+        if category_ids:
+            relationships["categories"] = ("category_id", category_ids)
+        if brand_ids:
+            filters["brand_id"] = brand_ids
+
+        if color_ids:
+            relationships["variants"] = ("color_id", color_ids)
+        if size_system_ids:
+            relationships["variants_sizing"] = ("size_system_id", size_system_ids)
+        if price_min is not None:
+            filters["price_min"] = price_min
+        if price_max is not None:
+            filters["price_max"] = price_max
+
+        # Apply search if a search term is provided
+        if search_term:
+            search_results = self.search(
+                db_session=db_session,
+                search_term=search_term,
+                fields=["name", "description"],
+                relationships=relationships,
+                fuzzy_threshold=2,
+                ranking=True,
             )
-            .filter(
-                PromotionsVariants.variant_id == self.id,
-                PromotionsAndDiscounts.active == True,
-                PromotionsAndDiscounts.valid_from <= func.now(),
-                PromotionsAndDiscounts.valid_to >= func.now(),
+            return PaginatedResponse(
+                items=search_results,
+                page=page,
+                page_size=page_size,
+                total_count=len(search_results),
             )
+        else:
+            return self.paginate(
+                db_session=db_session,
+                page=page,
+                page_size=page_size,
+                filters=filters,
+                relationships=relationships,
+            )
+
+    # --- Product Creation and Updates ---
+
+    def create_product(
+        self, db_session: Session, product_data: ProductCreate
+    ) -> Products:
+        """
+        Creates a new product with associated variants and other details.
+        Handles database transactions and relationships.
+        """
+        # with db_session.begin():
+        # Create the product
+        new_product = self.create(
+            db_session, **product_data.model_dump(exclude={"variants"})
         )
 
-        # Query for active user-specific promotions if user_id is provided
-        if user_id:
-            user_promotions = (
-                db_session.query(PromotionsAndDiscounts)
-                .join(
-                    UserPromotions,
-                    UserPromotions.promotion_id == PromotionsAndDiscounts.id,
-                )
-                .filter(
-                    UserPromotions.user_id == user_id,
-                    PromotionsAndDiscounts.active == True,
-                    PromotionsAndDiscounts.valid_from <= func.now(),
-                    PromotionsAndDiscounts.valid_to >= func.now(),
-                )
-            )
-            all_promotions = variant_promotions.union(user_promotions)
-        else:
-            all_promotions = variant_promotions
+        # Create variants
+        for variant_data in product_data.variants:
+            new_variant = self._create_variant(db_session, new_product, variant_data)
+            for sizing_data in variant_data.sizing:
+                self._create_sizing(db_session, new_variant.id, sizing_data)
 
-        total_discount = 0.0
-        for promo in all_promotions:
-            if promo.uses_left > 0:
-                # Calculate the discount based on type
-                if promo.discount_type == "Percentage":
-                    total_discount += (
-                        promo.discount_value
-                    )  # Assume this is already a percentage value (e.g., 10 for 10%)
-                elif promo.discount_type == "FixedAmount":
-                    total_discount += self.calculate_fixed_discount(
-                        promo.discount_value
+        db_session.refresh(new_product)
+        return new_product
+
+    def _create_variant(
+        self, db_session: Session, product: Products, variant_data: VariantCreate
+    ) -> Variants:
+        """
+        Creates a variant associated with the given product.
+        """
+        # Create the variant
+        new_variant = Variants(**variant_data.model_dump(exclude={"sizing"}))
+        db_session.add(new_variant)
+        db_session.commit()
+        db_session.refresh(new_variant)
+        return new_variant
+
+    def _create_sizing(
+        self, db_session: Session, variant: Variants, sizing_data: SizingCreate
+    ):
+        """
+        Creates a sizing option for the given variant.
+        """
+        # Create the sizing
+        new_sizing = Sizing(**sizing_data.model_dump(exclude_unset=True))
+        db_session.add(new_sizing)
+        db_session.commit()
+        db_session.refresh(new_sizing)
+        return new_sizing
+
+    def update_product(
+        self, db_session: Session, product_id: UUID, product_data: ProductUpdate
+    ) -> Products:
+        """
+        Updates an existing product and its related data.
+        """
+        with db_session.begin():
+            product = self.get_by_id(db_session, product_id)
+            if not product:
+                raise ValueError(f"Product not found with ID: {product_id}")
+
+            # Update the product itself
+            self.update(
+                db_session, product, **product_data.model_dump(exclude_unset=True)
+            )
+
+            # Update or create variants (consider using bulk_upsert for efficiency)
+            self._update_or_create_variants(db_session, product, product_data.variants)
+
+            return product
+
+    def _update_or_create_variants(
+        self, db_session: Session, product: Products, variant_data: list[VariantCreate]
+    ):
+        """
+        Updates or creates variants for a product.
+        This is a simplified example, you might need a more complex strategy for handling variant updates.
+        """
+        for data in variant_data:
+            variant_id = data.get("id")
+            if variant_id:
+                # Update existing variant
+                variant = db_session.query(Variants).get(variant_id)
+                if variant:
+                    self.update(
+                        db_session, variant, **data.model_dump(exclude_unset=True)
                     )
+                    self._update_or_create_sizing(db_session, variant, data.sizing)
+            else:
+                # Create new variant
+                self._create_variant(db_session, product, data)
 
-                # Decrement uses left and save changes
-                promo.uses_left -= 1
-                db_session.commit()
-
-        return total_discount
-
-    def calculate_fixed_discount(self, discount_value):
+    def _update_or_create_sizing(
+        self, db_session: Session, variant: Variants, sizing_data: list[SizingCreate]
+    ):
         """
-        Calculates the fixed amount discount as a percentage of the product's base price.
-        This ensures that fixed amount discounts are accurately reflected in the total percentage discount.
+        Updates or creates sizing options for a variant.
         """
-        base_price = self.get_base_price()
-        return (discount_value / base_price) * 100 if base_price else 0
-
-    def get_base_price(self, db_session: Session):
-        """
-        Retrieves the base price of the product from the pricing tier linked through the StockKeepingUnits.
-        """
-        # Retrieve the first SKU related to this product that has an associated pricing tier
-        sku = (
-            db_session.query(Variants)
-            .filter(Variants.product_id == self.id)
-            .join(StockKeepingUnits, StockKeepingUnits.id == Variants.sku_id)
-            .join(PricingTier)
-            .filter(StockKeepingUnits.id == PricingTier.sku_id)
-            .first()
-        )
-
-        # If an SKU with a pricing tier is found, return its retail price
-        if sku and sku.pricing_tier:
-            return sku.pricing_tier.retail_price
-
-        # Return 0 if no pricing tier is found
-        return 0
-
-    def new_item_premium(self, db_session: Session) -> bool:
-        """Checks if the product is considered new based on the condition of its article."""
-        article = db_session.query(Articles).filter(Articles.id == self.id).first()
-        if article.condition == "New":
-            return self.NEW_ITEM_PREMIUM
-        else:
-            return 1.0
-
-    def calculate_rental_price(self, rental_days: int):
-        """Calculates the total price for renting an article for a specified number of days."""
-        pricing_tier = self.get_pricing_tier()
-        base_price = pricing_tier.retail_price
-        price_multiplier = self.get_price_multiplier(rental_days, pricing_tier)
-        category_multiplier = self.get_category_multiplier(pricing_tier)
-
-        rental_price = base_price * price_multiplier * category_multiplier
-        rental_price *= self.new_item_premium()
-        rental_price += self.calculate_additional_costs(pricing_tier)
-        rental_price += self.calculate_vat(rental_price)
-
-        return rental_price
-
-    def get_pricing_tier(self, db_session: Session):
-        """Retrieve the pricing tier associated with the article."""
-        return (
-            db_session.query(PricingTier)
-            .filter_by(id=self.article.pricing_tier_id)
-            .first()
-        )
-
-    def get_price_multiplier(self, db_session: Session, rental_days, pricing_tier):
-        """Retrieves the price multiplier based on the rental period from PriceFactors."""
-        factor = (
-            db_session.query(PriceFactors)
-            .filter(
-                and_(
-                    PriceFactors.pricing_tier_id == pricing_tier.id,
-                    PriceFactors.rental_period <= rental_days,
-                )
-            )
-            .order_by(PriceFactors.rental_period.desc())
-            .first()
-        )
-        return factor.percentage if factor else 1.0
-
-    def get_category_multiplier(self, db_session: Session, pricing_tier):
-        """Applies a category-specific multiplier to adjust the pricing."""
-        multiplier = (
-            db_session.query(PriceMultipliers)
-            .filter_by(id=pricing_tier.price_multiplier_id)
-            .first()
-        )
-        return multiplier.multiplier if multiplier else 1.0
-
-    def calculate_additional_costs(self, pricing_tier):
-        """Calculates additional costs including taxes, insurance, and cleaning fees."""
-        insurance = 2.00  # Fixed insurance cost
-        cleaning = 2.00  # Fixed cleaning cost
-        return insurance + cleaning
-
-    def calculate_vat(self, price):
-        """
-        Applies VAT to the price based on the pricing tier settings.
-        """
-        vat_percentage = self.pricing_tiers.vat_percentage
-        return price * vat_percentage / 100
-
-    def get_occasional_category_names(self):
-        """Returns a list of names of occasional categories associated with the product."""
-        return [oc.occasional_category.name for oc in self.occasional_categories]
+        for data in sizing_data:
+            sizing_id = data.get("id")
+            if sizing_id:
+                # Update existing sizing
+                sizing = db_session.query(Sizing).get(sizing_id)
+                if sizing:
+                    self.update(
+                        db_session, sizing, **data.model_dump(exclude_unset=True)
+                    )
+            else:
+                # Create new sizing
+                self._create_sizing(db_session, variant, data)

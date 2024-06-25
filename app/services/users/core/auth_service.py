@@ -1,13 +1,11 @@
 import datetime
-import json
 import os
 import re
 from datetime import timedelta
 from typing import Optional
 
-from fastapi import HTTPException, Security, status
+from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import oauth2_scheme, pwd_context
@@ -24,43 +22,35 @@ class AuthService:
     - JWT token generation and validation.
     - Password strength validation with customizable rules.
     - Refresh token support (optional).
-    - Asynchronous database interactions.
+    -  database interactions.
     - Improved error handling.
     - Type hints for enhanced code clarity.
     """
 
-    SECRET_KEY = json.loads(os.environ["AUTH_SECRET_KEY"])["auth_secret_key"]
+    SECRET_KEY = os.environ.get("AUTH_SECRET_KEY")
     ALGORITHM = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
-    REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
     # Password validation rules
     PASSWORD_REGEX = (
         r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     )
 
-    def __init__(self, db_session: Session = None):
-        self.db_session = db_session
-        self.model = Users
-
-    def authenticate_user(self, login_data: UserLogin) -> Optional[Users]:
-        """
-        Authenticates a user based on their login and password.
-        """
-        user = self.db_session.execute(
-            select(self.model).filter(self.model.login == login_data.login)
-        )
-        user = user.scalars().first()
-        if user and pwd_context.verify(login_data.password, user.password):
-            return user
-        return None
+    def authenticate_user(
+        self, db_session: Session, login_data: UserLogin
+    ) -> Optional[Users]:
+        """Authenticates a user based on their login and password."""
+        user = db_session.query(Users).filter_by(login=login_data.login).first()
+        if not user:
+            return None
+        if not self.verify_password(login_data.password, user.password):
+            return None
+        return user
 
     def create_access_token(
         self, data: dict, expires_delta: Optional[timedelta] = None
     ) -> str:
-        """
-        Generates a JWT access token.
-        """
+        """Generates a JWT access token."""
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.datetime.now(datetime.UTC) + expires_delta
@@ -72,63 +62,37 @@ class AuthService:
         encoded_jwt = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return encoded_jwt
 
-    def create_refresh_token(
-        self, data: dict, expires_delta: Optional[timedelta] = None
-    ) -> str:
-        """
-        Generates a JWT refresh token.
-        """
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.datetime.now(datetime.UTC) + expires_delta
-        else:
-            expire = datetime.datetime.now(datetime.UTC) + timedelta(
-                minutes=self.REFRESH_TOKEN_EXPIRE_MINUTES
-            )
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
-        return encoded_jwt
-
-    def get_current_user(self, token: str = Security(oauth2_scheme)) -> Users:
-        """
-        Decodes the JWT token, retrieves the user from the database, and raises an exception if
-        credentials are invalid or the user is not found.
-        """
+    def get_current_user(
+        self, db_session: Session, token: str = Depends(oauth2_scheme)
+    ) -> Users:
+        """Decodes the JWT token and retrieves the user from the database."""
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
             username: str = payload.get("sub")
             if username is None:
                 raise self._credentials_exception()
-            user = self.db_session.execute(
-                select(self.model).filter(self.model.login == username)
-            )
-            user = user.scalars().first()
+            user = db_session.query(Users).filter_by(login=username).first()
             if user is None:
                 raise self._credentials_exception()
             return user
         except JWTError:
             raise self._credentials_exception()
 
-    def change_password(self, user: Users, new_password: str) -> None:
-        """
-        Changes the user's password, handling hashing and database updates.
-        """
+    def change_password(
+        self, db_session: Session, user: Users, new_password: str
+    ) -> None:
+        """Changes the user's password."""
         self.validate_password_strength(new_password)
         hashed_password = self.get_password_hash(new_password)
         user.password = hashed_password
-        self.db_session.commit()
+        db_session.commit()
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        """
-        Verifies a plain password against a hashed password using bcrypt.
-        """
+        """Verifies a plain password against a hashed password."""
         return pwd_context.verify(plain_password, hashed_password)
 
     def validate_password_strength(self, password: str) -> None:
-        """
-        Validates password strength against predefined rules. You can customize these rules
-        based on your application's security requirements.
-        """
+        """Validates password strength against predefined rules."""
         if not re.match(self.PASSWORD_REGEX, password):
             raise ValueError(
                 "Password must be at least 8 characters long, contain at least one lowercase letter, "

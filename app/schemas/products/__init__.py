@@ -1,6 +1,6 @@
+from .core.articles_schema import ArticleBase, ArticleCreate, ArticleRead, ArticleUpdate
 from .core.products_schema import ProductBase, ProductCreate, ProductRead, ProductUpdate
 from .core.variants_schema import VariantBase, VariantCreate, VariantRead, VariantUpdate
-from .core.articles_schema import ArticleBase, ArticleCreate, ArticleRead, ArticleUpdate
 from .inventorization.categories_schema import (
     CategoryBase,
     CategoryCreate,
@@ -13,17 +13,29 @@ from .inventorization.product_status_schema import (
     ProductStatusRead,
     ProductStatusUpdate,
 )
+from .inventorization.specifications_schema import (
+    SpecificationBase,
+    SpecificationCreate,
+    SpecificationRead,
+    SpecificationUpdate,
+)
 from .inventorization.stock_keeping_units_schema import (
     StockKeepingUnitBase,
     StockKeepingUnitCreate,
     StockKeepingUnitRead,
     StockKeepingUnitUpdate,
 )
-from .inventorization.specifications_schema import (
-    SpecificationBase,
-    SpecificationCreate,
-    SpecificationRead,
-    SpecificationUpdate,
+from .maintenance.cleaning_logs_schema import (
+    CleaningLogBase,
+    CleaningLogCreate,
+    CleaningLogRead,
+    CleaningLogUpdate,
+)
+from .maintenance.repair_logs_schema import (
+    RepairLogBase,
+    RepairLogCreate,
+    RepairLogRead,
+    RepairLogUpdate,
 )
 from .product_details.brand_schema import BrandBase, BrandCreate, BrandRead, BrandUpdate
 from .product_details.colors_schema import (
@@ -45,8 +57,6 @@ from .sizing.size_systems_schema import (
     SizeSystemUpdate,
 )
 from .sizing.sizing_schema import SizingBase, SizingCreate, SizingRead, SizingUpdate
-from .maintenance.cleaning_logs_schema import CleaningLogBase, CleaningLogCreate, CleaningLogRead, CleaningLogUpdate
-from .maintenance.repair_logs_schema import RepairLogBase, RepairLogCreate, RepairLogRead, RepairLogUpdate
 
 __all__ = [
     "SpecificationBase",

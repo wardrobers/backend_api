@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import BackgroundTasks, HTTPException
 from pydantic import UUID4
+from sqlalchemy.orm import Session
 
 from app.repositories.users import UserInfoRepository
 from app.schemas.users import (
@@ -14,24 +15,25 @@ from app.schemas.users import (
 # TODO: from app.services.email import send_welcome_email
 
 
+user_info_repository = UserInfoRepository()
+
+
 class UserInfoService:
     """
     Service layer for managing user information, utilizing the UserInfoRepository
     for database interactions. Includes advanced logic and business-specific methods.
     """
 
-    def __init__(self, user_info_repository: UserInfoRepository):
-        self.user_info_repository = user_info_repository
-
-    def get_user_info(self, user_id: UUID4) -> UserInfoRead:
+    def get_user_info(self, db_session: Session, user_id: UUID4) -> UserInfoRead:
         """Retrieves user info for a given user."""
-        user_info = self.user_info_repository.get_user_info_by_user_id(user_id)
+        user_info = user_info_repository.get_user_info_by_user_id(db_session, user_id)
         if not user_info:
             raise HTTPException(status_code=404, detail="User info not found")
         return UserInfoRead.model_validate(user_info)
 
     def create_user_info(
         self,
+        db_session: Session,
         user_id: UUID4,
         user_info_data: UserInfoCreate,
         background_tasks: BackgroundTasks,
@@ -39,7 +41,9 @@ class UserInfoService:
         """
         Creates new user info and optionally sends a welcome email.
         """
-        user_info = self.user_info_repository.create_user_info(user_id, user_info_data)
+        user_info = user_info_repository.create_user_info(
+            db_session, user_id, user_info_data
+        )
 
         # TODO: Add a background task to send a welcome email
         # if user_info.email:
@@ -49,6 +53,7 @@ class UserInfoService:
 
     def update_user_info(
         self,
+        db_session: Session,
         user_id: UUID4,
         user_info_update: UserInfoUpdate,
         context: UpdateContext,
@@ -58,6 +63,10 @@ class UserInfoService:
         Updates user info based on the provided context.
         Includes basic authorization logic (example).
         """
+        user_info = user_info_repository.get_user_info_by_user_id(db_session, user_id)
+        if not user_info:
+            raise HTTPException(status_code=404, detail="User info not found")
+
         if current_user_id and user_id != current_user_id:
             raise HTTPException(
                 status_code=403, detail="Not authorized to update this user info."
@@ -74,8 +83,8 @@ class UserInfoService:
                     detail=f"Field '{field}' cannot be updated in this context.",
                 )
 
-        updated_info = self.user_info_repository.update_user_info(
-            user_id, UserInfoUpdate(**update_data), context.value
+        updated_info = user_info_repository.update(
+            db_session, user_info.id, UserInfoUpdate(**update_data)
         )
         return UserInfoRead.model_validate(updated_info)
 
@@ -94,35 +103,46 @@ class UserInfoService:
         else:
             raise ValueError("Invalid update context")
 
-    def delete_user_info(self, user_id: UUID4, current_user_id: UUID4) -> None:
+    def delete_user_info(
+        self, db_session: Session, user_id: UUID4, current_user_id: UUID4
+    ) -> None:
         """
         Deletes user info. Includes basic authorization logic (example).
         """
+        user_info = user_info_repository.get_user_info_by_user_id(db_session, user_id)
+        if not user_info:
+            raise HTTPException(status_code=404, detail="User info not found")
+
         # Authorization Check (Example - assuming only the user can delete their info):
         if user_id != current_user_id:
             raise HTTPException(
                 status_code=403, detail="Not authorized to delete this user info."
             )
 
-        self.user_info_repository.delete_user_info(user_id)
+        user_info_repository.delete(db_session, user_info.id)
 
     # --- Additional Business Logic Methods ---
 
-    def set_user_as_lender(self, user_id: UUID4) -> UserInfoRead:
+    def set_user_as_lender(self, db_session: Session, user_id: UUID4) -> UserInfoRead:
         """
         Sets the user's lender status to True.
         You can add any additional logic related to becoming a lender here.
         """
-        user_info = self.get_user_info(user_id)
+        user_info = self.get_user_info(db_session, user_id)
         if user_info.lender:
             raise HTTPException(status_code=400, detail="User is already a lender.")
 
-        updated_info = self.user_info_repository.update_user_info(
-            user_id, UserInfoUpdate(lender=True), UpdateContext.LENDER_STATUS
+        updated_info = user_info_repository.update_user_info(
+            db_session,
+            user_id,
+            UserInfoUpdate(lender=True),
+            UpdateContext.LENDER_STATUS,
         )
         return UserInfoRead.model_validate(updated_info)
 
-    def verify_email(self, user_id: UUID4, verification_token: str) -> None:
+    def verify_email(
+        self, db_session: Session, user_id: UUID4, verification_token: str
+    ) -> None:
         """
         Verifies the user's email address using a verification token.
         You'll need to implement token generation and storage mechanisms.
@@ -133,11 +153,11 @@ class UserInfoService:
         # 3. If valid, update the user's info to mark the email as verified.
         pass
 
-    def get_public_user_info(self, user_id: UUID4) -> UserInfoRead:
+    def get_public_user_info(self, db_session: Session, user_id: UUID4) -> UserInfoRead:
         """
         Returns a subset of user info that is safe to share publicly.
         """
-        user_info = self.get_user_info(user_id)
+        user_info = self.get_user_info(db_session, user_id)
 
         # Example: Only return first name and last initial
         return UserInfoRead(

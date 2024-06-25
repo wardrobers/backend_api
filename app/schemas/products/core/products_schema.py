@@ -19,10 +19,11 @@ class ProductBase(BaseModel):
     size_and_fit_id: Optional[UUID4] = None
     status_code: UUID4
     accessories_size_id: Optional[UUID4] = None
+    variants: Optional[list[VariantCreate]] = None
 
 
 class ProductCreate(ProductBase):
-    variants: list[VariantCreate] = []
+    pass
 
 
 class ProductRead(ProductBase):

@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, BaseModel, Field
 from typing_extensions import Annotated
 
 from app.schemas.orders import LenderPaymentRead
@@ -10,23 +10,34 @@ from app.schemas.orders import LenderPaymentRead
 
 # --- Transactions Schemas (app/schemas/transactions.py) ---
 class TransactionBase(BaseModel):
-    amount: Annotated[
-        Decimal, Field(..., description="The amount of the transaction.")
-    ]
-    currency: str = Field(..., description="The currency of the transaction (e.g., 'USD', 'EUR').")
-    transaction_date: datetime = Field(..., description="The date and time of the transaction.")
+    amount: Annotated[Decimal, Field(..., description="The amount of the transaction.")]
+    currency: str = Field(
+        ..., description="The currency of the transaction (e.g., 'USD', 'EUR')."
+    )
+    transaction_date: datetime = Field(
+        ..., description="The date and time of the transaction."
+    )
+
     def get_transacation_status(self):
-        from app.models.orders.payments.transactions_model import TransactionStatus 
+        from app.models.orders.payments.transactions_model import TransactionStatus
+
         return TransactionStatus
-    
-    status: get_transacation_status = Field(..., description="The status of the transaction.")
-    user_id: UUID4 = Field(..., description="The ID of the user who made the transaction.")
+
+    status: get_transacation_status = Field(
+        ..., description="The status of the transaction."
+    )
+    user_id: UUID4 = Field(
+        ..., description="The ID of the user who made the transaction."
+    )
     payment_method_id: UUID4 = Field(
         ..., description="The ID of the payment method used for the transaction."
     )
-    order_id: UUID4 = Field(..., description="The ID of the order associated with this transaction.")
+    order_id: UUID4 = Field(
+        ..., description="The ID of the order associated with this transaction."
+    )
     user_address_id: Optional[UUID4] = Field(
-        None, description="The ID of the user's address associated with the transaction (if applicable)."
+        None,
+        description="The ID of the user's address associated with the transaction (if applicable).",
     )
 
 
@@ -54,10 +65,12 @@ class TransactionUpdate(TransactionBase):
     transaction_date: Optional[datetime] = Field(
         None, description="The date and time of the transaction."
     )
+
     def get_transacation_status(self):
-        from app.models.orders.payments.transactions_model import TransactionStatus 
+        from app.models.orders.payments.transactions_model import TransactionStatus
+
         return TransactionStatus
-    
+
     status: Optional[get_transacation_status] = Field(
         None, description="The status of the transaction."
     )

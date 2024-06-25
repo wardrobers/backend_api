@@ -2,16 +2,20 @@ from datetime import datetime, time
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, BaseModel, Field
 from typing_extensions import Annotated
-
 
 # --- Order Items ---
 
+
 class OrderItemBase(BaseModel):
-    start_date: datetime = Field(..., description="The start date of the rental period.")
+    start_date: datetime = Field(
+        ..., description="The start date of the rental period."
+    )
     end_date: datetime = Field(..., description="The end date of the rental period.")
-    time_start: Optional[time] = Field(None, description="Time of day for rental start.")
+    time_start: Optional[time] = Field(
+        None, description="Time of day for rental start."
+    )
     price: Annotated[
         Decimal, Field(..., description="The rental price of the article.")
     ]
@@ -19,7 +23,9 @@ class OrderItemBase(BaseModel):
         Annotated[Decimal, Field(description="The delivery price for the article.")]
     ] = None
     comment: Optional[str] = Field(None, description="Any comment for the order item.")
-    order_id: UUID4 = Field(..., description="The ID of the order this item belongs to.")
+    order_id: UUID4 = Field(
+        ..., description="The ID of the order this item belongs to."
+    )
     article_id: UUID4 = Field(..., description="The ID of the article being rented.")
     shipping_id: UUID4 = Field(
         ..., description="The ID of the shipping details for this item."
@@ -46,7 +52,9 @@ class OrderItemUpdate(OrderItemBase):
     end_date: Optional[datetime] = Field(
         None, description="The end date of the rental period."
     )
-    time_start: Optional[time] = Field(None, description="Time of day for rental start.")
+    time_start: Optional[time] = Field(
+        None, description="Time of day for rental start."
+    )
     price: Optional[
         Annotated[Decimal, Field(description="The rental price of the article.")]
     ] = None

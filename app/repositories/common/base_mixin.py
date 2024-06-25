@@ -1,5 +1,7 @@
 from typing import Any, Optional
 
+from fastapi import HTTPException
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import RelationshipProperty, Session, aliased
@@ -39,8 +41,28 @@ class BaseMixin:
         result = db_session.execute(select(self.model).where(self.model.id.in_(ids)))
         return result.scalars().all()
 
+    def get_by_field(
+        self, db_session: Session, field_name: str, field_value: Any
+    ) -> Optional[Any]:
+        """
+        Retrieve a model instance by a specific field.
+
+        Args:
+            db_session (Session): The database session.
+            field_name (str): The name of the field to filter by.
+            field_value (Any): The value of the field to filter by.
+
+        Returns:
+            Optional[Any]: The model instance if found, otherwise None.
+        """
+        return (
+            db_session.query(self.model)
+            .filter(getattr(self.model, field_name) == field_value)
+            .first()
+        )
+
     def _apply_filters(
-        self, db_session: Session, query: select, filters: Optional[dict[str, Any]]
+        self, query: select, filters: Optional[dict[str, Any]]
     ) -> select:
         """
         Applies filter conditions to the query.
@@ -124,8 +146,8 @@ class BaseMixin:
         if offset:
             query = query.offset(offset)
 
-            result = db_session.execute(query)
-            return result.scalars().all()
+        result = db_session.execute(query).unique()
+        return result.scalars().all()
 
     def paginate(
         self,
@@ -135,7 +157,7 @@ class BaseMixin:
         filters: Optional[dict[str, any]] = None,
         relationships: Optional[dict[str, tuple[str, Any]]] = None,
         order_by: Optional[list[tuple[str, str]]] = None,
-    ) -> list:
+    ) -> tuple[list, int]:
         """
         Retrieve paginated model instances asynchronously.
 
@@ -151,7 +173,7 @@ class BaseMixin:
             List: A list of model instances for the specified page.
         """
         offset = (page - 1) * page_size
-        return self.filter(
+        items = self.filter(
             db_session,
             filters=filters,
             relationships=relationships,
@@ -159,6 +181,8 @@ class BaseMixin:
             limit=page_size,
             offset=offset,
         )
+        total_count = db_session.query(func.count(self.model.id)).scalar()
+        return items, total_count
 
     def create(self, db_session: Session, **kwargs):
         """
@@ -168,31 +192,63 @@ class BaseMixin:
         db_session.add(new_instance)
         db_session.commit()
         db_session.refresh(new_instance)
-        return self.model
+        return new_instance
 
-    def update(self, db_session: Session, **kwargs):
+    def update(self, db_session: Session, id: UUID, update_data: BaseModel) -> Any:
         """
-        Update an existing model instance.
+        Update an existing model instance using a Pydantic model.
+
+        Args:
+            db_session (Session): The database session.
+            id (UUID): The ID of the instance to update.
+            update_data (BaseModel): The Pydantic model containing the update data.
+
+        Returns:
+            Any: The updated model instance.
         """
-        for key, value in kwargs.items():
-            setattr(self.model, key, value)
+        instance = self.get_by_id(db_session, id)
+        if not instance:
+            raise HTTPException(
+                status_code=404, detail=f"{self.model.__name__} not found"
+            )
+
+        update_dict = update_data.model_dump(exclude_unset=True)
+        for key, value in update_dict.items():
+            setattr(instance, key, value)
+
         db_session.commit()
-        db_session.refresh(self.model)
-        return self.model
+        db_session.refresh(instance)
+        return instance
 
-    def soft_delete(self, db_session: Session):
+    def soft_delete(self, db_session: Session, _id: UUID) -> Any:
         """
         Mark the model instance as deleted (soft delete).
         """
-        self.model.is_active = False
-        self.model.deleted_at = func.now()
-        db_session.commit()
-        db_session.refresh(self.model)
-        return self.model
+        instance = self.get_by_id(db_session, _id)
+        if not instance:
+            raise HTTPException(
+                status_code=404, detail=f"{self.model.__name__} not found"
+            )
 
-    def delete(self, db_session: Session):
+        instance.is_active = False
+        instance.deleted_at = func.now()
+        db_session.commit()
+        db_session.refresh(instance)
+        return instance
+
+    def delete(self, db_session: Session, _id: UUID) -> None:
         """
-        Permanently delete the model instance (hard delete).
+        Permanently delete a model instance.
+
+        Args:
+            db_session (Session): The database session.
+            id (UUID): The ID of the instance to delete.
         """
-        db_session.delete(self.model)
+        instance = self.get_by_id(db_session, _id)
+        if not instance:
+            raise HTTPException(
+                status_code=404, detail=f"{self.model.__name__} not found"
+            )
+
+        db_session.delete(instance)
         db_session.commit()

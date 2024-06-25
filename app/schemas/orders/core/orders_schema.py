@@ -1,10 +1,10 @@
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel, UUID4, Field
+from pydantic import UUID4, BaseModel, Field
 from typing_extensions import Annotated
 
-from app.schemas.orders import TransactionRead, OrderItemRead
+from app.schemas.orders import OrderItemRead, TransactionRead
 
 # --- Orders ---
 
@@ -15,9 +15,7 @@ class OrderBase(BaseModel):
     ]
     total_delivery_price: Annotated[
         Decimal,
-        Field(
-            ..., description="The total delivery price for the order."
-        ),
+        Field(..., description="The total delivery price for the order."),
     ]
     comment: Optional[str] = Field(None, description="Any comments for the order.")
     user_id: UUID4 = Field(..., description="The ID of the user who placed the order.")
@@ -47,9 +45,7 @@ class OrderUpdate(OrderBase):
     total_delivery_price: Optional[
         Annotated[
             Decimal,
-            Field(
-                description="The total delivery price for the order."
-            ),
+            Field(description="The total delivery price for the order."),
         ]
     ] = None
     comment: Optional[str] = Field(None, description="Any comments for the order.")
