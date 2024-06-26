@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import UUID4, BaseModel, EmailStr
+from pydantic import UUID4, BaseModel, EmailStr, ConfigDict
 
 
 class UpdateContext(str, Enum):
@@ -11,11 +11,13 @@ class UpdateContext(str, Enum):
 
 
 class UserInfoBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     first_name: str
     last_name: str
     phone_number: str
     email: EmailStr
-    lender: bool
+    is_lender: bool
 
 
 class UserInfoCreate(UserInfoBase):

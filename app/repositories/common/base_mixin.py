@@ -184,11 +184,11 @@ class BaseMixin:
         total_count = db_session.query(func.count(self.model.id)).scalar()
         return items, total_count
 
-    def create(self, db_session: Session, **kwargs):
+    def create(self, db_session: Session, create_data: BaseModel):
         """
-        Create and save a new instance of the model.
+        Create and save a new instance of the model from a Pydantic model.
         """
-        new_instance = self.model(**kwargs)
+        new_instance = self.model(**create_data.model_dump()) 
         db_session.add(new_instance)
         db_session.commit()
         db_session.refresh(new_instance)

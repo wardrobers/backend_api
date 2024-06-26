@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import UUID4, BaseModel, Field
 from typing_extensions import Annotated
 
-from app.schemas.orders import LenderPaymentRead
+from app.schemas.orders.payments.lender_payments_schema import LenderPaymentRead
 
 
 # --- Transactions Schemas (app/schemas/transactions.py) ---

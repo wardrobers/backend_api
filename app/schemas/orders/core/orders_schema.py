@@ -4,7 +4,8 @@ from typing import Optional
 from pydantic import UUID4, BaseModel, Field
 from typing_extensions import Annotated
 
-from app.schemas.orders import OrderItemRead, TransactionRead
+from app.schemas.orders.core.order_items_schema import OrderItemRead
+from app.schemas.orders.payments.transactions_schema import TransactionRead
 
 # --- Orders ---
 

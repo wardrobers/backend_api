@@ -89,6 +89,7 @@ def login_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect login or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
     access_token = auth_service.create_access_token(data={"sub": user.login})
@@ -96,6 +97,9 @@ def login_user(
         key="access_token", value=f"Bearer {access_token}", httponly=True
     )
     return {"access_token": access_token, "token_type": "bearer"}
+    # response = Response()
+    # response.headers["Authorization"] = f"Bearer {access_token}" 
+    # return response
 
 
 # --- Password Reset Confirmation ---

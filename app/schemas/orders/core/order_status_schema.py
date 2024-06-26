@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import UUID4, BaseModel, Field
 
-from app.schemas.orders import OrderRead
+from app.schemas.orders.core.orders_schema import OrderRead
 
 # --- Order Status ---
 

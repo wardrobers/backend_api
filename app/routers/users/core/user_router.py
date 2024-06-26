@@ -37,7 +37,7 @@ def get_current_user_id(
     return current_user.id
 
 
-@router.get("/me", response_model=UsersRead)
+@router.get("/me", dependencies=[Depends(oauth2_scheme)], response_model=UsersRead)
 def get_current_user_profile(
     current_user: Users = Depends(get_current_active_user),
     db_session: Session = Depends(get_db),
@@ -53,7 +53,7 @@ def get_current_user_profile(
     return users_service.get_user_by_id(db_session, current_user.id)
 
 
-@router.put("/me", response_model=UsersRead)
+@router.put("/me", dependencies=[Depends(oauth2_scheme)], response_model=UsersRead)
 def update_current_user_profile(
     user_update: UsersUpdate,
     db_session: Session = Depends(get_db),
@@ -79,34 +79,7 @@ def update_current_user_profile(
     )
 
 
-@router.put("/me/info", response_model=UserInfoRead)
-def update_current_user_info(
-    user_info_update: UserInfoUpdate,
-    db_session: Session = Depends(get_db),
-    current_user: Users = Depends(get_current_active_user),
-):
-    """
-    Updates additional user info of the currently authenticated user.
-
-    **Requires Authentication (JWT).**
-
-    **Request Body:**
-        - `UserInfoUpdate` (schema): Contains fields to be updated in the 'user_info' table.
-
-    **Response (Success - 200 OK):**
-        - `UserInfoRead` (schema): The updated user info object.
-
-    **Error Codes:**
-        - 400 Bad Request: If update data is invalid.
-        - 403 Forbidden: If the user is not authorized to update the info.
-        - 404 Not Found: If the user info for the current user is not found.
-    """
-    return user_info_service.update_user_info(
-        db_session, current_user.id, user_info_update, UpdateContext.FULL_PROFILE
-    )
-
-
-@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
+@router.delete("/me", dependencies=[Depends(oauth2_scheme)], status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_current_user_account(
     db_session: Session = Depends(get_db),
     current_user: Users = Depends(get_current_active_user),
@@ -126,7 +99,7 @@ def delete_current_user_account(
     users_service.delete_user(db_session, current_user.id, current_user)
 
 
-@router.put("/notifications", status_code=status.HTTP_200_OK, response_model=None)
+@router.put("/notifications", dependencies=[Depends(oauth2_scheme)], status_code=status.HTTP_200_OK, response_model=None)
 def update_notification_preferences(
     enabled: bool,
     db_session: Session = Depends(get_db),

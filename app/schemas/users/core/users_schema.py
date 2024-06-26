@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import UUID4, BaseModel, EmailStr, Field
+from pydantic import UUID4, BaseModel, EmailStr, Field, ConfigDict
 
 from app.schemas.subscriptions import SubscriptionRead
 from app.schemas.users.activity.user_activity_schema import UserActivityRead
@@ -18,6 +18,8 @@ from app.schemas.users.roles.roles_schema import RoleRead
 
 # Basic User Schemas
 class UsersBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     login: str
 
 

@@ -23,6 +23,7 @@ class Users(Base):
     password = Column(String, nullable=False)
     is_notificated = Column(Boolean, default=False)
     last_login_at = Column(DateTime)
+    is_active = Column(Boolean, default=True)
 
     # Relationships
     info = relationship(
@@ -33,13 +34,16 @@ class Users(Base):
         uselist=False,
         backref="users",
         cascade="all, delete-orphan",
+        lazy='joined',
     )
     basket = relationship(
         "UserBasket",
+        uselist=False,
         backref="users",
         cascade="all, delete-orphan",
+        lazy='joined',
     )
-    photos = relationship("UserPhotos", backref="users", cascade="all, delete-orphan")
+    photos = relationship("UserPhotos", backref="users", cascade="all, delete-orphan", lazy='joined')
     user_roles = relationship(
         "UserRoles",
         backref="users",
@@ -49,20 +53,22 @@ class Users(Base):
         "Orders",
         backref="users",
         cascade="all, delete-orphan",
+        lazy='joined',
     )
     subscriptions = relationship(
-        "Subscriptions", backref="users", cascade="all, delete-orphan"
+        "Subscriptions", backref="users", cascade="all, delete-orphan", lazy='joined',
     )
     reviews_and_ratings = relationship(
         "UserReviewsAndRatings",
         backref="users",
         cascade="all, delete-orphan",
+        lazy='joined',
     )
     saved_items = relationship(
-        "UserSavedItems", backref="users", cascade="all, delete-orphan"
+        "UserSavedItems", backref="users", cascade="all, delete-orphan", lazy='joined'
     )
     promotions = relationship(
-        "UserPromotions", backref="users", cascade="all, delete-orphan"
+        "UserPromotions", backref="users", cascade="all, delete-orphan", lazy='joined'
     )
     addresses = relationship(
         "UserAddresses", backref="users", cascade="all, delete-orphan"
@@ -73,4 +79,4 @@ class Users(Base):
         backref="users",
         cascade="all, delete-orphan",
     )
-    transactions = relationship("Transactions", backref="users")
+    transactions = relationship("Transactions", backref="users", lazy='joined')
