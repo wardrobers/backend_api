@@ -56,7 +56,7 @@ class UsersService:
 
         user_data.password = auth_service.get_password_hash(user_data.password)
         new_user = users_repository.create(
-            db_session, **user_data.model_dump(exclude={"password_confirmation"})
+            db_session, user_data
         )
         user_login = UsersRead(
             id=new_user.id, login=new_user.login, password=new_user.password

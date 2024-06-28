@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Annotated
 
 from pydantic import UUID4, BaseModel, EmailStr, Field, ConfigDict
 
@@ -25,7 +25,7 @@ class UsersBase(BaseModel):
 
 class UsersCreate(UsersBase):
     password: str = Field(..., min_length=8, json_schema_extra="StrongP@$$w0rd")
-    password_confirmation: str = Field(..., json_schema_extra="StrongP@$$w0rd")
+    password_confirmation: Annotated[str, Field(..., json_schema_extra="StrongP@$$w0rd", exclude=True)]
 
 
 # --- User Login Schema ---
