@@ -162,4 +162,5 @@ __pycache__/
 .vscode/
 service_account_key.json
 start_tunnel.sh
-[BE_calls]_14_06_2024.ipynb
+*.ipynb
+.anima/
